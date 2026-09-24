@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 
+import { MAX_QUANTITY_PER_VARIANT } from "@/contracts";
+
 import { checkoutSchema } from "./checkout.schema";
 
 const validInput = {
@@ -53,5 +55,22 @@ describe("checkoutSchema", () => {
       quantity: 1,
     }));
     expect(checkoutSchema.safeParse({ ...validInput, items }).success).toBe(false);
+  });
+
+  it("uses the shared per-variant quantity boundary", () => {
+    const variantId = validInput.items[0].variantId;
+
+    expect(
+      checkoutSchema.safeParse({
+        ...validInput,
+        items: [{ variantId, quantity: MAX_QUANTITY_PER_VARIANT }],
+      }).success,
+    ).toBe(true);
+    expect(
+      checkoutSchema.safeParse({
+        ...validInput,
+        items: [{ variantId, quantity: MAX_QUANTITY_PER_VARIANT + 1 }],
+      }).success,
+    ).toBe(false);
   });
 });

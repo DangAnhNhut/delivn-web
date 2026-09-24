@@ -56,6 +56,10 @@ describe("formatVnd", () => {
   it("formats integer đồng values with the Vietnamese VND currency formatter", () => {
     expect(formatVnd(125_000)).toBe("125.000 ₫");
   });
+
+  it("formats BigInt snapshot totals without converting through floating point", () => {
+    expect(formatVnd(BigInt("4294967294"))).toBe("4.294.967.294 ₫");
+  });
 });
 
 describe("getProductAvailability", () => {

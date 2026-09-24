@@ -1,0 +1,1 @@
+export const MAX_QUANTITY_PER_VARIANT = 20;

@@ -1,7 +1,9 @@
 import { z } from "zod";
 
+import { MAX_QUANTITY_PER_VARIANT } from "@/contracts/commerce-limits";
+
 export const MAX_CHECKOUT_ITEMS = 50;
-export const MAX_QUANTITY_PER_VARIANT = 20;
+export { MAX_QUANTITY_PER_VARIANT };
 
 const optionalEmailSchema = z.preprocess(
   (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),

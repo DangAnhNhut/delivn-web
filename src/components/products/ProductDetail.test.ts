@@ -3,6 +3,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
 import type { ProductDTO } from "@/contracts";
+import { CartProvider } from "@/components/cart/CartProvider";
 
 import { ProductDetail, ProductNotFoundState } from "./ProductDetail";
 
@@ -37,10 +38,18 @@ const productFixture: ProductDTO = {
 };
 
 describe("ProductDetail", () => {
-  it("renders canonical product content, DTO media, and variant labels", () => {
-    const html = renderToStaticMarkup(
-      createElement(ProductDetail, { product: productFixture }),
+  function renderProduct(product: ProductDTO) {
+    return renderToStaticMarkup(
+      createElement(
+        CartProvider,
+        null,
+        createElement(ProductDetail, { product }),
+      ),
     );
+  }
+
+  it("renders canonical product content, DTO media, and variant labels", () => {
+    const html = renderProduct(productFixture);
 
     expect(html).toContain("SẢN PHẨM THỬ NGHIỆM");
     expect(html).toContain("Nội dung fixture chỉ dùng trong kiểm thử giao diện chi tiết.");
@@ -51,24 +60,19 @@ describe("ProductDetail", () => {
   });
 
   it("renders an intentional no-media treatment without fabricating an image", () => {
-    const html = renderToStaticMarkup(
-      createElement(ProductDetail, {
-        product: { ...productFixture, media: [] },
-      }),
-    );
+    const html = renderProduct({ ...productFixture, media: [] });
 
     expect(html).toContain("HÌNH ẢNH SẢN PHẨM ĐANG ĐƯỢC CẬP NHẬT");
     expect(html).not.toContain("fixture-detail.png");
   });
 
-  it("does not expose inventory quantities or fake add-to-cart behavior", () => {
-    const html = renderToStaticMarkup(
-      createElement(ProductDetail, { product: productFixture }),
-    );
+  it("exposes the hydration-safe cart action without inventory quantities", () => {
+    const html = renderProduct(productFixture);
 
     expect(html.toLowerCase()).not.toContain("reservedquantity");
     expect(html.toLowerCase()).not.toContain("quantity");
-    expect(html).not.toContain("Thêm vào giỏ");
+    expect(html).toContain("THÊM VÀO GIỎ");
+    expect(html).toContain("disabled");
   });
 });
 
