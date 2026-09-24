@@ -4,6 +4,7 @@ import type { ProductVariantDTO } from "@/contracts";
 
 import {
   formatVnd,
+  getDefaultProductVariant,
   getProductAvailability,
   getProductPrice,
 } from "./product-presentation";
@@ -75,5 +76,25 @@ describe("getProductAvailability", () => {
 
   it("reports pending when the product has no variants", () => {
     expect(getProductAvailability([])).toBe("pending");
+  });
+});
+
+describe("getDefaultProductVariant", () => {
+  it("selects the first in-stock variant even when it is not first", () => {
+    const unavailable = variant("250", 125_000, false);
+    const available = variant("500", 220_000, true);
+
+    expect(getDefaultProductVariant([unavailable, available])).toBe(available);
+  });
+
+  it("selects the first variant when all variants are unavailable", () => {
+    const first = variant("250", 125_000, false);
+    const second = variant("500", 220_000, false);
+
+    expect(getDefaultProductVariant([first, second])).toBe(first);
+  });
+
+  it("returns null when there are no variants", () => {
+    expect(getDefaultProductVariant([])).toBeNull();
   });
 });

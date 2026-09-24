@@ -44,3 +44,9 @@ export function getProductAvailability(
     ? "available"
     : "unavailable";
 }
+
+export function getDefaultProductVariant(
+  variants: readonly ProductVariantDTO[],
+): ProductVariantDTO | null {
+  return variants.find((variant) => variant.inStock) ?? variants[0] ?? null;
+}
