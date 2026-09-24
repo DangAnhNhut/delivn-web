@@ -2,29 +2,50 @@
 
 import { useId, useState } from "react";
 
-import type { ProductVariantDTO } from "@/contracts";
+import { useCart } from "@/components/cart/CartProvider";
+import { MAX_QUANTITY_PER_VARIANT, type ProductDTO } from "@/contracts";
+import { createCartItemSnapshot } from "@/lib/cart/cart-snapshot";
 import {
   formatVnd,
   getDefaultProductVariant,
 } from "@/lib/storefront/product-presentation";
 
 interface ProductPurchasePanelProps {
-  productName: string;
-  variants: readonly ProductVariantDTO[];
+  product: ProductDTO;
 }
 
 export function ProductPurchasePanel({
-  productName,
-  variants,
+  product,
 }: ProductPurchasePanelProps) {
+  const { addItem, isHydrated, items } = useCart();
   const radioGroupName = useId();
+  const variants = product.variants;
   const defaultVariant = getDefaultProductVariant(variants);
   const [selectedVariantId, setSelectedVariantId] = useState<string | null>(
     defaultVariant?.id ?? null,
   );
+  const [feedback, setFeedback] = useState("");
   const selectedVariant =
     variants.find((variant) => variant.id === selectedVariantId) ??
     defaultVariant;
+  const selectedCartQuantity = selectedVariant
+    ? (items.find((item) => item.variantId === selectedVariant.id)?.quantity ?? 0)
+    : 0;
+  const isAtMaximumQuantity =
+    selectedCartQuantity >= MAX_QUANTITY_PER_VARIANT;
+
+  const selectVariant = (variantId: string) => {
+    setSelectedVariantId(variantId);
+    setFeedback("");
+  };
+
+  const handleAddToCart = () => {
+    if (!selectedVariant?.inStock || !isHydrated || isAtMaximumQuantity) return;
+
+    if (addItem(createCartItemSnapshot(product, selectedVariant))) {
+      setFeedback("ĐÃ THÊM VÀO GIỎ");
+    }
+  };
 
   if (!selectedVariant) {
     return (
@@ -87,7 +108,7 @@ export function ProductPurchasePanel({
                   name={radioGroupName}
                   value={variant.id}
                   checked={selectedVariant.id === variant.id}
-                  onChange={() => setSelectedVariantId(variant.id)}
+                  onChange={() => selectVariant(variant.id)}
                   aria-describedby={statusId}
                   className="peer sr-only"
                 />
@@ -106,8 +127,31 @@ export function ProductPurchasePanel({
         </div>
       </fieldset>
 
+      <button
+        type="button"
+        onClick={handleAddToCart}
+        disabled={
+          !isHydrated || !selectedVariant.inStock || isAtMaximumQuantity
+        }
+        className="mt-6 inline-flex min-h-12 w-full items-center justify-center border border-foreground bg-foreground px-6 py-3.5 text-xs font-bold tracking-[0.2em] text-background uppercase transition-colors duration-200 hover:bg-accent hover:border-accent disabled:cursor-not-allowed disabled:border-border disabled:bg-surface disabled:text-foreground-muted focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent motion-reduce:transition-none"
+      >
+        {!selectedVariant.inStock
+          ? "TẠM HẾT HÀNG"
+          : isAtMaximumQuantity
+            ? "ĐÃ ĐẠT GIỚI HẠN"
+            : "THÊM VÀO GIỎ"}
+      </button>
+
+      <p
+        aria-live="polite"
+        aria-atomic="true"
+        className="mt-3 min-h-5 text-center text-[11px] font-bold tracking-[0.18em] text-accent uppercase"
+      >
+        {isAtMaximumQuantity ? "" : feedback}
+      </p>
+
       <p className="mt-6 text-xs leading-relaxed text-foreground-muted">
-        Đang xem: <span className="font-semibold text-foreground">{productName}</span>
+        Đang xem: <span className="font-semibold text-foreground">{product.name}</span>
         {" · "}
         <span className="font-semibold text-foreground">{selectedVariant.label}</span>
       </p>

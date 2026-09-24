@@ -1,7 +1,5 @@
-import type { CheckoutInput } from "@/contracts";
+import { MAX_QUANTITY_PER_VARIANT, type CheckoutInput } from "@/contracts";
 import { CheckoutValidationError } from "@/server/errors/commerce-error";
-
-import { MAX_QUANTITY_PER_VARIANT } from "./checkout.schema";
 
 export type NormalizedCheckoutInput = Omit<CheckoutInput, "items"> & {
   items: ReadonlyArray<{ variantId: string; quantity: number }>;

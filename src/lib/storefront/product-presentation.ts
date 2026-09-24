@@ -29,7 +29,7 @@ export function getProductPrice(
   };
 }
 
-export function formatVnd(priceVnd: number): string {
+export function formatVnd(priceVnd: number | bigint): string {
   return vndFormatter.format(priceVnd);
 }
 

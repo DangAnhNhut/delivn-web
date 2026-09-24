@@ -123,10 +123,7 @@ export function ProductDetail({ product }: { product: ProductDTO }) {
               </p>
 
               <div className="mt-8 sm:mt-10">
-                <ProductPurchasePanel
-                  productName={product.name}
-                  variants={product.variants}
-                />
+                <ProductPurchasePanel product={product} />
               </div>
 
               <div className="mt-8 flex items-center justify-between gap-4 border-b border-border pb-4 text-[10px] font-semibold tracking-[0.16em] text-foreground-muted uppercase sm:text-[11px]">
