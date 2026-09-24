@@ -4,7 +4,10 @@ import type { ProductDTO } from "@/contracts";
 
 vi.mock("server-only", () => ({}));
 
-import { getStorefrontProducts } from "./products";
+import {
+  getStorefrontProductBySlug,
+  getStorefrontProducts,
+} from "./products";
 
 const canonicalProduct: ProductDTO = {
   id: "00000000-0000-4000-8000-000000000001",
@@ -44,5 +47,40 @@ describe("getStorefrontProducts", () => {
     };
 
     await expect(getStorefrontProducts(service)).rejects.toBe(infrastructureError);
+  });
+});
+
+describe("getStorefrontProductBySlug", () => {
+  it("returns the canonical ProductDTO supplied by the product service", async () => {
+    const service = {
+      getActiveProductBySlug: async (): Promise<ProductDTO | null> => canonicalProduct,
+    };
+
+    await expect(
+      getStorefrontProductBySlug("ca-phe-rang-xay", service),
+    ).resolves.toBe(canonicalProduct);
+  });
+
+  it("preserves a missing or inactive product result as null", async () => {
+    const service = {
+      getActiveProductBySlug: async (): Promise<ProductDTO | null> => null,
+    };
+
+    await expect(
+      getStorefrontProductBySlug("khong-ton-tai", service),
+    ).resolves.toBeNull();
+  });
+
+  it("propagates infrastructure failures instead of converting them to null", async () => {
+    const infrastructureError = new Error("database unavailable");
+    const service = {
+      getActiveProductBySlug: async (): Promise<ProductDTO | null> => {
+        throw infrastructureError;
+      },
+    };
+
+    await expect(
+      getStorefrontProductBySlug("ca-phe-rang-xay", service),
+    ).rejects.toBe(infrastructureError);
   });
 });
