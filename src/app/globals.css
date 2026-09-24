@@ -1,0 +1,69 @@
+@import "tailwindcss";
+
+:root {
+  /* Brand colors — derived from official DELIVN packaging and logo */
+  --background: #FAF6F1;
+  --surface: #F2EAE0;
+  --foreground: #2C2C2C;
+  --foreground-muted: #6B6259;
+  --sand: #C9B99A;
+  --cream: #F5F0E8;
+  --accent: #EF4E3E;
+  --border: #D9CEBD;
+
+  /* Layout tokens */
+  --header-height: 80px;
+  --hero-usable-height: calc(100svh - var(--header-height));
+
+  /* Fluid page shell tokens */
+  --page-gutter: clamp(24px, 4vw, 80px);
+  --content-max: 1600px;
+
+  /* Brand fonts */
+  --font-body: var(--font-be-vietnam-pro);
+  --font-display-serif: var(--font-playfair-display);
+}
+
+@media (min-width: 1920px) {
+  :root {
+    --content-max: 1780px;
+  }
+}
+
+@media (min-width: 2560px) {
+  :root {
+    --content-max: 1960px;
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-foreground: var(--foreground);
+  --color-foreground-muted: var(--foreground-muted);
+  --color-sand: var(--sand);
+  --color-cream: var(--cream);
+  --color-accent: var(--accent);
+  --color-border: var(--border);
+  --font-sans: var(--font-be-vietnam-pro);
+  --font-serif: var(--font-playfair-display);
+  --font-body: var(--font-be-vietnam-pro);
+  --font-display-serif: var(--font-playfair-display);
+}
+
+/* Explicit font family utilities */
+.font-display-serif {
+  font-family: var(--font-playfair-display), ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+}
+
+/* Fluid reusable page shell */
+.site-shell {
+  width: min(calc(100% - (var(--page-gutter) * 2)), var(--content-max));
+  margin-inline: auto;
+}
+
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}

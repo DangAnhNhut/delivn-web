@@ -1,0 +1,296 @@
+<!DOCTYPE html><html class="scroll-smooth" lang="vi"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>DELIVN — Trải Nghiệm 3D Tương Tác Bao Bì</title>
+<!-- Google Fonts: Epilogue & Newsreader for luxury editorial touch -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Epilogue', 'sans-serif'],
+            serif: ['Newsreader', 'Georgia', 'serif'],
+          },
+          colors: {
+            ivory: '#FCF9F4',
+            cream: '#F5EFE6',
+            kraft: '#C5A988',
+            sandTone: '#EFE7DA',
+            charcoal: '#161616',
+            charcoalLight: '#2C2B29',
+            brandRed: '#D84A38',
+            sandBorder: 'rgba(197, 169, 136, 0.28)',
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      background-color: #FCF9F4;
+      color: #161616;
+      font-family: 'Epilogue', sans-serif;
+      overflow-x: hidden;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    /* Smooth transitions for product view switching */
+    .product-stage-view {
+      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    /* Soft ambient lighting halo for 3D stage */
+    .ambient-glow {
+      background: radial-gradient(circle at 50% 52%, rgba(235, 226, 211, 0.75) 0%, rgba(252, 249, 244, 0) 72%);
+    }
+  </style>
+</head>
+<body class="bg-[#FCF9F4] text-charcoal selection:bg-[#EAE3D6] selection:text-charcoal">
+<!-- ===================================================================
+       SCREEN 03: PHÂN ĐOẠN TRẢI NGHIỆM 3D & KỂ CHUYỆN BAO BÌ
+       (Nối tiếp trực tiếp ngay sau SCREEN 02 — Không lặp lại Header / Nav)
+       =================================================================== -->
+<section class="relative w-full min-h-screen pt-20 pb-28 px-8 md:px-16 lg:px-24 max-w-[1440px] mx-auto border-t border-[#EAE3D6]" id="screen-03-interactive-story">
+<!-- HEADER PHÂN ĐOẠN (SECTION INTRODUCTION) -->
+<div class="max-w-3xl mb-14 md:mb-16">
+<!-- Eyebrow -->
+<div class="inline-flex items-center gap-2.5 mb-4">
+<span class="w-2 h-2 rounded-full bg-brandRed"></span>
+<span class="text-xs uppercase tracking-[0.25em] font-semibold text-charcoal/75">
+          KHÔNG CHỈ LÀ BAO BÌ
+        </span>
+</div>
+<!-- Main Headline -->
+<h2 class="text-4xl md:text-5xl lg:text-[54px] font-bold uppercase tracking-tight text-charcoal leading-[1.08] mb-6">
+        MỖI GÓC NHÌN,<br>
+<span class="font-light italic font-serif lowercase tracking-normal text-[1.05em] text-charcoal/90">một phần câu chuyện.</span>
+</h2>
+<!-- Intro Text -->
+<p class="text-base md:text-lg text-charcoal/70 leading-relaxed font-normal max-w-2xl">
+        Bao bì DELIVN không chỉ bảo vệ cà phê bên trong. Từ mặt trước, hai cạnh bên đến mặt sau, mỗi chi tiết đều được xây dựng để kể tiếp câu chuyện về sản phẩm, vùng đất Tây Nguyên và tinh thần cà phê Việt.
+      </p>
+</div>
+<!-- MAIN INTERACTIVE STAGE & STORYTELLING SPLIT LAYOUT -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+<!-- CỘT TRÁI: TIẾN TRÌNH KỂ CHUYỆN CUỘN (5 COLS) -->
+<div class="lg:col-span-5 flex flex-col justify-between h-full pt-2 lg:sticky lg:top-24">
+<!-- VISUAL PRODUCT SELECTOR: 2 MINI 2D THUMBNAILS -->
+<div class="mb-12">
+<div class="text-[11px] font-mono uppercase tracking-widest text-charcoal/45 mb-3">LỰA CHỌN DÒNG SẢN PHẨM</div>
+<div class="grid grid-cols-2 gap-3 max-w-md">
+<!-- Option 1: Sand (Default Active) -->
+<button class="flex items-center gap-3 p-2.5 rounded-xl border border-charcoal bg-[#F5EFE6]/80 text-left transition-all duration-300 shadow-sm group" id="card-prod-sand" onclick="switchProduct('sand')">
+<div class="w-12 h-14 rounded-lg bg-[#EFE7DA] overflow-hidden flex-shrink-0 flex items-center justify-center p-1 border border-charcoal/10 group-hover:scale-105 transition-transform duration-300">
+<img alt="DELIVN Sand" class="h-full w-auto object-contain drop-shadow-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBWo6dyjBPQts09wLH_1s1jFSbeeZy6WyBlIikU_UlKIQVAy9xRokSiaip9JPbWRX_hgSWkk1DDlDUBjhrIp4oLsjFLLMPeYl2ZmPPomYV4bIkLtUOKeMvSCFvajgoVP_ZdyVqIW-hdTRpe3pNIxG623WCeK434aK2vVw0VMUFSfKtpYe1xXRgyEvVv3bLs_hNELC1Ur6RPEMO9dVyF5uOoONYg0rw9kLrhrsKf42eFIxR54EGOiq4Ci-Di9G4CSAIZK0I">
+</div>
+<div class="min-w-0 pr-1">
+<div class="text-xs font-bold uppercase tracking-tight text-charcoal leading-tight">CÀ PHÊ RANG XAY</div>
+<div class="text-[11px] text-charcoal/60 leading-snug mt-0.5 truncate">Pha phin truyền thống</div>
+</div>
+</button>
+<!-- Option 2: Black -->
+<button class="flex items-center gap-3 p-2.5 rounded-xl border border-transparent hover:border-sandBorder bg-transparent hover:bg-[#F7F2E9]/60 text-left transition-all duration-300 group" id="card-prod-black" onclick="switchProduct('black')">
+<div class="w-12 h-14 rounded-lg bg-[#222120] overflow-hidden flex-shrink-0 flex items-center justify-center p-1 border border-charcoal/10 group-hover:scale-105 transition-transform duration-300">
+<img alt="DELIVN Black" class="h-full w-auto object-contain drop-shadow-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5d2qBZgNgKgRikXaCh5AxsRCpOf0HhZiXBsOk1NqGmvuEvimSff9hdp7_VbT9e8hi8h0emRhWuvPJhb1cnVK2HyS8iF4Cy3qm-hrl-zPh626c3S_hwxvaG1UmEwuNhHqjUuh-nJ7C7u69iTp0txebp8Cf6CyqmQlJTxpp4HaGksiFpLTRmo3n2pVbeIfDKORIwg4zStBqA3jMoT-t24VmzDt_45ACv-acXtUC8P3g5fKL2u-NCjwQ31JTa0yEmz0vJXY">
+</div>
+<div class="min-w-0 pr-1">
+<div class="text-xs font-bold uppercase tracking-tight text-charcoal/70 leading-tight group-hover:text-charcoal transition-colors">HẠT RANG ESPRESSO</div>
+<div class="text-[11px] text-charcoal/50 leading-snug mt-0.5 truncate">Rang mộc chuyên biệt</div>
+</div>
+</button>
+</div>
+</div>
+<!-- DANH SÁCH 3 TRẠNG THÁI CUỘN KỂ CHUYỆN (3 SCROLL STORY STATES) -->
+<div class="space-y-10 relative pl-8 border-l border-charcoal/15">
+<!-- STATE 01: MẶT TRƯỚC (Active by default) -->
+<div class="group cursor-pointer transition-all duration-300 relative" id="state-card-1" onclick="setActiveState(1)">
+<!-- Active Indicator Marker -->
+<div class="absolute -left-[37px] top-1.5 w-4 h-4 rounded-full border-2 border-charcoal bg-charcoal transition-all duration-300" id="marker-1"></div>
+<div class="flex items-baseline gap-3 mb-2">
+<span class="text-xs font-mono tracking-widest text-brandRed font-semibold" id="num-1">01</span>
+<span class="text-xs uppercase tracking-widest font-semibold text-charcoal/50">MẶT TRƯỚC</span>
+</div>
+<h3 class="text-xl md:text-2xl font-bold uppercase text-charcoal mb-3 group-hover:text-brandRed transition-colors">
+              DẤU ẤN ĐẦU TIÊN
+            </h3>
+<p class="text-sm md:text-base text-charcoal/75 leading-relaxed font-normal">
+              Mặt trước định hình cá tính của từng dòng cà phê — từ sắc cát ấm áp của cà phê rang xay đến sắc đen mạnh mẽ của Espresso.
+            </p>
+</div>
+<!-- STATE 02: CẠNH BÊN -->
+<div class="group cursor-pointer transition-all duration-300 relative opacity-45 hover:opacity-100" id="state-card-2" onclick="setActiveState(2)">
+<!-- Indicator Marker -->
+<div class="absolute -left-[37px] top-1.5 w-4 h-4 rounded-full border-2 border-charcoal/40 bg-ivory group-hover:border-charcoal transition-all duration-300" id="marker-2"></div>
+<div class="flex items-baseline gap-3 mb-2">
+<span class="text-xs font-mono tracking-widest text-charcoal/50 font-semibold" id="num-2">02</span>
+<span class="text-xs uppercase tracking-widest font-semibold text-charcoal/50">CẠNH BÊN</span>
+</div>
+<h3 class="text-xl md:text-2xl font-bold uppercase text-charcoal mb-3 group-hover:text-brandRed transition-colors">
+              CÂU CHUYỆN TIẾP NỐI
+            </h3>
+<p class="text-sm md:text-base text-charcoal/75 leading-relaxed font-normal">
+              Khi sản phẩm xoay, những chi tiết về nguồn gốc, câu chuyện Tây Nguyên và thông tin sản phẩm dần được hé lộ trên hai cạnh bao bì.
+            </p>
+</div>
+<!-- STATE 03: MẶT SAU -->
+<div class="group cursor-pointer transition-all duration-300 relative opacity-45 hover:opacity-100" id="state-card-3" onclick="setActiveState(3)">
+<!-- Indicator Marker -->
+<div class="absolute -left-[37px] top-1.5 w-4 h-4 rounded-full border-2 border-charcoal/40 bg-ivory group-hover:border-charcoal transition-all duration-300" id="marker-3"></div>
+<div class="flex items-baseline gap-3 mb-2">
+<span class="text-xs font-mono tracking-widest text-charcoal/50 font-semibold" id="num-3">03</span>
+<span class="text-xs uppercase tracking-widest font-semibold text-charcoal/50">MẶT SAU</span>
+</div>
+<h3 class="text-xl md:text-2xl font-bold uppercase text-charcoal mb-3 group-hover:text-brandRed transition-colors">
+              TRỌN VẸN MỘT THIẾT KẾ
+            </h3>
+<p class="text-sm md:text-base text-charcoal/75 leading-relaxed font-normal">
+              Từ thông tin sản phẩm đến những nét minh họa tiếp nối, mặt sau hoàn thiện một hệ hình ảnh thống nhất quanh toàn bộ bao bì DELIVN.
+            </p>
+</div>
+</div>
+<!-- HƯỚNG DẪN CUỘN TRẢI NGHIỆM TINH TẾ -->
+<div class="mt-14 pt-8 border-t border-[#EAE3D6] flex items-center gap-3 text-xs text-charcoal/60">
+<span class="inline-block w-4 h-[1px] bg-charcoal/40"></span>
+<span class="tracking-widest uppercase font-medium">CUỘN ĐỂ KHÁM PHÁ TOÀN DIỆN THIẾT KẾ</span>
+</div>
+</div>
+<!-- CỘT PHẢI: SÂN KHẤU 3D ĐỘC QUYỀN TỶ LỆ 55-60% (7 COLS) -->
+<div class="lg:col-span-7 relative min-h-[600px] lg:min-h-[660px] flex flex-col items-center justify-center p-4 md:p-8">
+<!-- VÙNG PHỦ SÁNG HÀO QUANG ẤM ÁP -->
+<div class="absolute inset-0 ambient-glow rounded-full pointer-events-none -z-0"></div>
+<!-- KHUNG CHỨA MÔ HÌNH SẢN PHẨM -->
+<div class="relative z-10 w-full max-w-[440px] aspect-[1/1.28] flex flex-col items-center justify-center select-none">
+<!-- ==============================================
+               BỘ HÌNH ẢNH: DÒNG CÀ PHÊ RANG XAY (SAND BAG)
+               ============================================== -->
+<div class="product-stage-view w-full h-full flex items-center justify-center relative cursor-grab active:cursor-grabbing" id="view-sand-group">
+<!-- Sand Angle 1: Mặt trước (01) -->
+<img alt="DELIVN Cà phê Rang Xay — Mặt trước" class="max-h-[500px] w-auto object-contain drop-shadow-[0_28px_40px_rgba(40,30,20,0.18)] transition-all duration-500 block" id="sand-angle-1" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2hTu1H-vj93PmK9C7yaFk6QiufgmUhJwBSUGcK81UHyBPvguQXwqtb-x8VaFATY-DD3m6-e4PDqnq1sKBhOXT3kebejPJvbVosFaDgJ1a22G0Sib4brEW0WR-RI_iM004FPWJ3jtMY9IxWrBTkjFrzHfMlrORd88FnB_Sc-7Y21p2lWF5oxTReqOqBPS5AVQ_aZj3AM5Rgoxvd8QeuKsND7dQ5mr_-FiqglwEdxkg5IlxiyrdriqXu5-ZqNtAPtuOHQk">
+<!-- Sand Angle 2: Cạnh bên 3/4 (02) -->
+<img alt="DELIVN Cà phê Rang Xay — Cạnh bên" class="max-h-[500px] w-auto object-contain drop-shadow-[0_28px_40px_rgba(40,30,20,0.18)] transition-all duration-500 hidden" id="sand-angle-2" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAt2PtVeOULU5iPFFpNaPn40SIWCtVZoQP72z9rBCHVPfAm8QtnOXanRsoaQKQNmUsjh8HGAeM2dneSOF2i2xuAedmXWJxXWp2aDmqgyeUkmoiHgilE_V8XPSw1A6haSyelKF6_d2Ph5B0-Dr40OpVFZPsLlvyAVC_dpvCAjoV2Xj8-EChROU1uleUqfaKmlvSCKf7Mmp5xRXON5VCE1A8ymXWUoG_oZobNgas8zPt-NjAli8qMAMLqgnFPrihZWUzIQyE">
+<!-- Sand Angle 3: Mặt sau & Chi tiết (03) -->
+<img alt="DELIVN Cà phê Rang Xay — Mặt sau &amp; Chi tiết" class="max-h-[460px] w-auto object-contain drop-shadow-[0_28px_40px_rgba(40,30,20,0.18)] transition-all duration-500 hidden" id="sand-angle-3" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGaT5JjZrXkPnzhf8ktbh5KEOxm0BkJzSiiAmfNIp44_hNm9DHygrLZki9RJg6ypMQVoGDGnEQ9S4ES3PofA2p8GM1PX9zImFQWfxWs9-eaqvgoYIwtDAsFhug1GT7Yxbucxj4LhKEy81k2aMf947i-dCgEQYjiUX3XaHByKSrJtHVJDRYIaY5Xidh-3KZ1rMI7AMlxCmQSmVoYTAuBHxt_Y_BERDJkjaj7Rcz9krFmoVmHT4iMz2pgUVq8Sw1h_3BEvw">
+</div>
+<!-- ==============================================
+               BỘ HÌNH ẢNH: DÒNG ESPRESSO (BLACK BAG)
+               ============================================== -->
+<div class="product-stage-view w-full h-full items-center justify-center relative hidden opacity-0 cursor-grab active:cursor-grabbing" id="view-black-group">
+<!-- Black Angle 1: Mặt trước (01) -->
+<img alt="DELIVN Cà phê Hạt Rang Espresso — Mặt trước" class="max-h-[500px] w-auto object-contain drop-shadow-[0_28px_40px_rgba(10,10,10,0.22)] transition-all duration-500 block" id="black-angle-1" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD0ggLJ065WmNc32QpwvQBPvKLPgyvQcWRWaAXVAkFh2Fy9yXazL40RgWdsWmZ-BrpgKLz2_wt_VC16Z5LV7tUxZFGq8-lH8E_EGhSjLkMILSU1-Ioy1kq33f4bOAqh8WfKXT1qC95EMlO54JA6mZfMZmbEeDtQtuZ_BZPzSr9-Fumf_O024d7YZAXuF0Q7qegFS8SZrm3i6rS75pQxuFJv4DYTCPyGJ0xPro9vN2G2_L50Y3BgpqglyZ-qiHmgU4QoOEo">
+<!-- Black Angle 2: Cạnh bên 3/4 (02) -->
+<img alt="DELIVN Cà phê Hạt Rang Espresso — Cạnh bên" class="max-h-[500px] w-auto object-contain drop-shadow-[0_28px_40px_rgba(10,10,10,0.22)] transition-all duration-500 hidden" id="black-angle-2" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGJpvd5xrp2yT5iPoFIOgV-nTxTvyHf6Wy1eL7Mm5NBhKz2nJSNtejvT2eWVCHQ5cKFzGW7gkLU3hwbwRrPGfpzsS5qrTW77P_UkIssfMBc-4QrTAZdReK5tJzQjn50ya7U6Ws6lyxOMa2q1-vwSAEseBcB3TjW6GuHxuD6VxhGEb4FE1miH7JAHS9ch5FMFBQrTX493HDz5o3rbb-3GlBRBbz_-rhCBT3g27aHIsKPhI4Ih5ZzgOpeton_d6W5gvGygY">
+<!-- Black Angle 3: Mặt sau & Chi tiết (03) -->
+<img alt="DELIVN Cà phê Hạt Rang Espresso — Mặt sau &amp; Chi tiết" class="max-h-[460px] w-auto object-contain drop-shadow-[0_28px_40px_rgba(10,10,10,0.22)] transition-all duration-500 hidden" id="black-angle-3" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3qtT5MLawEvAq8xNQpnDpip8qltuBJTLh0qThM3_icrdR6Z2DBN3NcUwQwLAREw0jI6buKzIB4cQlgNQnLBXFKODcI3CVZHOtlr-7x7ussbo8f2v0jq1OfuAcoWhUbznQrp1_AFGehVtY6ZZ28SJW3fAbe73HPuDGnus2_yllzhl2QylmZxlXD6sobT20_PiMpGYvyij3pEVaeYwp5Qeupi-H2-nQBqj6fzzmKxrw_gvYkajpbJyO1EdxuJf6ceVVmpY">
+</div>
+<!-- BÓNG ĐỔ TIẾP XÚC SÀN THỰC TẾ -->
+<div class="w-[290px] h-[22px] bg-[#1a140e]/14 blur-md rounded-[100%] mt-[-10px] pointer-events-none"></div>
+<!-- GÓC NHÌN ĐIỀU HƯỚNG NHANH TINH GỌN -->
+<div class="mt-7 flex items-center gap-2 bg-[#F6F1E8]/90 backdrop-blur border border-sandBorder px-2.5 py-1.5 rounded-full shadow-sm">
+<button class="text-[11px] font-mono px-3 py-1 rounded-full font-bold bg-charcoal text-ivory transition-all" id="rot-btn-1" onclick="setActiveState(1)">01 · TRƯỚC</button>
+<button class="text-[11px] font-mono px-3 py-1 rounded-full font-medium text-charcoal/60 hover:text-charcoal transition-all" id="rot-btn-2" onclick="setActiveState(2)">02 · HÔNG</button>
+<button class="text-[11px] font-mono px-3 py-1 rounded-full font-medium text-charcoal/60 hover:text-charcoal transition-all" id="rot-btn-3" onclick="setActiveState(3)">03 · SAU</button>
+</div>
+<!-- MICRO-CAPTION DUY NHẤT ĐƯỢC CHĂM CHÚT DƯỚI SÂN KHẤU -->
+<div class="mt-4 flex items-center justify-center gap-2 text-charcoal/45 text-[11px] tracking-wider uppercase font-medium">
+<svg class="w-3.5 h-3.5 animate-spin-slow opacity-60" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+<path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.19"></path>
+</svg>
+<span>TƯƠNG TÁC ĐỂ XEM TỪNG GÓC ĐỘ</span>
+</div>
+</div>
+</div>
+</div>
+<!-- CHÂN PHÂN ĐOẠN: DÒNG TIẾP NỐI CUỘN SANG PHÂN ĐOẠN TIẾP THEO -->
+<div class="mt-20 pt-8 border-t border-[#EAE3D6] flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-charcoal/50">
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-brandRed"></span>
+<span>DELIVN HERITAGE ROAST — HỆ THỐNG TRẢI NGHIỆM KỸ THUẬT SỐ ĐƯƠNG ĐẠI</span>
+</div>
+<div class="tracking-widest uppercase text-[11px] font-medium">
+        TIẾP TỤC CUỘN ĐỂ KHÁM PHÁ CÂU CHUYỆN NGUỒN GỐC &amp; CÁCH PHA →
+      </div>
+</div>
+</section>
+<!-- JAVASCRIPT ĐIỀU KHIỂN TƯƠNG TÁC PREVIEW & SCROLL STATES -->
+<script>
+    let currentProduct = 'sand';
+    let currentState = 1;
+
+    function switchProduct(type) {
+      currentProduct = type;
+      const cardSand = document.getElementById('card-prod-sand');
+      const cardBlack = document.getElementById('card-prod-black');
+      const viewSand = document.getElementById('view-sand-group');
+      const viewBlack = document.getElementById('view-black-group');
+
+      if (type === 'sand') {
+        // Sand active card styling
+        cardSand.className = "flex items-center gap-3 p-2.5 rounded-xl border border-charcoal bg-[#F5EFE6]/80 text-left transition-all duration-300 shadow-sm group";
+        cardBlack.className = "flex items-center gap-3 p-2.5 rounded-xl border border-transparent hover:border-sandBorder bg-transparent hover:bg-[#F7F2E9]/60 text-left transition-all duration-300 group";
+        
+        viewSand.classList.remove('hidden');
+        setTimeout(() => { viewSand.classList.remove('opacity-0'); }, 10);
+        viewBlack.classList.add('opacity-0');
+        setTimeout(() => { viewBlack.classList.add('hidden'); }, 300);
+      } else {
+        // Black active card styling
+        cardBlack.className = "flex items-center gap-3 p-2.5 rounded-xl border border-charcoal bg-[#F5EFE6]/80 text-left transition-all duration-300 shadow-sm group";
+        cardSand.className = "flex items-center gap-3 p-2.5 rounded-xl border border-transparent hover:border-sandBorder bg-transparent hover:bg-[#F7F2E9]/60 text-left transition-all duration-300 group";
+        
+        viewBlack.classList.remove('hidden');
+        setTimeout(() => { viewBlack.classList.remove('opacity-0'); }, 10);
+        viewSand.classList.add('opacity-0');
+        setTimeout(() => { viewSand.classList.add('hidden'); }, 300);
+      }
+      setActiveState(currentState);
+    }
+
+    function setActiveState(state) {
+      currentState = state;
+
+      // Update story cards active styles
+      for (let i = 1; i <= 3; i++) {
+        const card = document.getElementById('state-card-' + i);
+        const marker = document.getElementById('marker-' + i);
+        const rotBtn = document.getElementById('rot-btn-' + i);
+        const numLabel = document.getElementById('num-' + i);
+
+        if (i === state) {
+          card.classList.remove('opacity-45');
+          card.classList.add('opacity-100');
+          marker.className = "absolute -left-[37px] top-1.5 w-4 h-4 rounded-full border-2 border-charcoal bg-charcoal transition-all duration-300";
+          rotBtn.className = "text-[11px] font-mono px-3 py-1 rounded-full font-bold bg-charcoal text-ivory transition-all";
+          numLabel.className = "text-xs font-mono tracking-widest text-brandRed font-semibold";
+        } else {
+          card.classList.add('opacity-45');
+          card.classList.remove('opacity-100');
+          marker.className = "absolute -left-[37px] top-1.5 w-4 h-4 rounded-full border-2 border-charcoal/40 bg-ivory group-hover:border-charcoal transition-all duration-300";
+          rotBtn.className = "text-[11px] font-mono px-3 py-1 rounded-full font-medium text-charcoal/60 hover:text-charcoal transition-all";
+          numLabel.className = "text-xs font-mono tracking-widest text-charcoal/50 font-semibold";
+        }
+      }
+
+      // Update images visibility for Sand
+      document.getElementById('sand-angle-1').classList.toggle('hidden', state !== 1);
+      document.getElementById('sand-angle-1').classList.toggle('block', state === 1);
+      document.getElementById('sand-angle-2').classList.toggle('hidden', state !== 2);
+      document.getElementById('sand-angle-2').classList.toggle('block', state === 2);
+      document.getElementById('sand-angle-3').classList.toggle('hidden', state !== 3);
+      document.getElementById('sand-angle-3').classList.toggle('block', state === 3);
+
+      // Update images visibility for Black
+      document.getElementById('black-angle-1').classList.toggle('hidden', state !== 1);
+      document.getElementById('black-angle-1').classList.toggle('block', state === 1);
+      document.getElementById('black-angle-2').classList.toggle('hidden', state !== 2);
+      document.getElementById('black-angle-2').classList.toggle('block', state === 2);
+      document.getElementById('black-angle-3').classList.toggle('hidden', state !== 3);
+      document.getElementById('black-angle-3').classList.toggle('block', state === 3);
+    }
+  </script>
+</body></html>

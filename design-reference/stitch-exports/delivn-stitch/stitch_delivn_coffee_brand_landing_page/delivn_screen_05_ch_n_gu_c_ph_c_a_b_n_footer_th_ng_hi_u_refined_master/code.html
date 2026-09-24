@@ -1,0 +1,278 @@
+<!DOCTYPE html><html class="scroll-smooth" lang="vi" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>DELIVN — SCREEN 05: Chọn Gu Cà Phê Của Bạn &amp; Footer Thương Hiệu</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500&amp;family=Plus+Jakarta+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            display: ['Epilogue', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              cream: '#FCF9F4',
+              surface: '#F5EFE6',
+              sand: '#EAE1D5',
+              sandDark: '#C5A988',
+              charcoal: '#161616',
+              black: '#111111',
+              red: '#EE3D24',
+              mutedRed: '#D0321B',
+              border: '#E8E1D5',
+              footerBg: '#121212',
+              footerCard: '#1A1A1A'
+            }
+          },
+          letterSpacing: {
+            widest2: '0.22em',
+            widest3: '0.28em',
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      background-color: #FCF9F4;
+      color: #161616;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      overflow-x: hidden;
+      margin: 0;
+      padding: 0;
+    }
+    
+    /* Subtle editorial ambient background */
+    .ambient-glow {
+      background: radial-gradient(circle at 60% 45%, rgba(234, 225, 213, 0.45) 0%, rgba(252, 249, 244, 0) 70%);
+    }
+
+    /* Soft realistic ground shadow */
+    .product-shadow {
+      filter: drop-shadow(0 28px 36px rgba(22, 22, 22, 0.14)) drop-shadow(0 8px 16px rgba(22, 22, 22, 0.08));
+    }
+    .product-shadow-back {
+      filter: drop-shadow(0 20px 28px rgba(22, 22, 22, 0.18));
+    }
+
+    /* Refined interactions */
+    .cta-btn {
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px -6px rgba(22, 22, 22, 0.35);
+      background-color: #000000;
+    }
+
+    .footer-link {
+      transition: color 0.25s ease, transform 0.25s ease;
+    }
+    .footer-link:hover {
+      color: #FFFFFF;
+      transform: translateX(3px);
+    }
+  </style>
+</head>
+<body class="bg-brand-cream text-brand-charcoal antialiased selection:bg-brand-red selection:text-white">
+<!-- ================================================================= -->
+<!-- SCREEN 05: PHÂN ĐOẠN CHUYỂN ĐỔI CUỐI TRANG & FOOTER THƯƠNG HIỆU -->
+<!-- Note: Nối tiếp trực tiếp sau SCREEN 04 (Nguồn Cảm Hứng Tây Nguyên) -->
+<!-- Không lặp lại top navbar hay header.                               -->
+<!-- ================================================================= -->
+<main class="w-full relative overflow-hidden">
+<!-- SUBTLE CONNECTING SEPARATOR FROM SCREEN 04 -->
+<div class="max-w-7xl mx-auto px-6 md:px-12 pt-6">
+<div class="h-[1px] w-full bg-brand-border/60"></div>
+</div>
+<!-- =============================================================== -->
+<!-- FINAL CTA CONVERSION SECTION (Occupies ~70% viewport before footer) -->
+<!-- =============================================================== -->
+<section class="relative min-h-[760px] lg:min-h-[820px] flex items-center justify-center py-16 lg:py-24 ambient-glow">
+<!-- Subtle atmospheric background texture ring -->
+<div class="absolute right-1/4 top-1/2 -translate-y-1/2 w-[680px] h-[680px] rounded-full border border-brand-sand/40 pointer-events-none -z-10"></div>
+<div class="absolute right-1/4 top-1/2 -translate-y-1/2 w-[900px] h-[900px] rounded-full border border-brand-sand/20 pointer-events-none -z-10"></div>
+<div class="max-w-7xl mx-auto px-6 md:px-12 w-full">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+<!-- LEFT / COPY COLUMN: Strategic Conversion Anchor (5 cols) -->
+<div class="lg:col-span-5 flex flex-col items-start z-10">
+<!-- Eyebrow Tag -->
+<div class="inline-flex items-center gap-2.5 mb-5">
+<span class="w-2 h-2 rounded-full bg-brand-red"></span>
+<span class="font-display uppercase tracking-widest2 text-[11px] font-semibold text-brand-charcoal/80">
+                ĐẾN LÚC CHỌN GU CÀ PHÊ CỦA BẠN
+              </span>
+</div>
+<!-- Main Headline -->
+<h2 class="font-display text-4xl sm:text-5xl lg:text-[56px] font-extrabold leading-[1.1] tracking-tight text-brand-charcoal mb-6">
+              HAI DÒNG CÀ PHÊ<br>
+<span class="font-serif italic font-normal text-brand-charcoal/90 text-3xl sm:text-4xl lg:text-[46px] block mt-1 tracking-normal">Chọn Gu Cà Phê&nbsp;</span><span class="font-serif italic font-normal text-brand-charcoal/90 text-3xl sm:text-4xl lg:text-[46px] block mt-1 tracking-normal">Phù Hợp Với Bạn</span>
+</h2>
+<!-- Supporting Copy -->
+<p class="text-base sm:text-lg text-brand-charcoal/75 leading-relaxed font-normal mb-9 max-w-lg">
+              Dù bạn tìm kiếm sự mạnh mẽ, rõ nét của espresso hay nét đậm đà, gần gũi của cà phê pha phin, DELIVN có một lựa chọn phù hợp cho nhịp thưởng thức của bạn.
+            </p>
+<!-- Single Intentional Primary CTA (No competing buttons) -->
+<div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full sm:w-auto">
+<a class="cta-btn inline-flex items-center justify-center gap-4 px-9 py-5 bg-brand-charcoal text-white rounded-full font-display font-bold text-[13px] tracking-widest uppercase shadow-md group" href="/san-pham">
+<span class="">CHỌN CÀ PHÊ CỦA BẠN</span>
+<span class="text-brand-sandDark group-hover:text-white transition-transform duration-300 group-hover:translate-x-1">→</span>
+</a>
+</div>
+<!-- Editorial footnote marker -->
+<div class="mt-10 pt-6 border-t border-brand-border/60 flex items-center gap-6 text-xs text-brand-charcoal/60 tracking-wider">
+<span class="font-display font-semibold uppercase text-brand-charcoal/80">01 / ESPRESSO</span>
+<span class="w-1 h-1 rounded-full bg-brand-sandDark"></span>
+<span class="font-display font-semibold uppercase text-brand-charcoal/80">02 / PHA PHIN TRUYỀN THỐNG</span>
+</div>
+</div>
+<!-- RIGHT / PRODUCT COMPOSITION COLUMN: High-Fashion Hero Bag Layering (7 cols) -->
+<div class="lg:col-span-7 relative flex items-center justify-center lg:justify-end"><div class="relative w-full max-w-[560px] lg:max-w-[600px] flex flex-col items-center justify-center py-4"><div class="relative w-full overflow-hidden flex items-center justify-center"><img src="https://lh3.googleusercontent.com/aida/AEtjO1VBl5iXl97OtN0WwWckyHvu5dHwt5UKNd86TOyawJ4HwFJ9qW5jto97F07n9mBBTztCTN9ooJ_-eCKbRbxQspqK1HAdzR_P1sHPmsaxQz_EVmKt1l3lXourtDQ6AuKM5vEnOCYZnbKlyxNzMXFccM_kbTeDHM3y6p5yK7GfH2zxFDhx7WyZ1kP02DtFOu9537rGiLpdk0zH9TDMy3CN5VQ-ACaDJb5A2tQlHANq4JcZisocLyDSlxJ8OOs" alt="DELIVN - Hai dòng cà phê Tây Nguyên" class="w-full h-auto object-contain block drop-shadow-sm"></div><div class="mt-6 flex items-center justify-center gap-8 text-[11px] font-display font-semibold uppercase tracking-widest text-brand-charcoal/75"><span class="">01 · CÀ PHÊ HẠT RANG ESPRESSO</span><span class="w-1 h-1 rounded-full bg-brand-sandDark"></span><span class="">02 · CÀ PHÊ RANG XAY</span></div></div></div>
+</div>
+</div>
+</section>
+<!-- =============================================================== -->
+<!-- FOOTER: Master Brand World Closure (Dark Basalt Charcoal Palette) -->
+<!-- Distinctive, architectural, calm, and unmistakably DELIVN         -->
+<!-- =============================================================== -->
+<footer class="bg-brand-footerBg text-brand-cream/80 relative z-20 border-t border-neutral-800">
+<!-- Upper Footer Brand Strip -->
+<div class="max-w-7xl mx-auto px-6 md:px-12 pt-16 pb-14">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8">
+<!-- BRAND SUMMARY & LOGO (Col 1-4) -->
+<div class="lg:col-span-4 flex flex-col items-start pr-0 lg:pr-8">
+<!-- Official Brand Logo -->
+<a class="inline-block mb-6 group" href="/"><div class="flex items-center gap-3">
+<img alt="DELIVN" class="h-8 w-auto object-contain invert brightness-200" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAp72P5e2L7JTR1EYLGCKYXJRrZ3gu_nmvom-Z7oNEn6syUwqu2LY14fxpEPoEP5tTODhRVYFPZvbLyylGvAiSjr21ch54V0JeslagEKX4qI6XH25vsOhSHeHnMnrc12rAAoS_Mh5TcmX4ya6_dQNpGRtY3yKrGSc8X12HBg9M3UHPdPIFMqG-nnbktp6tiWpT0jgkPnAkhip0u2ISNT3TxDSlVK97FvQ1vPdi-AF5WeUncR2EZNgR1m1RSVNuJOvnw6ng">
+</div></a>
+<!-- Brand Line verbatim requirement -->
+<p class="text-white text-base font-display font-medium tracking-tight mb-3">
+              Cà phê Việt, đậm dấu ấn Tây Nguyên.
+            </p>
+<p class="text-xs text-neutral-400 leading-relaxed font-light mb-8 max-w-sm">
+              Khởi nguồn từ vùng đất đất đỏ bazan hùng vĩ, DELIVN chắt lọc tinh hoa cà phê truyền thống và tái hiện qua ngôn ngữ thiết kế đương đại.
+            </p>
+<!-- Origin Stamp / Tag -->
+<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded bg-brand-footerCard border border-neutral-800 text-[10px] uppercase font-display tracking-widest text-neutral-400">
+<span class="w-1.5 h-1.5 rounded-full bg-brand-red"></span>
+<span class="">TÂY NGUYÊN · VIETNAM</span>
+</div>
+</div>
+<!-- COLUMN 1: SẢN PHẨM (Col 5-6) -->
+<div class="lg:col-span-2">
+<h4 class="font-display text-xs font-bold uppercase tracking-widest2 text-white mb-6">
+              SẢN PHẨM
+            </h4>
+<ul class="space-y-3.5 text-sm font-normal">
+<li class="">
+<a class="footer-link inline-block text-neutral-400" href="/san-pham/espresso">
+                  Cà phê hạt rang Espresso
+                </a>
+</li>
+<li class="">
+<a class="footer-link inline-block text-neutral-400" href="/san-pham/rang-xay">
+                  Cà phê rang xay
+                </a>
+</li>
+<li class="pt-2">
+<a class="footer-link inline-flex items-center gap-1.5 text-xs text-brand-sandDark uppercase tracking-wider font-semibold" href="/san-pham">
+<span class="">Tất cả sản phẩm</span>
+<span class="">→</span>
+</a>
+</li>
+</ul>
+</div>
+<!-- COLUMN 2: KHÁM PHÁ (Col 7-8) -->
+<div class="lg:col-span-2">
+<h4 class="font-display text-xs font-bold uppercase tracking-widest2 text-white mb-6">
+              KHÁM PHÁ
+            </h4>
+<ul class="space-y-3.5 text-sm font-normal">
+<li class="">
+<a class="footer-link inline-block text-neutral-400" href="/cau-chuyen">
+                  Câu chuyện
+                </a>
+</li>
+<li class="">
+<a class="footer-link inline-block text-neutral-400" href="/cach-pha">
+                  Cách pha
+                </a>
+</li>
+<li class="">
+<a class="footer-link inline-block text-neutral-400" href="/lien-he">
+                  Liên hệ
+                </a>
+</li>
+</ul>
+</div>
+<!-- COLUMN 3: KẾT NỐI (Col 9-10) -->
+<div class="lg:col-span-2">
+<h4 class="font-display text-xs font-bold uppercase tracking-widest2 text-white mb-6">
+              KẾT NỐI
+            </h4>
+<ul class="space-y-3.5 text-sm font-normal">
+<li class="">
+<a class="footer-link inline-flex items-center gap-2 text-neutral-400" href="https://facebook.com" rel="noopener noreferrer" target="_blank">
+<span class="">Facebook</span>
+</a>
+</li>
+<li class="">
+<a class="footer-link inline-flex items-center gap-2 text-neutral-400" href="https://instagram.com" rel="noopener noreferrer" target="_blank">
+<span class="">Instagram</span>
+</a>
+</li>
+<li class="">
+<a class="footer-link inline-flex items-center gap-2 text-neutral-400" href="https://zalo.me" rel="noopener noreferrer" target="_blank">
+<span class="">Zalo</span>
+</a>
+</li>
+</ul>
+</div>
+<!-- COLUMN 4: CONTACT PLACEHOLDER (Col 11-12) -->
+<div class="lg:col-span-2">
+<h4 class="font-display text-xs font-bold uppercase tracking-widest2 text-white mb-6">
+              LIÊN HỆ
+            </h4>
+<div class="space-y-3.5 text-sm text-neutral-400">
+<div>
+<p class="text-[11px] uppercase tracking-wider text-neutral-500 mb-0.5">Email</p>
+<a class="footer-link inline-block text-neutral-300" href="mailto:contact@delivn.vn">
+                  contact@delivn.vn
+                </a>
+</div>
+<div class="pt-1"><p class="text-[11px] uppercase tracking-wider text-neutral-500 mb-0.5">Số điện thoại</p>
+<span class="text-neutral-400 font-sans tracking-normal text-sm">
+                  Đang cập nhật
+                </span></div>
+</div>
+</div>
+</div>
+</div>
+<!-- BOTTOM BAR: Legal & Clean Closure -->
+<div class="border-t border-neutral-800/80 bg-black/40">
+<div class="max-w-7xl mx-auto px-6 md:px-12 py-7 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-neutral-500">
+<div>
+<p class="">© DELIVN. All rights reserved.</p>
+</div>
+<div class="flex items-center gap-6">
+<a class="hover:text-neutral-300 transition-colors" href="/chinh-sach-bao-mat">
+              Chính sách bảo mật
+            </a>
+<span class="text-neutral-700">·</span>
+<a class="hover:text-neutral-300 transition-colors" href="/dieu-khoan-su-dung">
+              Điều khoản sử dụng
+            </a>
+</div>
+</div>
+</div>
+</footer>
+</main>
+
+
+
+</body></html>

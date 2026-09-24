@@ -1,0 +1,127 @@
+<!DOCTYPE html><html lang="vi"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<meta content="web_standard" name="shell-type">
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&amp;family=Epilogue:wght@500;600;700;800;900&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+    @layer base {
+      html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+      }
+      body {
+        overscroll-behavior: none;
+      }
+    }
+    ::-webkit-scrollbar {
+      display: none;
+    }
+  </style>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            surface: "#fcf9f4",
+            background: "#FAF7F2",
+            primary: "#161616",
+            brandRed: "#D84A38"
+          },
+          fontFamily: {
+            body: ["Be Vietnam Pro", "sans-serif"],
+            display: ["Epilogue", "sans-serif"],
+            serif: ["Epilogue", "serif"]
+          }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="bg-[#FAF7F2] font-body text-stone-900 w-full h-screen overflow-hidden flex flex-col justify-between selection:bg-[#D84A38] selection:text-white">
+<!-- ==================== HEADER (3 CLEAR ZONES) ==================== -->
+<header class="w-full flex-none z-50 bg-[#FAF7F2]/90 backdrop-blur-sm">
+<div class="max-w-[1440px] mx-auto px-8 lg:px-14 h-24 flex items-center justify-between">
+<!-- ZONE 1: LEFT - DELIVN Logo -->
+<div class="flex items-center">
+<a aria-label="DELIVN Trang chủ" class="inline-block transition-transform hover:opacity-95" href="#">
+<img alt="DELIVN Logo" class="h-11 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCkSVrMpqlhfSRaWJbaMOUr1L_ezHSGuf8WSHyYUnKYiD0iJ_KC6CJzg4a8dfSk_7RC9rS7vBSkflNuJBFGq99o2wDdNhM3iD-HdIHY-GFs7LWmWtrdfc_VaFYTv0BUs2bdcRXsrh_-u9qwo6cFx0hmbUkjgDtaeY50kBu0F7MJSJ9sX-qFEMJet13jG3xUIERfctgPFcmSY4QHDYw0YTD2EBZgavPF3iQWfYE-Ug5ZCZxxV6Jz6H8IFS6Qr20o8JvI4vM">
+</a>
+</div>
+<!-- ZONE 2: CENTER - Navigation Links (Generous spacing, no overlapping) -->
+<nav class="hidden md:flex items-center gap-10 lg:gap-14">
+<a class="text-xs lg:text-[13px] font-semibold tracking-[0.22em] text-stone-800 hover:text-black uppercase transition-colors" href="#">
+          SẢN PHẨM
+        </a>
+<a class="text-xs lg:text-[13px] font-semibold tracking-[0.22em] text-stone-800 hover:text-black uppercase transition-colors" href="#">
+          CÂU CHUYỆN
+        </a>
+<a class="text-xs lg:text-[13px] font-semibold tracking-[0.22em] text-stone-800 hover:text-black uppercase transition-colors" href="#">
+          CÁCH PHA
+        </a>
+<a class="text-xs lg:text-[13px] font-semibold tracking-[0.22em] text-stone-800 hover:text-black uppercase transition-colors" href="#">
+          LIÊN HỆ
+        </a>
+</nav>
+<!-- ZONE 3: RIGHT - Cart indicator -->
+<div class="flex items-center">
+<a class="text-xs lg:text-[13px] font-bold tracking-[0.18em] text-stone-900 hover:text-[#D84A38] transition-colors flex items-center gap-2 uppercase" href="#">
+<span>GIỎ HÀNG</span>
+<span>(0)</span>
+</a>
+</div>
+</div>
+</header>
+<!-- ==================== MAIN HERO VIEWPORT ==================== -->
+<main class="flex-1 w-full max-w-[1440px] mx-auto px-8 lg:px-14 flex items-center relative z-10">
+<div class="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+<!-- LEFT COLUMN: Editorial Typography & Call To Action (Span 6 / ~50%) -->
+<div class="lg:col-span-6 flex flex-col justify-center pr-0 lg:pr-4">
+<!-- Eyebrow -->
+<div class="inline-flex items-center gap-2.5 mb-6">
+<span class="w-2.5 h-2.5 rounded-full bg-[#D84A38] shrink-0"></span>
+<span class="text-xs font-bold tracking-[0.25em] uppercase text-stone-600">
+            CÀ PHÊ VIỆT NAM · TỪ TÂY NGUYÊN
+          </span>
+</div>
+<!-- Headline -->
+<h1 class="font-serif text-5xl lg:text-6xl xl:text-[64px] font-black text-stone-950 tracking-tight leading-[1.1] mb-8">
+          CÀ PHÊ VIỆT,<br>
+          ĐẬM DẤU ẤN<br>
+<span class="text-[#D84A38]">TÂY NGUYÊN.</span>
+</h1>
+<!-- Brand Narrative Description -->
+<p class="text-stone-600 text-lg leading-relaxed max-w-lg mb-10 font-normal">
+          DELIVN mang đến hai dòng cà phê với tinh thần hiện đại, được khơi nguồn từ bản sắc Tây Nguyên và hoàn thiện cho trải nghiệm thưởng thức mỗi ngày.
+        </p>
+<!-- CTA Buttons -->
+<div class="flex flex-wrap items-center gap-5"><a href="/san-pham" class="inline-flex items-center justify-center gap-3 px-8 py-4 bg-[#161616] text-[#FCF9F4] font-medium text-sm tracking-wider uppercase rounded-sm hover:bg-[#2A2A2A] transition-colors duration-200">
+  <span class="">CHỌN CÀ PHÊ CỦA BẠN</span>
+  <span class="text-base leading-none">→</span>
+</a></div>
+</div>
+<!-- RIGHT COLUMN: Luxury Master Editorial Stage (~50% width) -->
+<div class="lg:col-span-6 relative flex items-center justify-center h-[520px] lg:h-[620px]">
+<!-- Gentle warm ambient halo gradient -->
+<div class="w-[500px] h-[500px] bg-gradient-to-tr from-[#EBE3D5]/50 to-transparent rounded-full blur-3xl absolute -z-10 pointer-events-none"></div>
+<!-- Single Full-Resolution Hero Product Shot -->
+<img alt="DELIVN Cà Phê Tây Nguyên - Bản Cát &amp; Bản Đen" class="w-full max-w-[620px] h-auto object-contain drop-shadow-2xl z-10 transition-transform duration-700 hover:scale-[1.02]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuANgN05cMVfhaZyGIqTI8VIqPh6jkNmuCedPlbClRugoNQ8zG1ngQwvgQ7BLpRnzyFV6tSYChk3SmEuLQU5Is4gT-onEEH_HVhwuWo8keHBeaxbXIDIZ_jz5xeh6AwX4t22izd4Jky770ftm8Tl2AyqsDzPLlfnGrf8FPNuM2cfZuGdxCzkVjBAQheNPxzqMcip7M-47mgu3sWKwROwoi1sTSkDpyfhTNjL560TFe1es7DSCPA0M40uIA">
+</div>
+</div>
+</main>
+<!-- ==================== BOTTOM MINIMAL SCROLL INDICATOR ==================== -->
+<footer class="w-full flex-none pb-5 flex flex-col items-center justify-center gap-2 z-20 pointer-events-none select-none">
+<span class="text-[11px] font-medium tracking-[0.3em] uppercase text-stone-500">
+      CUỘN ĐỂ KHÁM PHÁ
+    </span>
+<div class="w-[1.5px] h-6 bg-gradient-to-b from-stone-700 to-transparent"></div>
+</footer>
+
+
+</body></html>
