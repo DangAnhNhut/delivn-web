@@ -71,6 +71,7 @@ describe("CartPage", () => {
 
     expect(html).toContain("ĐANG TẢI GIỎ HÀNG");
     expect(html).not.toContain("GIỎ HÀNG CỦA BẠN ĐANG TRỐNG");
+    expect(html).not.toContain('href="/thanh-toan"');
   });
 
   it("renders the intentional empty state after hydration", async () => {
@@ -80,6 +81,7 @@ describe("CartPage", () => {
     expect(container.querySelector('a[href="/san-pham"]')?.textContent).toContain(
       "KHÁM PHÁ SẢN PHẨM",
     );
+    expect(container.querySelector('a[href="/thanh-toan"]')).toBeNull();
   });
 
   it("renders persisted snapshots, product navigation, line totals, and subtotal", async () => {
@@ -144,7 +146,7 @@ describe("CartPage", () => {
     expect(container.textContent).toContain("GIỎ HÀNG CỦA BẠN ĐANG TRỐNG");
   });
 
-  it("labels totals as snapshots and exposes no checkout flow", async () => {
+  it("labels totals as snapshots and exposes real checkout navigation without posting", async () => {
     const fetchSpy = vi.spyOn(globalThis, "fetch");
     await renderCart([first]);
 
@@ -153,8 +155,9 @@ describe("CartPage", () => {
       "Giá và tình trạng sản phẩm sẽ được xác nhận lại khi thanh toán.",
     );
     expect(container.textContent).not.toContain("PHÍ VẬN CHUYỂN");
-    expect(container.textContent).not.toContain("THANH TOÁN");
-    expect(container.querySelector('a[href="/thanh-toan"]')).toBeNull();
+    expect(container.querySelector('a[href="/thanh-toan"]')?.textContent).toContain(
+      "TIẾP TỤC THANH TOÁN",
+    );
     expect(container.querySelector('a[href="/san-pham"]')?.textContent).toContain(
       "TIẾP TỤC CHỌN CÀ PHÊ",
     );

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { MAX_QUANTITY_PER_VARIANT } from "@/contracts";
+import { checkoutSchema as sharedCheckoutSchema } from "@/contracts/checkout-schema";
 
 import { checkoutSchema } from "./checkout.schema";
 
@@ -17,6 +18,17 @@ const validInput = {
 };
 
 describe("checkoutSchema", () => {
+  it("keeps the server compatibility export identical to the browser-safe schema", () => {
+    expect(checkoutSchema.parse(validInput)).toEqual(sharedCheckoutSchema.parse(validInput));
+
+    const invalid = {
+      ...validInput,
+      customer: { ...validInput.customer, phone: "abc" },
+    };
+    expect(checkoutSchema.safeParse(invalid).success).toBe(false);
+    expect(sharedCheckoutSchema.safeParse(invalid).success).toBe(false);
+  });
+
   it("normalizes practical customer strings", () => {
     const result = checkoutSchema.parse(validInput);
     expect(result.customer).toEqual({

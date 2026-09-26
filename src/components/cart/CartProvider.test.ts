@@ -44,6 +44,7 @@ function CartHarness() {
       { "data-state": true },
       `${cart.items[0]?.quantity ?? 0}|${cart.itemCount}|${cart.isHydrated}`,
     ),
+    createElement("output", { "data-items": true }, JSON.stringify(cart.items)),
     createElement(
       "button",
       { type: "button", onClick: () => cart.addItem(snapshot) },
@@ -54,11 +55,29 @@ function CartHarness() {
       { type: "button", onClick: () => cart.clearCart() },
       "clear",
     ),
+    createElement(
+      "button",
+      {
+        type: "button",
+        onClick: () =>
+          cart.reconcileSubmittedItems([
+            { variantId: snapshot.variantId, quantity: 2 },
+          ]),
+      },
+      "reconcile",
+    ),
   );
 }
 
 function EarlyMutationProbe() {
-  const { addItem, increment, decrement, removeItem, clearCart } = useCart();
+  const {
+    addItem,
+    increment,
+    decrement,
+    removeItem,
+    clearCart,
+    reconcileSubmittedItems,
+  } = useCart();
 
   useLayoutEffect(() => {
     addItem(snapshot);
@@ -66,7 +85,15 @@ function EarlyMutationProbe() {
     decrement(snapshot.variantId);
     removeItem(snapshot.variantId);
     clearCart();
-  }, [addItem, clearCart, decrement, increment, removeItem]);
+    reconcileSubmittedItems([{ variantId: snapshot.variantId, quantity: 2 }]);
+  }, [
+    addItem,
+    clearCart,
+    decrement,
+    increment,
+    reconcileSubmittedItems,
+    removeItem,
+  ]);
 
   return createElement(CartHarness);
 }
@@ -234,5 +261,52 @@ describe("CartProvider cross-tab synchronization", () => {
     });
 
     expect(stateText()).toBe("2|2|true");
+  });
+
+  it("reconciles against the latest cross-tab cart and persists only the remainder", async () => {
+    localStorage.setItem(CART_STORAGE_KEY, serializedCart(2));
+    await mount();
+
+    const other = {
+      ...snapshot,
+      productId: "00000000-0000-4000-8000-000000000010",
+      variantId: "00000000-0000-4000-8000-000000000011",
+      productName: "Cà phê B",
+      quantity: 4,
+    };
+    const refreshed = {
+      ...snapshot,
+      productName: "Tên mới từ tab khác",
+      unitPriceVndSnapshot: 135_000,
+      quantity: 3,
+    };
+    const incoming = JSON.stringify({ version: 1, items: [refreshed, other] });
+    localStorage.setItem(CART_STORAGE_KEY, incoming);
+
+    await act(async () => {
+      window.dispatchEvent(
+        new StorageEvent("storage", {
+          key: CART_STORAGE_KEY,
+          newValue: incoming,
+          storageArea: localStorage,
+        }),
+      );
+    });
+
+    const setItem = vi.spyOn(Storage.prototype, "setItem");
+    const reconcile = [...container.querySelectorAll("button")].find(
+      (button) => button.textContent === "reconcile",
+    );
+    await act(async () => reconcile?.click());
+
+    const rendered = JSON.parse(
+      container.querySelector("[data-items]")?.textContent ?? "[]",
+    );
+    expect(rendered).toEqual([{ ...refreshed, quantity: 1 }, other]);
+    expect(JSON.parse(localStorage.getItem(CART_STORAGE_KEY) ?? "null")).toEqual({
+      version: 1,
+      items: [{ ...refreshed, quantity: 1 }, other],
+    });
+    expect(setItem).toHaveBeenCalledTimes(1);
   });
 });

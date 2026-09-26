@@ -11,6 +11,7 @@ import {
   type ReactNode,
 } from "react";
 
+import type { CheckoutInput } from "@/contracts";
 import { cartReducer } from "@/lib/cart/cart-reducer";
 import { selectCartItemCount } from "@/lib/cart/cart-selectors";
 import {
@@ -32,6 +33,9 @@ type CartContextValue = {
   decrement: (variantId: string) => void;
   removeItem: (variantId: string) => void;
   clearCart: () => void;
+  reconcileSubmittedItems: (
+    items: ReadonlyArray<CheckoutInput["items"][number]>,
+  ) => void;
 };
 
 const CartContext = createContext<CartContextValue | null>(null);
@@ -126,6 +130,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
     dispatch({ type: "clear" });
   }, []);
 
+  const reconcileSubmittedItems = useCallback(
+    (submittedItems: ReadonlyArray<CheckoutInput["items"][number]>) => {
+      if (!isHydratedRef.current) return;
+      dispatch({ type: "reconcileSubmitted", items: submittedItems });
+    },
+    [],
+  );
+
   const value = useMemo<CartContextValue>(
     () => ({
       items,
@@ -136,6 +148,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       decrement,
       removeItem,
       clearCart,
+      reconcileSubmittedItems,
     }),
     [
       addItem,
@@ -144,6 +157,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       increment,
       isHydrated,
       items,
+      reconcileSubmittedItems,
       removeItem,
     ],
   );
