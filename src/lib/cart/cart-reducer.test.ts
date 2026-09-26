@@ -104,4 +104,62 @@ describe("cartReducer", () => {
     ).toBe(existing);
     expect(cartReducer(existing, { type: "remove", variantId: "missing" })).toBe(existing);
   });
+
+  it("removes a line when submitted quantity equals or exceeds the current quantity", () => {
+    expect(
+      cartReducer([line({ quantity: 2 })], {
+        type: "reconcileSubmitted",
+        items: [{ variantId: snapshot.variantId, quantity: 2 }],
+      }),
+    ).toEqual([]);
+    expect(
+      cartReducer([line({ quantity: 1 })], {
+        type: "reconcileSubmitted",
+        items: [{ variantId: snapshot.variantId, quantity: 2 }],
+      }),
+    ).toEqual([]);
+  });
+
+  it("keeps the current refreshed snapshot with the remaining quantity", () => {
+    const refreshed = line({
+      quantity: 3,
+      productName: "Tên mới từ tab khác",
+      variantLabel: "Gói mới",
+      image: { url: "/products/refreshed.png", alt: "Ảnh mới" },
+      unitPriceVndSnapshot: 135_000,
+    });
+
+    expect(
+      cartReducer([refreshed], {
+        type: "reconcileSubmitted",
+        items: [{ variantId: snapshot.variantId, quantity: 2 }],
+      }),
+    ).toEqual([{ ...refreshed, quantity: 1 }]);
+  });
+
+  it("leaves absent and unrelated current variants untouched", () => {
+    const other = line({
+      variantId: "00000000-0000-4000-8000-000000000003",
+      quantity: 4,
+    });
+
+    expect(
+      cartReducer([other], {
+        type: "reconcileSubmitted",
+        items: [{ variantId: snapshot.variantId, quantity: 2 }],
+      }),
+    ).toEqual([other]);
+  });
+
+  it("aggregates duplicate submitted quantities defensively", () => {
+    expect(
+      cartReducer([line({ quantity: 4 })], {
+        type: "reconcileSubmitted",
+        items: [
+          { variantId: snapshot.variantId, quantity: 1 },
+          { variantId: snapshot.variantId, quantity: 2 },
+        ],
+      }),
+    ).toEqual([line({ quantity: 1 })]);
+  });
 });

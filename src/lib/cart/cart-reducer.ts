@@ -1,4 +1,5 @@
 import { MAX_QUANTITY_PER_VARIANT } from "@/contracts";
+import type { CheckoutInput } from "@/contracts";
 
 import type { CartItem, CartItemSnapshot } from "./cart-types";
 
@@ -8,6 +9,10 @@ export type CartAction =
   | { type: "increment"; variantId: string }
   | { type: "decrement"; variantId: string }
   | { type: "remove"; variantId: string }
+  | {
+      type: "reconcileSubmitted";
+      items: ReadonlyArray<CheckoutInput["items"][number]>;
+    }
   | { type: "clear" };
 
 function updateQuantity(
@@ -52,6 +57,23 @@ export function cartReducer(state: CartItem[], action: CartAction): CartItem[] {
     case "remove": {
       const items = state.filter((item) => item.variantId !== action.variantId);
       return items.length === state.length ? state : items;
+    }
+    case "reconcileSubmitted": {
+      const submittedQuantities = new Map<string, number>();
+      for (const item of action.items) {
+        submittedQuantities.set(
+          item.variantId,
+          (submittedQuantities.get(item.variantId) ?? 0) + item.quantity,
+        );
+      }
+
+      return state.flatMap((item) => {
+        const submittedQuantity = submittedQuantities.get(item.variantId);
+        if (submittedQuantity === undefined) return [item];
+
+        const quantity = item.quantity - submittedQuantity;
+        return quantity > 0 ? [{ ...item, quantity }] : [];
+      });
     }
     case "clear":
       return state.length === 0 ? state : [];

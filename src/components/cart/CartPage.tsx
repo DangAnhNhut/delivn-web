@@ -215,8 +215,14 @@ export function CartPage() {
                 Giá và tình trạng sản phẩm sẽ được xác nhận lại khi thanh toán.
               </p>
               <Link
+                href="/thanh-toan"
+                className="mt-7 inline-flex min-h-12 w-full items-center justify-center gap-3 border border-foreground bg-foreground px-5 py-3.5 text-center text-[11px] font-bold tracking-[0.17em] text-background uppercase transition-colors duration-300 hover:border-accent hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent motion-reduce:transition-none"
+              >
+                TIẾP TỤC THANH TOÁN <span aria-hidden="true">→</span>
+              </Link>
+              <Link
                 href="/san-pham"
-                className="mt-7 inline-flex min-h-12 w-full items-center justify-center gap-3 border border-foreground px-5 py-3.5 text-center text-[11px] font-bold tracking-[0.17em] text-foreground uppercase transition-colors duration-300 hover:bg-foreground hover:text-background focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent motion-reduce:transition-none"
+                className="mt-3 inline-flex min-h-12 w-full items-center justify-center gap-3 border border-foreground px-5 py-3.5 text-center text-[11px] font-bold tracking-[0.17em] text-foreground uppercase transition-colors duration-300 hover:bg-foreground hover:text-background focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent motion-reduce:transition-none"
               >
                 TIẾP TỤC CHỌN CÀ PHÊ <span aria-hidden="true">→</span>
               </Link>
