@@ -1,6 +1,7 @@
 import { expect, type Page } from "@playwright/test";
 
-import { DEMO_PRODUCTS } from "../../src/server/demo/demo-data";
+import { DEMO_PRODUCTS, DEMO_VARIANTS } from "../../src/server/demo/demo-data";
+import { readOrderByNumber } from "./demo-db";
 
 export const E2E_CUSTOMER = {
   name: "E2E Customer",
@@ -45,4 +46,33 @@ export async function fillCheckout(page: Page, note: string = E2E_CUSTOMER.note)
   await page.getByLabel(/Địa chỉ nhận hàng/).fill(E2E_CUSTOMER.address);
   await page.getByLabel(/^Ghi chú/).fill(note);
   await page.getByRole("radio", { name: /THANH TOÁN KHI NHẬN HÀNG/i }).check();
+}
+
+export async function expectPersistedEspresso250Order(orderNumber: string): Promise<void> {
+  const persisted = await readOrderByNumber(orderNumber);
+  expect(persisted).not.toBeNull();
+  expect(persisted?.order).toMatchObject({
+    customerName: E2E_CUSTOMER.name,
+    phone: E2E_CUSTOMER.phone,
+    email: E2E_CUSTOMER.email,
+    address: E2E_CUSTOMER.address,
+    note: E2E_CUSTOMER.note,
+    totalVnd: 173_000,
+    paymentMethod: "cod",
+    paymentStatus: "unpaid",
+    orderStatus: "pending",
+  });
+  expect(persisted?.items).toEqual([
+    {
+      variantId: DEMO_VARIANTS[0].id,
+      productName: DEMO_PRODUCTS[0].name,
+      variantName: "250g",
+      sku: "DEV-DEMO-ESPRESSO-250",
+      unitPriceVnd: 173_000,
+      quantity: 1,
+      lineTotalVnd: 173_000,
+    },
+  ]);
+  expect(persisted?.inventory).toEqual({ quantity: 100, reservedQuantity: 1 });
+  expect(persisted?.history).toEqual([{ fromStatus: null, toStatus: "pending" }]);
 }
