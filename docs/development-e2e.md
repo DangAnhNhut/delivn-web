@@ -63,6 +63,17 @@ npm run test:e2e
 
 Only `chrome` and `msedge` are accepted. Remove the variable to return to Playwright-managed Chromium. CI and the default local workflow remain on managed Chromium when it is available; this fallback does not change application runtime or database routing.
 
+## Full customer sales journey
+
+`e2e/customer-sales-journey.spec.ts` starts on the DELIVN homepage and follows only customer-facing controls through Homepage → Catalog → PDP → Cart → Checkout → Order confirmation. It then uses the guarded E2E database helper to prove the submitted order, authoritative price, inventory reservation, and initial status history were persisted in `delivn_e2e`.
+
+Run only this journey with local Chrome:
+
+```powershell
+$env:DELIVN_E2E_BROWSER_CHANNEL="chrome"
+npx playwright test e2e/customer-sales-journey.spec.ts
+```
+
 ## Development fixture profile
 
 - Espresso / HẠT demo: 250g at 173,000 VND and 500g at 345,000 VND.

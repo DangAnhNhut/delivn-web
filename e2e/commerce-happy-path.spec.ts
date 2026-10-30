@@ -1,8 +1,12 @@
 import { expect, test } from "@playwright/test";
 
-import { DEMO_PRODUCTS, DEMO_VARIANTS } from "../src/server/demo/demo-data";
-import { addEspresso250ToCart, continueToCheckout, E2E_CUSTOMER, fillCheckout } from "./support/commerce-flow";
-import { readOrderByNumber, resetDemoData } from "./support/demo-db";
+import {
+  addEspresso250ToCart,
+  continueToCheckout,
+  expectPersistedEspresso250Order,
+  fillCheckout,
+} from "./support/commerce-flow";
+import { resetDemoData } from "./support/demo-db";
 import { monitorRuntime } from "./support/runtime-monitor";
 
 test("catalog to checkout creates a real authoritative order", async ({ page }) => {
@@ -26,31 +30,6 @@ test("catalog to checkout creates a real authoritative order", async ({ page }) 
   await expect(page.getByText("173.000 ₫", { exact: true })).toBeVisible();
   await expect(page.getByRole("link", { name: "GIỎ HÀNG (0)" }).first()).toBeVisible();
 
-  const persisted = await readOrderByNumber(orderNumber!);
-  expect(persisted).not.toBeNull();
-  expect(persisted?.order).toMatchObject({
-    customerName: E2E_CUSTOMER.name,
-    phone: E2E_CUSTOMER.phone,
-    email: E2E_CUSTOMER.email,
-    address: E2E_CUSTOMER.address,
-    note: E2E_CUSTOMER.note,
-    totalVnd: 173_000,
-    paymentMethod: "cod",
-    paymentStatus: "unpaid",
-    orderStatus: "pending",
-  });
-  expect(persisted?.items).toEqual([
-    {
-      variantId: DEMO_VARIANTS[0].id,
-      productName: DEMO_PRODUCTS[0].name,
-      variantName: "250g",
-      sku: "DEV-DEMO-ESPRESSO-250",
-      unitPriceVnd: 173_000,
-      quantity: 1,
-      lineTotalVnd: 173_000,
-    },
-  ]);
-  expect(persisted?.inventory).toEqual({ quantity: 100, reservedQuantity: 1 });
-  expect(persisted?.history).toEqual([{ fromStatus: null, toStatus: "pending" }]);
+  await expectPersistedEspresso250Order(orderNumber!);
   runtime.assertClean();
 });
