@@ -43,12 +43,26 @@ export type NewOrderItem = {
   lineTotalVnd: number;
 };
 
+function normalizeTransactionTimestamp(value: unknown): Date {
+  const timestamp = value instanceof Date
+    ? value
+    : typeof value === "string"
+      ? new Date(value)
+      : undefined;
+
+  if (!timestamp || !Number.isFinite(timestamp.getTime())) {
+    throw new Error("Invalid transaction timestamp returned by PostgreSQL.");
+  }
+
+  return timestamp;
+}
+
 export function createOrderRepository() {
   return {
     async getNextOrderNumberParts(
       tx: DbTransaction,
     ): Promise<{ createdAt: Date; sequenceValue: string }> {
-      const result = await tx.execute<{ created_at: Date; sequence_value: string }>(sql`
+      const result = await tx.execute<{ created_at: unknown; sequence_value: string }>(sql`
         select transaction_timestamp() as created_at,
                nextval('delivn_order_number_seq')::text as sequence_value
       `);
@@ -56,7 +70,10 @@ export function createOrderRepository() {
       if (!row) {
         throw new Error("Order number sequence did not return a value.");
       }
-      return { createdAt: row.created_at, sequenceValue: row.sequence_value };
+      return {
+        createdAt: normalizeTransactionTimestamp(row.created_at),
+        sequenceValue: row.sequence_value,
+      };
     },
 
     async insertOrder(tx: DbTransaction, data: NewOrder): Promise<OrderRecord> {
