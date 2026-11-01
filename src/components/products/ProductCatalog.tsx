@@ -1,11 +1,18 @@
-/* eslint-disable @next/next/no-img-element -- ProductDTO media can use runtime URLs that are not known to Next's static image allowlist. */
-import Link from "next/link";
+"use client";
 
-import type { ProductCategory, ProductDTO } from "@/contracts";
+import Image from "next/image";
+import Link from "next/link";
+import { useState } from "react";
+
+import { useCart } from "@/components/cart/CartProvider";
+import { MAX_QUANTITY_PER_VARIANT, type ProductCategory, type ProductDTO } from "@/contracts";
+import { createCartItemSnapshot } from "@/lib/cart/cart-snapshot";
 import {
   formatVnd,
+  getDefaultProductVariant,
   getProductAvailability,
-  getProductPrice,
+  getProductDisplayDescription,
+  getProductPrincipalImage,
   type ProductAvailability,
 } from "@/lib/storefront/product-presentation";
 
@@ -24,134 +31,192 @@ interface ProductCatalogProps {
   products: readonly ProductDTO[];
 }
 
-function ProductVisual({ product, index }: { product: ProductDTO; index: number }) {
-  const primaryMedia = product.media[0];
-
-  return (
-    <div
-      className={`relative aspect-[4/5] min-h-[360px] overflow-hidden sm:min-h-[480px] lg:min-h-[620px] ${
-        product.category === "espresso"
-          ? "bg-[#242321]"
-          : "bg-[#D8C4A3]"
-      }`}
-    >
-      {primaryMedia ? (
-        <img
-          src={primaryMedia.url}
-          alt={primaryMedia.alt}
-          width={1200}
-          height={1500}
-          loading={index === 0 ? "eager" : "lazy"}
-          decoding="async"
-          className="h-full w-full object-contain p-7 transition-transform duration-500 ease-out group-hover:scale-[1.025] motion-reduce:transition-none motion-reduce:transform-none sm:p-10 lg:p-14"
-        />
-      ) : (
-        <div className="flex h-full flex-col justify-between p-7 sm:p-10 lg:p-14">
-          <div className="flex items-center justify-between text-[11px] font-semibold tracking-[0.24em] uppercase opacity-70">
-            <span>DELIVN</span>
-            <span>{String(index + 1).padStart(2, "0")}</span>
-          </div>
-          <div aria-hidden="true" className="self-center text-[clamp(4rem,9vw,8rem)] font-bold leading-none tracking-[-0.08em] opacity-10">
-            D
-          </div>
-          <p className="max-w-[15rem] text-xs font-medium leading-relaxed tracking-[0.18em] uppercase opacity-70">
-            Hình ảnh sản phẩm đang được cập nhật
-          </p>
-        </div>
-      )}
-    </div>
-  );
+interface ProductCardProps {
+  product: ProductDTO;
+  index: number;
 }
 
-function ProductBlock({ product, index }: { product: ProductDTO; index: number }) {
-  const price = getProductPrice(product.variants);
-  const availability = getProductAvailability(product.variants);
-  const visualOrder = index % 2 === 0 ? "lg:order-1" : "lg:order-2";
-  const contentOrder = index % 2 === 0 ? "lg:order-2" : "lg:order-1";
+export function ProductCard({ product, index }: ProductCardProps) {
+  const { addItem, isHydrated, items } = useCart();
+  const defaultVariant = getDefaultProductVariant(product.variants);
+  const [selectedVariantId, setSelectedVariantId] = useState<string | null>(
+    defaultVariant?.id ?? null,
+  );
+  const [feedback, setFeedback] = useState("");
+
+  const selectedVariant =
+    product.variants.find((v) => v.id === selectedVariantId) ?? defaultVariant;
+
+  const selectedCartQuantity = selectedVariant
+    ? (items.find((item) => item.variantId === selectedVariant.id)?.quantity ?? 0)
+    : 0;
+  const isAtMaximumQuantity = selectedCartQuantity >= MAX_QUANTITY_PER_VARIANT;
+
+  const availability = selectedVariant
+    ? selectedVariant.inStock
+      ? "available"
+      : "unavailable"
+    : getProductAvailability(product.variants);
+
+  const description = getProductDisplayDescription(product);
+  const principalImage = getProductPrincipalImage(product);
+
+  const handleBuyNow = () => {
+    if (!selectedVariant?.inStock || !isHydrated || isAtMaximumQuantity) return;
+
+    if (addItem(createCartItemSnapshot(product, selectedVariant))) {
+      if (typeof window !== "undefined") {
+        // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+        window.location.assign("/thanh-toan");
+      }
+    }
+  };
+
+  const handleAddToCart = () => {
+    if (!selectedVariant?.inStock || !isHydrated || isAtMaximumQuantity) return;
+
+    if (addItem(createCartItemSnapshot(product, selectedVariant))) {
+      setFeedback("ĐÃ THÊM VÀO GIỎ");
+    }
+  };
 
   return (
-    <article className="group grid grid-cols-1 border-t border-border lg:grid-cols-2">
-      <div className={visualOrder}>
-        <ProductVisual product={product} index={index} />
-      </div>
+    <article className="group flex flex-col justify-between transition-all duration-300">
+      <div>
+        {/* Single Approved Principal Image - occupying full column width without artificial borders */}
+        <div className="relative aspect-[4/3] w-full overflow-hidden bg-transparent">
+          <Image
+            src={principalImage.url}
+            alt={principalImage.altText || product.name}
+            fill
+            sizes="(max-width: 768px) 100vw, 50vw"
+            priority={index === 0}
+            className="object-contain transition-transform duration-500 group-hover:scale-[1.02]"
+          />
+        </div>
 
-      <div
-        className={`flex items-center px-0 py-10 sm:py-14 lg:px-[clamp(3rem,6vw,7rem)] lg:py-20 ${contentOrder}`}
-      >
-        <div className="w-full max-w-xl">
-          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-4">
-            <p className="text-[11px] font-bold tracking-[0.22em] text-foreground-muted uppercase">
-              {String(index + 1).padStart(2, "0")} / {categoryLabels[product.category]}
-            </p>
-            <p
-              className={`text-[11px] font-bold tracking-[0.18em] uppercase ${
-                availability === "available" ? "text-foreground" : "text-foreground-muted"
-              }`}
-            >
-              <span
-                aria-hidden="true"
-                className={`mr-2 inline-block size-1.5 rounded-full align-middle ${
-                  availability === "available" ? "bg-accent" : "bg-foreground-muted/50"
-                }`}
-              />
-              {availabilityLabels[availability]}
-            </p>
-          </div>
-
-          <h3 className="mt-8 text-3xl font-bold leading-[1.08] tracking-[-0.035em] text-foreground uppercase sm:text-4xl xl:text-5xl">
-            {product.name}
-          </h3>
-          <p className="mt-5 max-w-lg text-base leading-relaxed text-foreground-muted sm:text-lg">
-            {product.description}
+        {/* Category descriptor & Stock status */}
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-2 sm:mt-5">
+          <p className="text-[10px] font-semibold tracking-[0.2em] text-foreground-muted uppercase sm:text-[11px]">
+            {String(index + 1).padStart(2, "0")} / {categoryLabels[product.category]}
           </p>
+          <p className="text-[10px] font-semibold tracking-[0.14em] text-foreground-muted uppercase sm:text-[11px]">
+            <span
+              aria-hidden="true"
+              className={`mr-1.5 inline-block size-1.5 rounded-full align-middle ${
+                availability === "available" ? "bg-accent" : "bg-foreground-muted/50"
+              }`}
+            />
+            {availabilityLabels[availability]}
+          </p>
+        </div>
 
-          {product.variants.length > 0 && (
-            <div className="mt-8">
-              <p className="text-[11px] font-bold tracking-[0.2em] text-foreground-muted uppercase">
-                Quy cách
-              </p>
-              <ul className="mt-3 flex flex-wrap gap-2" aria-label="Các phiên bản sản phẩm">
-                {product.variants.map((variant) => (
-                  <li
-                    key={variant.id}
-                    className="border border-border px-4 py-2 text-sm font-semibold text-foreground"
-                  >
-                    {variant.label}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+        {/* Title without PDP link */}
+        <h3 className="mt-2 text-xl font-bold leading-tight tracking-tight text-foreground uppercase sm:text-2xl">
+          {product.name}
+        </h3>
 
-          <div className="mt-9 flex flex-col items-start justify-between gap-6 border-t border-border pt-6 sm:flex-row sm:items-end">
-            <div>
-              <p className="text-[11px] font-bold tracking-[0.2em] text-foreground-muted uppercase">
-                Giá bán
-              </p>
-              {price ? (
-                <p className="mt-2 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
-                  {price.showFrom ? "Từ " : ""}
-                  {formatVnd(price.priceVnd)}
-                </p>
-              ) : (
-                <p className="mt-2 text-sm text-foreground-muted">Đang cập nhật</p>
-              )}
-            </div>
+        {/* Neutral factual description */}
+        <p className="mt-1.5 text-xs leading-relaxed text-foreground-muted sm:text-sm">
+          {description}
+        </p>
 
-            <Link
-              href={`/san-pham/${product.slug}`}
-              className="group/link inline-flex w-full items-center justify-center gap-3 bg-foreground px-6 py-4 text-xs font-bold tracking-[0.2em] text-background uppercase transition-colors duration-300 hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent motion-reduce:transition-none sm:w-auto"
+        {/* Variant selection without inner red dots */}
+        {product.variants.length > 0 && (
+          <div className="mt-3.5 sm:mt-4">
+            <p className="text-[10px] font-bold tracking-[0.2em] text-foreground-muted uppercase">
+              Quy cách
+            </p>
+            <div
+              role="radiogroup"
+              aria-label={`Chọn quy cách cho ${product.name}`}
+              className="mt-2 flex flex-wrap gap-2 sm:gap-2.5"
             >
-              Xem chi tiết
-              <span
-                aria-hidden="true"
-                className="transition-transform duration-300 group-hover/link:translate-x-1 motion-reduce:transition-none motion-reduce:transform-none"
-              >
-                →
-              </span>
-            </Link>
+              {product.variants.map((variant) => {
+                const isSelected = selectedVariant?.id === variant.id;
+                return (
+                  <button
+                    key={variant.id}
+                    type="button"
+                    role="radio"
+                    aria-checked={isSelected}
+                    onClick={() => {
+                      setSelectedVariantId(variant.id);
+                      setFeedback("");
+                    }}
+                    className={`border px-5 py-2 text-xs font-bold tracking-[0.14em] uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-accent ${
+                      isSelected
+                        ? "border-foreground bg-foreground text-background"
+                        : "border-border/80 bg-background text-foreground hover:border-foreground/60"
+                    }`}
+                  >
+                    <span>{variant.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Price Display */}
+        <div className="mt-3.5 sm:mt-4">
+          <div className="flex items-baseline gap-2.5">
+            {selectedVariant ? (
+              <>
+                <p className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
+                  {formatVnd(selectedVariant.priceVnd)}
+                </p>
+                {selectedVariant.compareAtPriceVnd !== null && (
+                  <del className="text-xs text-foreground-muted decoration-foreground-muted/60">
+                    {formatVnd(selectedVariant.compareAtPriceVnd)}
+                  </del>
+                )}
+              </>
+            ) : (
+              <p className="text-sm text-foreground-muted">Đang cập nhật</p>
+            )}
           </div>
         </div>
+      </div>
+
+      {/* Actions: MUA NGAY (Primary) + THÊM VÀO GIỎ (Secondary) */}
+      <div className="mt-4 sm:mt-5">
+        <div className="flex flex-col gap-2.5 sm:flex-row">
+          <button
+            type="button"
+            onClick={handleBuyNow}
+            disabled={!isHydrated || !selectedVariant?.inStock || isAtMaximumQuantity}
+            className="inline-flex min-h-11 flex-1 items-center justify-center border border-foreground bg-foreground px-5 py-3 text-xs font-bold tracking-[0.2em] text-background uppercase transition-colors duration-200 hover:border-accent hover:bg-accent disabled:cursor-not-allowed disabled:border-border disabled:bg-surface disabled:text-foreground-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent motion-reduce:transition-none sm:min-h-12"
+          >
+            {!selectedVariant || !selectedVariant.inStock
+              ? "TẠM HẾT HÀNG"
+              : isAtMaximumQuantity
+                ? "ĐÃ ĐẠT GIỚI HẠN"
+                : "MUA NGAY"}
+          </button>
+
+          <button
+            type="button"
+            onClick={handleAddToCart}
+            disabled={!isHydrated || !selectedVariant?.inStock || isAtMaximumQuantity}
+            className="inline-flex min-h-11 flex-1 items-center justify-center border border-foreground/80 bg-transparent px-5 py-3 text-xs font-bold tracking-[0.2em] text-foreground uppercase transition-colors duration-200 hover:bg-foreground hover:text-background disabled:cursor-not-allowed disabled:border-border disabled:bg-surface disabled:text-foreground-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent motion-reduce:transition-none sm:min-h-12"
+          >
+            {!selectedVariant || !selectedVariant.inStock
+              ? "TẠM HẾT HÀNG"
+              : isAtMaximumQuantity
+                ? "ĐÃ ĐẠT GIỚI HẠN"
+                : "THÊM VÀO GIỎ"}
+          </button>
+        </div>
+
+        {/* Feedback message */}
+        <p
+          aria-live="polite"
+          aria-atomic="true"
+          className="mt-1.5 min-h-4 text-center text-[11px] font-bold tracking-[0.16em] text-accent uppercase"
+        >
+          {isAtMaximumQuantity ? "" : feedback}
+        </p>
       </div>
     </article>
   );
@@ -160,27 +225,10 @@ function ProductBlock({ product, index }: { product: ProductDTO; index: number }
 export function ProductCatalog({ products }: ProductCatalogProps) {
   return (
     <section
-      aria-labelledby="product-selection-title"
-      className="bg-background pb-20 sm:pb-24 lg:pb-32"
+      aria-labelledby="product-catalog-title"
+      className="bg-background pt-4 pb-12 sm:pt-5 sm:pb-16 lg:pt-6 lg:pb-20"
     >
       <div className="site-shell">
-        <div className="flex flex-col justify-between gap-4 py-10 sm:flex-row sm:items-end sm:py-14 lg:py-16">
-          <div>
-            <p className="text-xs font-bold tracking-[0.24em] text-accent uppercase">
-              Bộ sưu tập
-            </p>
-            <h2
-              id="product-selection-title"
-              className="mt-3 text-2xl font-bold tracking-[-0.025em] text-foreground uppercase sm:text-3xl"
-            >
-              Tuyển chọn của DELIVN
-            </h2>
-          </div>
-          <p className="max-w-md text-sm leading-relaxed text-foreground-muted sm:text-right">
-            Khám phá các dòng cà phê hiện có và lựa chọn quy cách phù hợp với bạn.
-          </p>
-        </div>
-
         {products.length === 0 ? (
           <div className="relative overflow-hidden border-y border-border bg-surface px-6 py-20 text-center sm:px-10 sm:py-28 lg:py-36">
             <div
@@ -206,9 +254,9 @@ export function ProductCatalog({ products }: ProductCatalogProps) {
             </div>
           </div>
         ) : (
-          <div>
+          <div className="grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-x-10 lg:gap-x-14 xl:gap-x-16">
             {products.map((product, index) => (
-              <ProductBlock key={product.id} product={product} index={index} />
+              <ProductCard key={product.id} product={product} index={index} />
             ))}
           </div>
         )}
