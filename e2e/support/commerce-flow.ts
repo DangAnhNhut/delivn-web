@@ -15,11 +15,11 @@ export async function addEspresso250ToCart(page: Page): Promise<void> {
   await page.goto("/san-pham");
   const product = page.getByRole("article").filter({ hasText: DEMO_PRODUCTS[0].name });
   await expect(product).toBeVisible();
-  await product.getByRole("link", { name: /xem chi tiết/i }).click();
-  await expect(page).toHaveURL(/\/san-pham\/dev-demo-delivn-espresso$/);
-  await page.getByRole("radio", { name: /250g/i }).check();
-  await page.getByRole("button", { name: "THÊM VÀO GIỎ" }).click();
-  await expect(page.getByText("ĐÃ THÊM VÀO GIỎ", { exact: true })).toBeVisible();
+
+  await product.getByRole("radio", { name: /250g/i }).click();
+  await product.getByRole("button", { name: "THÊM VÀO GIỎ" }).click();
+  await expect(product.getByText("ĐÃ THÊM VÀO GIỎ", { exact: true })).toBeVisible();
+
   let cartLink = page.getByRole("link", { name: "GIỎ HÀNG (1)" });
   let openedMobileMenu = false;
   if ((await cartLink.count()) === 0) {
@@ -46,6 +46,11 @@ export async function fillCheckout(page: Page, note: string = E2E_CUSTOMER.note)
   await page.getByLabel(/Địa chỉ nhận hàng/).fill(E2E_CUSTOMER.address);
   await page.getByLabel(/^Ghi chú/).fill(note);
   await page.getByRole("radio", { name: /THANH TOÁN KHI NHẬN HÀNG/i }).check();
+
+  const termsCheckbox = page.getByRole("checkbox", { name: /đồng ý|điều khoản/i });
+  if (await termsCheckbox.isVisible()) {
+    await termsCheckbox.check();
+  }
 }
 
 export async function expectPersistedEspresso250Order(orderNumber: string): Promise<void> {

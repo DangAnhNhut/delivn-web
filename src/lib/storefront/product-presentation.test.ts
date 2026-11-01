@@ -6,7 +6,9 @@ import {
   formatVnd,
   getDefaultProductVariant,
   getProductAvailability,
+  getProductDisplayDescription,
   getProductPrice,
+  getProductPrincipalImage,
 } from "./product-presentation";
 
 function variant(
@@ -100,5 +102,60 @@ describe("getDefaultProductVariant", () => {
 
   it("returns null when there are no variants", () => {
     expect(getDefaultProductVariant([])).toBeNull();
+  });
+});
+
+describe("getProductDisplayDescription", () => {
+  it("replaces development copy with neutral factual copy for espresso", () => {
+    expect(
+      getProductDisplayDescription({
+        description: "Dữ liệu sản phẩm DELIVN dùng cho phát triển cục bộ.",
+        category: "espresso",
+      }),
+    ).toBe("Cà phê hạt rang — lựa chọn 250g hoặc 500g.");
+  });
+
+  it("replaces development copy with neutral factual copy for rang xay", () => {
+    expect(
+      getProductDisplayDescription({
+        description: "Dữ liệu sản phẩm tổng hợp chỉ dùng cho phát triển và kiểm thử thương mại.",
+        category: "rang_xay",
+      }),
+    ).toBe("Cà phê rang xay — lựa chọn 250g hoặc 500g.");
+  });
+
+  it("replaces unverified regional claims with neutral factual copy", () => {
+    expect(
+      getProductDisplayDescription({
+        description: "Cà phê hạt rang espresso đặc biệt, chế tác từ nguồn nguyên liệu Tây Nguyên.",
+        category: "espresso",
+      }),
+    ).toBe("Cà phê hạt rang — lựa chọn 250g hoặc 500g.");
+  });
+
+  it("preserves verified business description when provided", () => {
+    const verified = "Mô tả sản phẩm cao cấp chính thức từ thương hiệu.";
+    expect(
+      getProductDisplayDescription({
+        description: verified,
+        category: "espresso",
+      }),
+    ).toBe(verified);
+  });
+});
+
+describe("getProductPrincipalImage", () => {
+  it("resolves the approved reference JPG for espresso", () => {
+    expect(getProductPrincipalImage({ category: "espresso" })).toEqual({
+      url: "/products/reference/500g_black_reference.jpg",
+      altText: "Bao bì DELIVN Espresso",
+    });
+  });
+
+  it("resolves the approved reference JPG for rang_xay", () => {
+    expect(getProductPrincipalImage({ category: "rang_xay" })).toEqual({
+      url: "/products/reference/500g_sand_reference.jpg",
+      altText: "Bao bì DELIVN Rang Xay",
+    });
   });
 });

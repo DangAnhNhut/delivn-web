@@ -109,7 +109,14 @@ describe("ProductPurchasePanel", () => {
     expect(container.querySelector("del")?.textContent).toContain("175.000 ₫");
     expect(purchaseButton()?.textContent).toContain("THÊM VÀO GIỎ");
     expect(purchaseButton()?.disabled).toBe(false);
+
+    const buyNowBtn = [...container.querySelectorAll("button")].find(
+      (b) => b.textContent?.trim() === "MUA NGAY",
+    );
+    expect(buyNowBtn).toBeDefined();
+    expect(buyNowBtn?.disabled).toBe(false);
   });
+
 
   it("server-renders Add To Cart disabled before hydration", () => {
     const html = renderToStaticMarkup(
