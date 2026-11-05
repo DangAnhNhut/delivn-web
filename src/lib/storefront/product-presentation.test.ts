@@ -7,6 +7,7 @@ import {
   getDefaultProductVariant,
   getProductAvailability,
   getProductDisplayDescription,
+  getCartProductDisplayImage,
   getProductPrice,
   getProductPrincipalImage,
 } from "./product-presentation";
@@ -157,5 +158,69 @@ describe("getProductPrincipalImage", () => {
       url: "/products/reference/500g_sand_reference.jpg",
       altText: "Bao bì DELIVN Rang Xay",
     });
+  });
+});
+
+describe("getCartProductDisplayImage", () => {
+  it("uses approved storefront photography for known persistent product slugs", () => {
+    expect(
+      getCartProductDisplayImage({
+        productSlug: "dev-local-delivn-espresso",
+        image: { url: "/products/legacy-gray.png", alt: "Legacy Espresso" },
+      }),
+    ).toEqual({
+      url: "/products/reference/500g_black_reference.jpg",
+      alt: "Bao bì DELIVN Espresso",
+    });
+    expect(
+      getCartProductDisplayImage({
+        productSlug: "dev-local-delivn-rang-xay",
+        image: { url: "/products/legacy-gray.png", alt: "Legacy Rang Xay" },
+      }),
+    ).toEqual({
+      url: "/products/reference/500g_sand_reference.jpg",
+      alt: "Bao bì DELIVN Rang Xay",
+    });
+  });
+
+  it("uses the same approved photography for guarded E2E product slugs", () => {
+    expect(
+      getCartProductDisplayImage({
+        productSlug: "dev-demo-delivn-espresso",
+        image: { url: "/products/demo-gray.png", alt: "Demo Espresso" },
+      }),
+    ).toEqual({
+      url: "/products/reference/500g_black_reference.jpg",
+      alt: "Bao bì DELIVN Espresso",
+    });
+    expect(
+      getCartProductDisplayImage({
+        productSlug: "dev-demo-delivn-rang-xay",
+        image: { url: "/products/demo-gray.png", alt: "Demo Rang Xay" },
+      }),
+    ).toEqual({
+      url: "/products/reference/500g_sand_reference.jpg",
+      alt: "Bao bì DELIVN Rang Xay",
+    });
+  });
+
+  it("preserves a persisted snapshot image for an unknown product slug", () => {
+    const snapshot = { url: "/products/legacy-product.jpg", alt: "Legacy product" };
+
+    expect(
+      getCartProductDisplayImage({
+        productSlug: "legacy-product",
+        image: snapshot,
+      }),
+    ).toEqual(snapshot);
+  });
+
+  it("keeps the no-image state for an unknown product without a snapshot", () => {
+    expect(
+      getCartProductDisplayImage({
+        productSlug: "legacy-product-without-media",
+        image: null,
+      }),
+    ).toBeNull();
   });
 });

@@ -1,6 +1,9 @@
 import { expect, type Page } from "@playwright/test";
 
-import { isIgnorableAllowedResponseConsoleError } from "../../src/server/demo/demo-runtime-monitor-policy";
+import {
+  isIgnorableAllowedResponseConsoleError,
+  isIgnorableCancelledRscRequest,
+} from "../../src/server/demo/demo-runtime-monitor-policy";
 
 type AllowedResponse = { path: string; status: number };
 
@@ -21,6 +24,7 @@ export function monitorRuntime(page: Page, allowedResponses: readonly AllowedRes
     if (!isSameOrigin(request.url())) return;
     const failure = request.failure()?.errorText ?? "unknown failure";
     if (failure === "net::ERR_ABORTED" && new URL(request.url()).pathname.startsWith("/_next/")) return;
+    if (isIgnorableCancelledRscRequest(request.method(), request.url(), failure)) return;
     issues.push(`requestfailed: ${request.method()} ${request.url()} (${failure})`);
   });
   page.on("response", (response) => {

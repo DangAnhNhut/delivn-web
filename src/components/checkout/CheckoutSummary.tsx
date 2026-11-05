@@ -8,10 +8,14 @@ import { formatVnd } from "@/lib/storefront/product-presentation";
 export function CheckoutSummary({ items }: { items: readonly CartItem[] }) {
   return (
     <aside aria-labelledby="checkout-summary-title">
-      <div className="border-y border-border bg-surface px-6 py-8 sm:px-8 lg:sticky lg:top-[calc(var(--header-height)+2.5rem)]">
+      <div className="border-y border-border bg-cream px-6 py-8 sm:px-8 lg:sticky lg:top-[calc(var(--header-height)+2.5rem)]">
+        <p className="flex items-center gap-3 text-[10px] font-bold tracking-[0.2em] text-foreground-muted uppercase">
+          <span className="size-1.5 rounded-full bg-accent" aria-hidden="true" />
+          CÀ PHÊ DELIVN
+        </p>
         <h2
           id="checkout-summary-title"
-          className="text-xs font-bold tracking-[0.2em] text-foreground uppercase"
+          className="mt-3 text-2xl font-bold leading-tight tracking-[-0.025em] text-foreground uppercase sm:text-3xl"
         >
           ĐƠN HÀNG CỦA BẠN
         </h2>
@@ -43,7 +47,8 @@ export function CheckoutSummary({ items }: { items: readonly CartItem[] }) {
           </p>
         </div>
         <p className="mt-5 border-t border-border pt-5 text-sm leading-relaxed text-foreground-muted">
-          Giá và tình trạng sản phẩm sẽ được xác nhận lại khi đặt hàng.
+          Giá hiển thị là dữ liệu tham khảo từ giỏ hàng. Máy chủ sẽ xác nhận lại
+          sản phẩm, khả năng đáp ứng và tổng tiền khi bạn đặt hàng.
         </p>
       </div>
     </aside>

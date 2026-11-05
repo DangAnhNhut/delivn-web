@@ -22,13 +22,15 @@ for (const viewport of viewports) {
 
     await page.goto("/san-pham");
     await expect(page.getByRole("heading", { name: DEMO_PRODUCTS[0].name })).toBeVisible();
-    const catalogImage = page.getByAltText(/Bao bì Espresso màu đen dùng cho dữ liệu demo/).first();
+    const catalogImage = page.getByAltText("Bao bì DELIVN Espresso").first();
     await expect(catalogImage).toBeVisible();
     expect(await catalogImage.evaluate((image: HTMLImageElement) => image.naturalWidth > 0)).toBe(true);
     await expectNoHorizontalOverflow(page);
 
     await addEspresso250ToCart(page);
-    await expect(page.getByRole("button", { name: /THÊM VÀO GIỎ|ĐÃ ĐẠT GIỚI HẠN/ })).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: /THÊM VÀO GIỎ|ĐÃ ĐẠT GIỚI HẠN/ }).first(),
+    ).toBeVisible();
     await expectNoHorizontalOverflow(page);
 
     await page.goto("/gio-hang");
@@ -37,6 +39,10 @@ for (const viewport of viewports) {
 
     await page.goto("/thanh-toan");
     await expect(page.getByRole("button", { name: "ĐẶT HÀNG" })).toBeVisible();
+    await expect(page.getByRole("combobox", { name: /Tỉnh \/ thành phố/i })).toBeVisible();
+    await expect(page.getByRole("combobox", { name: /Phường \/ xã \/ đặc khu/i })).toBeDisabled();
+    await expect(page.getByLabel(/Địa chỉ chi tiết/i)).toBeVisible();
+    await expect(page.getByLabel(/Quận \/ huyện/i)).toHaveCount(0);
     await expectNoHorizontalOverflow(page);
     runtime.assertClean();
 

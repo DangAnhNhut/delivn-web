@@ -5,10 +5,14 @@ import Link from "next/link";
 
 import { MAX_QUANTITY_PER_VARIANT } from "@/contracts";
 import {
+  selectCartItemCount,
   selectCartLineTotalVnd,
   selectCartSubtotalVnd,
 } from "@/lib/cart/cart-selectors";
-import { formatVnd } from "@/lib/storefront/product-presentation";
+import {
+  formatVnd,
+  getCartProductDisplayImage,
+} from "@/lib/storefront/product-presentation";
 
 import { useCart } from "./CartProvider";
 
@@ -27,7 +31,7 @@ export function CartPage() {
       <section
         aria-busy="true"
         aria-labelledby="cart-loading-title"
-        className="min-h-[calc(100svh-var(--header-height))] bg-background py-16 sm:py-24"
+        className="min-h-[calc(100svh-var(--header-height))] bg-background py-12 sm:py-16"
       >
         <div className="site-shell">
           <p className="text-xs font-bold tracking-[0.24em] text-foreground-muted uppercase">
@@ -49,22 +53,22 @@ export function CartPage() {
     return (
       <section
         aria-labelledby="empty-cart-title"
-        className="flex min-h-[calc(100svh-var(--header-height))] items-center bg-background py-16"
+        className="min-h-[calc(100svh-var(--header-height))] bg-background py-12 sm:py-16"
       >
         <div className="site-shell">
-          <div className="relative overflow-hidden border-y border-border bg-surface px-6 py-20 text-center sm:px-10 sm:py-28 lg:py-36">
+          <div className="relative overflow-hidden border-y border-border bg-surface px-6 py-14 text-center sm:px-10 sm:py-20">
             <span className="mx-auto block size-2 rounded-full bg-accent" aria-hidden="true" />
             <p className="mt-5 text-xs font-bold tracking-[0.24em] text-foreground-muted uppercase">
               Giỏ hàng
             </p>
             <h1
               id="empty-cart-title"
-              className="mx-auto mt-4 max-w-3xl text-2xl font-bold leading-tight tracking-[-0.035em] text-foreground uppercase sm:text-4xl lg:text-5xl"
+              className="mx-auto mt-4 max-w-3xl text-2xl font-bold leading-tight tracking-[-0.035em] text-foreground uppercase sm:text-4xl"
             >
               GIỎ HÀNG CỦA BẠN ĐANG TRỐNG
             </h1>
             <p className="mx-auto mt-5 max-w-lg text-base leading-relaxed text-foreground-muted sm:text-lg">
-              Chọn dòng cà phê phù hợp để bắt đầu giỏ hàng của bạn.
+              Chọn cà phê DELIVN phù hợp để bắt đầu đơn hàng.
             </p>
             <Link
               href="/san-pham"
@@ -79,38 +83,43 @@ export function CartPage() {
   }
 
   const subtotalVnd = selectCartSubtotalVnd(items);
+  const itemCount = selectCartItemCount(items);
 
   return (
-    <article className="overflow-x-clip bg-background pb-20 pt-14 sm:pb-24 sm:pt-20 lg:pb-32 lg:pt-24">
+    <article className="overflow-x-clip bg-background py-12 sm:py-16 lg:py-20">
       <div className="site-shell">
-        <header className="border-b border-border pb-10 sm:pb-14">
-          <p className="text-xs font-bold tracking-[0.24em] text-foreground-muted uppercase">
+        <header className="border-b border-border pb-8 sm:pb-10">
+          <p className="text-xs font-bold tracking-[0.24em] text-accent uppercase">
             GIỎ HÀNG
           </p>
-          <h1 className="mt-4 max-w-4xl text-[clamp(2.8rem,7vw,7rem)] font-bold leading-[0.92] tracking-[-0.055em] text-foreground uppercase">
-            LỰA CHỌN CỦA BẠN.
+          <h1 className="mt-3 max-w-4xl break-words text-[clamp(2.25rem,4.5vw,4.5rem)] font-bold leading-[0.98] tracking-[-0.045em] text-foreground uppercase">
+            LỰA CHỌN CỦA BẠN
           </h1>
+          <p className="mt-4 text-base leading-7 text-foreground-muted sm:text-lg">
+            {itemCount} sản phẩm đang chờ bạn hoàn tất đơn hàng.
+          </p>
         </header>
 
-        <div className="mt-10 grid grid-cols-1 gap-14 lg:grid-cols-12 lg:gap-16 xl:gap-24">
+        <div className="mt-8 grid grid-cols-1 gap-10 lg:mt-10 lg:grid-cols-12 lg:gap-12 xl:gap-16">
           <section aria-label="Sản phẩm trong giỏ hàng" className="lg:col-span-8">
             <div className="divide-y divide-border border-y border-border">
               {items.map((item) => {
                 const description = `${item.productName} – ${item.variantLabel}`;
+                const displayImage = getCartProductDisplayImage(item);
 
                 return (
                   <article
                     key={item.variantId}
-                    className="grid grid-cols-1 gap-6 py-8 sm:grid-cols-[11rem_1fr] sm:gap-8 lg:grid-cols-[13rem_1fr] lg:py-10"
+                    className="grid grid-cols-1 gap-6 py-7 sm:grid-cols-[16rem_minmax(0,1fr)] sm:gap-8 lg:py-8"
                   >
-                    <div className="aspect-square overflow-hidden bg-surface">
-                      {item.image ? (
+                    <div className="aspect-[5/4] overflow-hidden bg-surface">
+                      {displayImage ? (
                         <img
-                          src={item.image.url}
-                          alt={item.image.alt}
+                          src={displayImage.url}
+                          alt={displayImage.alt}
                           width={520}
-                          height={520}
-                          className="h-full w-full object-contain p-5 sm:p-6"
+                          height={390}
+                          className="h-full w-full object-contain p-2 sm:p-3"
                         />
                       ) : (
                         <div className="flex h-full min-h-44 items-end bg-[#D8C4A3] p-5 text-[10px] font-bold tracking-[0.16em] text-foreground/65 uppercase">
@@ -119,7 +128,7 @@ export function CartPage() {
                       )}
                     </div>
 
-                    <div className="flex min-w-0 flex-col justify-between gap-7">
+                    <div className="flex min-w-0 flex-col justify-between gap-6">
                       <div>
                         <Link
                           href={`/san-pham/${item.productSlug}`}
@@ -135,7 +144,7 @@ export function CartPage() {
                         </p>
                       </div>
 
-                      <div className="flex flex-wrap items-end justify-between gap-5">
+                      <div className="flex flex-wrap items-end justify-between gap-5 border-t border-border pt-5">
                         <div>
                           <p className="mb-2 text-[10px] font-bold tracking-[0.16em] text-foreground-muted uppercase">
                             Số lượng
@@ -172,7 +181,10 @@ export function CartPage() {
                         </div>
 
                         <div className="text-left sm:text-right">
-                          <p className="text-lg font-semibold text-foreground">
+                          <p className="text-[10px] font-bold tracking-[0.16em] text-foreground-muted uppercase">
+                            Thành tiền
+                          </p>
+                          <p className="mt-1 text-lg font-semibold text-foreground">
                             {formatVnd(selectCartLineTotalVnd(item))}
                           </p>
                           <button
@@ -202,16 +214,23 @@ export function CartPage() {
           </section>
 
           <aside className="lg:col-span-4">
-            <div className="border-y border-border bg-surface px-6 py-8 sm:px-8 lg:sticky lg:top-[calc(var(--header-height)+2.5rem)]">
-              <div className="flex items-baseline justify-between gap-4">
-                <h2 className="text-xs font-bold tracking-[0.2em] text-foreground uppercase">
+            <div className="border-y border-border bg-cream px-6 py-8 sm:px-8 lg:sticky lg:top-[calc(var(--header-height)+2.5rem)]">
+              <p className="flex items-center gap-2 text-[10px] font-bold tracking-[0.2em] text-accent uppercase">
+                <span className="size-1.5 rounded-full bg-accent" aria-hidden="true" />
+                CÀ PHÊ DELIVN
+              </p>
+              <h2 className="mt-3 text-xl font-bold tracking-[-0.025em] text-foreground uppercase sm:text-2xl">
+                TÓM TẮT ĐƠN HÀNG
+              </h2>
+              <div className="mt-6 flex items-baseline justify-between gap-4 border-t border-border pt-5">
+                <p className="text-xs font-bold tracking-[0.16em] text-foreground-muted uppercase">
                   TẠM TÍNH
-                </h2>
+                </p>
                 <p className="text-xl font-semibold text-foreground sm:text-2xl">
                   {formatVnd(subtotalVnd)}
                 </p>
               </div>
-              <p className="mt-6 border-t border-border pt-5 text-sm leading-relaxed text-foreground-muted">
+              <p className="mt-5 text-sm leading-relaxed text-foreground-muted">
                 Giá và tình trạng sản phẩm sẽ được xác nhận lại khi thanh toán.
               </p>
               <Link

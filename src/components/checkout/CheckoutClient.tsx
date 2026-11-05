@@ -45,7 +45,9 @@ const initialValues: CheckoutFormValues = {
   name: "",
   phone: "",
   email: "",
-  address: "",
+  provinceCode: "",
+  communeCode: "",
+  addressDetail: "",
   note: "",
   paymentMethod: "",
 };
@@ -76,6 +78,8 @@ export function CheckoutClient() {
   const [fieldErrors, setFieldErrors] = useState<
     Partial<Record<CheckoutFieldName, string>>
   >({});
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [termsError, setTermsError] = useState<string | undefined>();
   const [submission, setSubmission] = useState<SubmissionState>({ status: "idle" });
   const submittingRef = useRef(false);
   const errorRef = useRef<HTMLDivElement>(null);
@@ -89,11 +93,16 @@ export function CheckoutClient() {
   }, [submission]);
 
   const updateField = (field: CheckoutFieldName, value: string) => {
-    setValues((current) => ({ ...current, [field]: value }));
+    setValues((current) => {
+      if (field !== "provinceCode") return { ...current, [field]: value };
+      return current.provinceCode === value
+        ? { ...current, provinceCode: value }
+        : { ...current, provinceCode: value, communeCode: "" };
+    });
     setFieldErrors((current) => {
-      if (!current[field]) return current;
       const next = { ...current };
       delete next[field];
+      if (field === "provinceCode") delete next.communeCode;
       return next;
     });
   };
@@ -104,6 +113,18 @@ export function CheckoutClient() {
 
     submittingRef.current = true;
     setFieldErrors({});
+
+    if (!termsAccepted) {
+      const message = "Bạn cần đồng ý với điều khoản giao dịch trước khi đặt hàng.";
+      setTermsError(message);
+      setSubmission({
+        status: "error",
+        message,
+        cartActionRecommended: false,
+      });
+      submittingRef.current = false;
+      return;
+    }
 
     const inputResult = createCheckoutInput(values, items);
     if (!inputResult.ok) {
@@ -272,21 +293,22 @@ export function CheckoutClient() {
       : null;
 
   return (
-    <article className="overflow-x-clip bg-background pb-20 pt-14 sm:pb-24 sm:pt-20 lg:pb-32 lg:pt-24">
+    <article className="overflow-x-clip bg-background py-12 sm:py-16 lg:py-20">
       <div className="site-shell">
-        <header className="border-b border-border pb-10 sm:pb-14">
-          <p className="text-xs font-bold tracking-[0.24em] text-foreground-muted uppercase">
+        <header className="border-b border-border pb-8 sm:pb-10">
+          <p className="flex items-center gap-3 text-xs font-bold tracking-[0.24em] text-foreground-muted uppercase">
+            <span className="size-1.5 rounded-full bg-accent" aria-hidden="true" />
             THANH TOÁN
           </p>
-          <h1 className="mt-4 max-w-5xl text-[clamp(2.7rem,6.7vw,6.8rem)] font-bold leading-[0.92] tracking-[-0.055em] text-foreground uppercase">
-            HOÀN TẤT ĐƠN HÀNG.
+          <h1 className="mt-4 max-w-4xl text-[clamp(2.25rem,5vw,4.5rem)] font-bold leading-[0.95] tracking-[-0.045em] text-foreground uppercase">
+            HOÀN TẤT ĐƠN HÀNG
           </h1>
-          <p className="mt-6 max-w-2xl text-base leading-relaxed text-foreground-muted sm:text-lg">
+          <p className="mt-4 max-w-2xl text-base leading-relaxed text-foreground-muted sm:text-lg">
             Thông tin sản phẩm, giá và khả năng đáp ứng sẽ được máy chủ xác nhận khi bạn đặt hàng.
           </p>
         </header>
 
-        <div className="mt-10 grid grid-cols-1 gap-14 lg:grid-cols-12 lg:gap-16 xl:gap-24">
+        <div className="mt-8 grid grid-cols-1 gap-10 lg:mt-10 lg:grid-cols-12 lg:gap-12 xl:gap-16">
           <section className="lg:col-span-7">
             {errorMessage ? (
               <div
@@ -320,7 +342,13 @@ export function CheckoutClient() {
                 fieldErrors={fieldErrors}
                 isSubmitting={isSubmitting}
                 submitBlocked={isUncertain}
+                termsAccepted={termsAccepted}
+                termsError={termsError}
                 onChange={updateField}
+                onTermsChange={(accepted) => {
+                  setTermsAccepted(accepted);
+                  if (accepted) setTermsError(undefined);
+                }}
               />
             </form>
           </section>

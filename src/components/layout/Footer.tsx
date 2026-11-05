@@ -4,6 +4,7 @@ import { useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { footerContent } from "@/data/content/home";
+import { COMPANY_INFORMATION, LEGAL_ROUTE_LINKS } from "@/data/legal";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -13,8 +14,12 @@ if (typeof window !== "undefined") {
 
 export function Footer() {
   const footerRef = useRef<HTMLElement>(null);
-  const { brandLine, summary, tag, company, navigation, copyright } =
-    footerContent;
+  const { brandLine, summary, tag, navigation, copyright } = footerContent;
+  const informationLinks = [
+    ...navigation,
+    ...LEGAL_ROUTE_LINKS.slice(0, 2),
+  ];
+  const policyLinks = LEGAL_ROUTE_LINKS.slice(2);
 
   useEffect(() => {
     const footer = footerRef.current;
@@ -74,8 +79,8 @@ export function Footer() {
     >
       <div className="footer-inner site-shell pt-14 sm:pt-16 lg:pt-20 pb-10 sm:pb-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
-          {/* COL 1: Brand Wordmark & Tag (lg:col-span-5) */}
-          <div className="footer-col lg:col-span-5 flex flex-col items-start pr-0 lg:pr-6">
+          {/* COL 1: Brand Wordmark & Tag */}
+          <div className="footer-col lg:col-span-4 flex flex-col items-start pr-0 lg:pr-6">
             {/* Official White Logo with authentic Red Seal - ZERO CSS filters */}
             <Link
               href="/"
@@ -111,47 +116,70 @@ export function Footer() {
             </div>
           </div>
 
-          {/* COL 2: Verified Company Legal Information (lg:col-span-4) */}
-          <div className="footer-col lg:col-span-4 flex flex-col items-start text-xs text-neutral-400 leading-relaxed space-y-2.5">
+          {/* COL 2: Verified Company Legal Information */}
+          <div className="footer-col lg:col-span-3 flex flex-col items-start text-xs text-neutral-400 leading-relaxed space-y-2.5">
             <h3 className="text-[11px] font-bold uppercase tracking-[0.24em] text-white/90 mb-2">
               THÔNG TIN DOANH NGHIỆP
             </h3>
             <p className="text-white font-medium text-[12.5px]">
-              {company.name}
+              {COMPANY_INFORMATION.legalName}
             </p>
             <p>
               <span className="text-neutral-500 font-mono">MST:</span>{" "}
-              <span className="font-mono text-neutral-300">{company.mst}</span>
+              <span className="font-mono text-neutral-300">
+                {COMPANY_INFORMATION.enterpriseNumber}
+              </span>
             </p>
             <p className="text-neutral-400">
               <span className="text-neutral-500 font-mono">Địa chỉ:</span>{" "}
-              {company.address}
+              {COMPANY_INFORMATION.registeredOffice}
             </p>
             <p>
               <span className="text-neutral-500 font-mono">Hotline:</span>{" "}
               <a
-                href={`tel:${company.phone}`}
+                href={`tel:${COMPANY_INFORMATION.phone}`}
                 className="text-neutral-300 hover:text-white transition-colors"
               >
-                {company.phone}
+                {COMPANY_INFORMATION.phone}
               </a>
             </p>
           </div>
 
-          {/* COL 3: Primary Navigation Links (lg:col-span-3) */}
-          <div className="footer-col lg:col-span-3 flex flex-col items-start lg:items-end">
+          {/* COL 3: Information links */}
+          <div className="footer-col lg:col-span-2 flex flex-col items-start">
             <h3 className="text-[11px] font-bold uppercase tracking-[0.24em] text-white/90 mb-4 lg:mb-5">
-              KHÁM PHÁ DELIVN
+              THÔNG TIN
             </h3>
             <nav
-              aria-label="Menu chân trang"
-              className="flex flex-col items-start lg:items-end gap-3.5"
+              aria-label="Thông tin DELIVN"
+              className="flex flex-col items-start gap-3.5"
             >
-              {navigation.map((item) => (
+              {informationLinks.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
                   className="text-xs sm:text-[13px] font-medium tracking-[0.2em] text-neutral-400 hover:text-white transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent rounded-sm"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+
+          {/* COL 4: Policy links */}
+          <div className="footer-col lg:col-span-3 flex flex-col items-start lg:items-end">
+            <h3 className="text-[11px] font-bold uppercase tracking-[0.24em] text-white/90 mb-4 lg:mb-5">
+              CHÍNH SÁCH
+            </h3>
+            <nav
+              aria-label="Chính sách DELIVN"
+              className="flex flex-col items-start gap-3.5 lg:items-end"
+            >
+              {policyLinks.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="text-xs sm:text-[13px] font-medium tracking-[0.12em] text-neutral-400 hover:text-white transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent rounded-sm lg:text-right"
                 >
                   {item.label}
                 </Link>

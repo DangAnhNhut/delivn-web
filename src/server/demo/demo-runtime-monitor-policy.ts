@@ -13,3 +13,12 @@ export function isIgnorableAllowedResponseConsoleError(
   }
   return false;
 }
+
+export function isIgnorableCancelledRscRequest(
+  method: string,
+  rawUrl: string,
+  failure: string,
+): boolean {
+  if (method !== "GET" || failure !== "net::ERR_ABORTED") return false;
+  return new URL(rawUrl).searchParams.has("_rsc");
+}

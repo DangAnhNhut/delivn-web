@@ -4,9 +4,8 @@ import { MobileMenuButton } from "./MobileMenuButton";
 import { CartLink } from "./CartLink";
 
 const navigation = [
+  { label: "TRANG CHỦ", href: "/" },
   { label: "SẢN PHẨM", href: "/san-pham" },
-  { label: "CÂU CHUYỆN", href: "/cau-chuyen" },
-  { label: "CÁCH PHA", href: "/cach-pha" },
   { label: "LIÊN HỆ", href: "/lien-he" },
 ] as const;
 

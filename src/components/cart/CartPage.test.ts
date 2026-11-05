@@ -16,22 +16,22 @@ import { CartPage } from "./CartPage";
 
 const first: CartItem = {
   productId: "00000000-0000-4000-8000-000000000001",
-  productSlug: "ca-phe-a",
-  productName: "Cà phê A",
+  productSlug: "dev-local-delivn-espresso",
+  productName: "Cà phê hạt rang Espresso",
   variantId: "00000000-0000-4000-8000-000000000002",
   variantLabel: "250g",
-  image: { url: "/products/a.png", alt: "Gói cà phê A" },
+  image: { url: "/products/legacy-gray-a.png", alt: "Gói cà phê Espresso cũ" },
   unitPriceVndSnapshot: 125_000,
   quantity: 2,
 };
 
 const second: CartItem = {
   productId: "00000000-0000-4000-8000-000000000003",
-  productSlug: "ca-phe-b",
-  productName: "Cà phê B",
+  productSlug: "dev-local-delivn-rang-xay",
+  productName: "Cà phê rang xay",
   variantId: "00000000-0000-4000-8000-000000000004",
   variantLabel: "500g",
-  image: null,
+  image: { url: "/products/legacy-gray-b.png", alt: "Gói cà phê Rang Xay cũ" },
   unitPriceVndSnapshot: 200_000,
   quantity: 1,
 };
@@ -87,25 +87,42 @@ describe("CartPage", () => {
   it("renders persisted snapshots, product navigation, line totals, and subtotal", async () => {
     await renderCart([first, second]);
 
-    expect(container.textContent).toContain("LỰA CHỌN CỦA BẠN.");
-    expect(container.querySelector('img[src="/products/a.png"]')?.getAttribute("alt")).toBe(
-      "Gói cà phê A",
+    expect(container.textContent).toContain("LỰA CHỌN CỦA BẠN");
+    expect(container.textContent).not.toContain("LỰA CHỌN CỦA BẠN.");
+    expect(container.textContent).toContain(
+      "3 sản phẩm đang chờ bạn hoàn tất đơn hàng.",
     );
-    expect(container.querySelector('a[href="/san-pham/ca-phe-a"]')?.textContent).toContain(
-      "Cà phê A",
+    expect(
+      container.querySelector(
+        'img[src="/products/reference/500g_black_reference.jpg"]',
+      )?.getAttribute("alt"),
+    ).toBe("Bao bì DELIVN Espresso");
+    expect(
+      container.querySelector(
+        'img[src="/products/reference/500g_sand_reference.jpg"]',
+      )?.getAttribute("alt"),
+    ).toBe("Bao bì DELIVN Rang Xay");
+    expect(container.querySelector('img[src*="legacy-gray"]')).toBeNull();
+    expect(
+      container.querySelector('a[href="/san-pham/dev-local-delivn-espresso"]')
+        ?.textContent,
+    ).toContain(
+      "Cà phê hạt rang Espresso",
     );
-    expect(container.querySelector('a[href="/san-pham/ca-phe-b"]')?.textContent).toContain(
-      "Cà phê B",
+    expect(
+      container.querySelector('a[href="/san-pham/dev-local-delivn-rang-xay"]')
+        ?.textContent,
+    ).toContain(
+      "Cà phê rang xay",
     );
-    expect(container.textContent).toContain("HÌNH ẢNH ĐANG CẬP NHẬT");
     expect(container.textContent).toContain("250.000 ₫");
     expect(container.textContent).toContain("450.000 ₫");
   });
 
   it("increments and decrements with explicit minimum and maximum states", async () => {
     await renderCart([first]);
-    const decrementLabel = "Giảm số lượng Cà phê A – 250g";
-    const incrementLabel = "Tăng số lượng Cà phê A – 250g";
+    const decrementLabel = "Giảm số lượng Cà phê hạt rang Espresso – 250g";
+    const incrementLabel = "Tăng số lượng Cà phê hạt rang Espresso – 250g";
 
     await act(async () => button(decrementLabel)?.click());
     expect(container.querySelector("[data-quantity]")?.textContent).toBe("1");
@@ -138,9 +155,11 @@ describe("CartPage", () => {
   it("removes one line and clears the cart through explicit actions", async () => {
     await renderCart([first, second]);
 
-    await act(async () => button("Xóa Cà phê A – 250g khỏi giỏ hàng")?.click());
-    expect(container.textContent).not.toContain("Cà phê A");
-    expect(container.textContent).toContain("Cà phê B");
+    await act(async () =>
+      button("Xóa Cà phê hạt rang Espresso – 250g khỏi giỏ hàng")?.click(),
+    );
+    expect(container.textContent).not.toContain("Cà phê hạt rang Espresso");
+    expect(container.textContent).toContain("Cà phê rang xay");
 
     await act(async () => button("Xóa giỏ hàng")?.click());
     expect(container.textContent).toContain("GIỎ HÀNG CỦA BẠN ĐANG TRỐNG");
