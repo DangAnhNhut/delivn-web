@@ -107,3 +107,32 @@ export function getProductPrincipalImage(product: {
     altText: fallback?.altText ?? "Bao bì DELIVN",
   };
 }
+
+const CART_PRODUCT_IMAGE_OVERRIDES: Record<
+  string,
+  { url: string; alt: string }
+> = {
+  "dev-local-delivn-espresso": {
+    url: PRODUCT_PRINCIPAL_IMAGES.espresso,
+    alt: "Bao bì DELIVN Espresso",
+  },
+  "dev-local-delivn-rang-xay": {
+    url: PRODUCT_PRINCIPAL_IMAGES.rang_xay,
+    alt: "Bao bì DELIVN Rang Xay",
+  },
+  "dev-demo-delivn-espresso": {
+    url: PRODUCT_PRINCIPAL_IMAGES.espresso,
+    alt: "Bao bì DELIVN Espresso",
+  },
+  "dev-demo-delivn-rang-xay": {
+    url: PRODUCT_PRINCIPAL_IMAGES.rang_xay,
+    alt: "Bao bì DELIVN Rang Xay",
+  },
+};
+
+export function getCartProductDisplayImage(item: {
+  productSlug: string;
+  image: { url: string; alt: string } | null;
+}): { url: string; alt: string } | null {
+  return CART_PRODUCT_IMAGE_OVERRIDES[item.productSlug] ?? item.image;
+}

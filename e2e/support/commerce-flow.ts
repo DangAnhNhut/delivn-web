@@ -7,7 +7,12 @@ export const E2E_CUSTOMER = {
   name: "E2E Customer",
   phone: "0900000000",
   email: "e2e.customer@example.com",
-  address: "123 Đường Kiểm Thử, Thành phố Demo",
+  provinceCode: "01",
+  provinceName: "Thành phố Hà Nội",
+  communeCode: "00004",
+  communeName: "Phường Ba Đình",
+  addressDetail: "123 Đường Kiểm Thử",
+  address: "123 Đường Kiểm Thử, Phường Ba Đình, Thành phố Hà Nội, Việt Nam",
   note: "DEV-DEMO E2E CHECKOUT",
 } as const;
 
@@ -39,18 +44,41 @@ export async function continueToCheckout(page: Page): Promise<void> {
   await expect(page).toHaveURL(/\/thanh-toan$/);
 }
 
-export async function fillCheckout(page: Page, note: string = E2E_CUSTOMER.note): Promise<void> {
+export async function fillCheckoutDetails(
+  page: Page,
+  note: string = E2E_CUSTOMER.note,
+): Promise<void> {
   await page.getByLabel(/Họ và tên/).fill(E2E_CUSTOMER.name);
   await page.getByLabel(/Số điện thoại/).fill(E2E_CUSTOMER.phone);
   await page.getByLabel(/^Email/).fill(E2E_CUSTOMER.email);
-  await page.getByLabel(/Địa chỉ nhận hàng/).fill(E2E_CUSTOMER.address);
+  const province = page.getByRole("combobox", { name: /Tỉnh \/ thành phố/i });
+  await province.fill("ha noi");
+  await province.press("ArrowDown");
+  await province.press("Enter");
+  await expect(province).toHaveValue(E2E_CUSTOMER.provinceName);
+
+  const commune = page.getByRole("combobox", { name: /Phường \/ xã \/ đặc khu/i });
+  await expect(commune).toBeEnabled();
+  await commune.fill("ba dinh");
+  await commune.press("ArrowDown");
+  await commune.press("Enter");
+  await expect(commune).toHaveValue(E2E_CUSTOMER.communeName);
+
+  await page.getByLabel(/Địa chỉ chi tiết/).fill(E2E_CUSTOMER.addressDetail);
   await page.getByLabel(/^Ghi chú/).fill(note);
   await page.getByRole("radio", { name: /THANH TOÁN KHI NHẬN HÀNG/i }).check();
+}
 
-  const termsCheckbox = page.getByRole("checkbox", { name: /đồng ý|điều khoản/i });
-  if (await termsCheckbox.isVisible()) {
-    await termsCheckbox.check();
-  }
+export async function acceptCheckoutTerms(page: Page): Promise<void> {
+  await page.getByRole("checkbox", { name: /Tôi đã đọc và đồng ý/i }).check();
+}
+
+export async function fillCheckout(
+  page: Page,
+  note: string = E2E_CUSTOMER.note,
+): Promise<void> {
+  await fillCheckoutDetails(page, note);
+  await acceptCheckoutTerms(page);
 }
 
 export async function expectPersistedEspresso250Order(orderNumber: string): Promise<void> {

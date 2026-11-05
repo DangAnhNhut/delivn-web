@@ -242,18 +242,9 @@ export const footerContent = {
   summary:
     "DELIVN mang tinh thần cà phê Việt vào một trải nghiệm hiện đại, nơi hương vị, hình ảnh và cảm hứng Tây Nguyên cùng tạo nên bản sắc riêng.",
   tag: "TÂY NGUYÊN · VIETNAM",
-  company: {
-    name: "CÔNG TY TNHH CÀ PHÊ DELIVN",
-    mst: "3703119501",
-    address:
-      "Ô 32, Lô H37, Đường NH15, Khu dân cư Ấp 6, Khu phố 1, Phường Thới Hòa, Thành phố Hồ Chí Minh, Việt Nam",
-    phone: "0961122226",
-  },
   navigation: [
+    { label: "TRANG CHỦ", href: "/" },
     { label: "SẢN PHẨM", href: "/san-pham" },
-    { label: "CÂU CHUYỆN", href: "/cau-chuyen" },
-    { label: "CÁCH PHA", href: "/cach-pha" },
-    { label: "LIÊN HỆ", href: "/lien-he" },
   ],
   copyright: "© 2026 DELIVN.",
 } as const;

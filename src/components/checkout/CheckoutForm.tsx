@@ -2,17 +2,41 @@ import type {
   CheckoutFieldName,
   CheckoutFormValues,
 } from "@/lib/checkout/checkout-input";
+import { MAX_ADDRESS_DETAIL_LENGTH } from "@/lib/checkout/checkout-input";
+import {
+  VIETNAM_PROVINCES,
+  getCommunesByProvinceCode,
+} from "@/data/vietnam-administrative-units";
+import { LEGAL_ROUTE_LINKS } from "@/data/legal";
+
+import { AdministrativeCombobox } from "./AdministrativeCombobox";
 
 type CheckoutFormProps = {
   values: CheckoutFormValues;
   fieldErrors: Partial<Record<CheckoutFieldName, string>>;
   isSubmitting: boolean;
   submitBlocked: boolean;
+  termsAccepted: boolean;
+  termsError?: string;
   onChange: (field: CheckoutFieldName, value: string) => void;
+  onTermsChange: (accepted: boolean) => void;
 };
 
 const inputClassName =
   "mt-2 min-h-12 w-full border border-border bg-background px-4 py-3 text-base text-foreground outline-none transition-colors placeholder:text-foreground-muted/60 focus:border-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none";
+
+const paymentMethods = [
+  {
+    value: "cod",
+    name: "Thanh toán khi nhận hàng",
+    description: "Thanh toán khi đơn hàng được giao đến bạn.",
+  },
+  {
+    value: "bank_transfer",
+    name: "Chuyển khoản ngân hàng",
+    description: "Chọn chuyển khoản làm phương thức thanh toán cho đơn hàng.",
+  },
+] as const;
 
 function FieldError({ field, message }: { field: CheckoutFieldName; message?: string }) {
   if (!message) return null;
@@ -28,7 +52,10 @@ export function CheckoutForm({
   fieldErrors,
   isSubmitting,
   submitBlocked,
+  termsAccepted,
+  termsError,
   onChange,
+  onTermsChange,
 }: CheckoutFormProps) {
   return (
     <fieldset disabled={isSubmitting} className="min-w-0 disabled:opacity-90">
@@ -88,22 +115,46 @@ export function CheckoutForm({
           <FieldError field="email" message={fieldErrors.email} />
         </label>
 
+        <AdministrativeCombobox
+          id="checkout-province"
+          label="Tỉnh / thành phố"
+          value={values.provinceCode}
+          options={VIETNAM_PROVINCES}
+          required
+          placeholder="Tìm tỉnh / thành phố"
+          error={fieldErrors.provinceCode}
+          onValueChange={(code) => onChange("provinceCode", code)}
+        />
+
+        <AdministrativeCombobox
+          id="checkout-commune"
+          label="Phường / xã / đặc khu"
+          value={values.communeCode}
+          options={getCommunesByProvinceCode(values.provinceCode)}
+          disabled={!values.provinceCode}
+          required
+          placeholder={values.provinceCode ? "Tìm phường / xã / đặc khu" : "Chọn tỉnh / thành phố trước"}
+          error={fieldErrors.communeCode}
+          onValueChange={(code) => onChange("communeCode", code)}
+        />
+
         <label className="block text-sm font-semibold text-foreground sm:col-span-2">
-          Địa chỉ nhận hàng <span aria-hidden="true">*</span>
+          Địa chỉ chi tiết <span aria-hidden="true">*</span>
           <textarea
-            name="address"
+            name="addressDetail"
             autoComplete="street-address"
             required
-            minLength={5}
-            maxLength={500}
+            maxLength={MAX_ADDRESS_DETAIL_LENGTH}
             rows={4}
-            value={values.address}
-            aria-invalid={fieldErrors.address ? true : undefined}
-            aria-describedby={fieldErrors.address ? "checkout-address-error" : undefined}
-            onChange={(event) => onChange("address", event.target.value)}
+            value={values.addressDetail}
+            aria-invalid={fieldErrors.addressDetail ? true : undefined}
+            aria-describedby={
+              fieldErrors.addressDetail ? "checkout-addressDetail-error" : undefined
+            }
+            onChange={(event) => onChange("addressDetail", event.target.value)}
             className={`${inputClassName} resize-y`}
           />
-          <FieldError field="address" message={fieldErrors.address} />
+          <FieldError field="addressDetail" message={fieldErrors.addressDetail} />
         </label>
 
         <label className="block text-sm font-semibold text-foreground sm:col-span-2">
@@ -134,29 +185,118 @@ export function CheckoutForm({
           }
           className="mt-5 grid gap-3 sm:grid-cols-2"
         >
-          {[
-            { value: "cod", label: "THANH TOÁN KHI NHẬN HÀNG" },
-            { value: "bank_transfer", label: "CHUYỂN KHOẢN NGÂN HÀNG" },
-          ].map((method) => (
-            <label
-              key={method.value}
-              className="flex min-h-14 cursor-pointer items-center gap-3 border border-border bg-background px-4 py-3 text-xs font-bold tracking-[0.12em] text-foreground transition-colors has-[:checked]:border-foreground has-[:checked]:bg-surface focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent motion-reduce:transition-none"
-            >
-              <input
-                type="radio"
-                name="paymentMethod"
-                value={method.value}
-                required
-                checked={values.paymentMethod === method.value}
-                onChange={(event) => onChange("paymentMethod", event.target.value)}
-                className="size-4 accent-[var(--accent)]"
-              />
-              {method.label}
-            </label>
-          ))}
+          {paymentMethods.map((method) => {
+            const isSelected = values.paymentMethod === method.value;
+            return (
+              <label
+                key={method.value}
+                className={`relative flex min-h-28 cursor-pointer items-start gap-4 border px-5 py-5 transition-colors focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent motion-reduce:transition-none ${
+                  isSelected
+                    ? "border-accent bg-cream"
+                    : "border-border bg-background hover:border-foreground-muted"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value={method.value}
+                  required
+                  checked={isSelected}
+                  onChange={(event) => onChange("paymentMethod", event.target.value)}
+                  className="mt-0.5 size-4 shrink-0 accent-[var(--accent)]"
+                />
+                <span className="min-w-0 flex-1">
+                  <span className="flex items-start justify-between gap-3">
+                    <span className="text-xs font-bold tracking-[0.08em] text-foreground uppercase">
+                      {method.name}
+                    </span>
+                    <span className="shrink-0 text-[9px] font-bold tracking-[0.14em] text-accent uppercase">
+                      {isSelected ? "ĐÃ CHỌN" : "CHỌN"}
+                    </span>
+                  </span>
+                  <span className="mt-2 block text-xs leading-relaxed text-foreground-muted">
+                    {method.description}
+                  </span>
+                </span>
+              </label>
+            );
+          })}
         </div>
         <FieldError field="paymentMethod" message={fieldErrors.paymentMethod} />
+
+        {values.paymentMethod === "bank_transfer" ? (
+          <section
+            data-bank-transfer-placeholder
+            aria-live="polite"
+            className="mt-5 border border-border bg-cream px-5 py-6 sm:px-7"
+          >
+            <p className="text-xs font-bold tracking-[0.18em] text-foreground uppercase">
+              THANH TOÁN CHUYỂN KHOẢN
+            </p>
+            <div className="mt-5 flex flex-col items-center gap-5 sm:flex-row sm:items-center">
+              <div
+                aria-label="Mã QR không hoạt động, đang cập nhật"
+                className="relative flex aspect-square w-40 shrink-0 items-center justify-center border border-foreground/25 bg-background text-center"
+              >
+                <span
+                  aria-hidden="true"
+                  className="absolute inset-3 border border-dashed border-foreground/20"
+                />
+                <span className="relative text-[11px] font-bold leading-relaxed tracking-[0.18em] text-foreground-muted uppercase">
+                  MÃ QR
+                  <br />
+                  ĐANG CẬP NHẬT
+                </span>
+              </div>
+              <div className="max-w-sm text-center sm:text-left">
+                <p className="text-sm font-semibold text-foreground">
+                  Mã QR thanh toán đang được hoàn thiện.
+                </p>
+                <p className="mt-2 text-xs leading-relaxed text-foreground-muted">
+                  Khu vực này chưa cung cấp mã thanh toán và không thể quét.
+                </p>
+              </div>
+            </div>
+          </section>
+        ) : null}
       </fieldset>
+
+      <div className="mt-8 border-y border-border bg-surface px-4 py-5 sm:px-5">
+        <label className="flex cursor-pointer items-start gap-3 text-sm leading-relaxed text-foreground">
+          <input
+            type="checkbox"
+            name="termsAccepted"
+            required
+            checked={termsAccepted}
+            aria-invalid={termsError ? true : undefined}
+            aria-describedby={termsError ? "checkout-terms-error" : "checkout-terms-help"}
+            onChange={(event) => onTermsChange(event.target.checked)}
+            className="mt-1 size-5 shrink-0 accent-[var(--accent)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          />
+          <span>
+            Tôi đã đọc và đồng ý với{" "}
+            {LEGAL_ROUTE_LINKS.slice(2).map((link, index, links) => (
+              <span key={link.href}>
+                <a
+                  href={link.href}
+                  className="font-semibold underline decoration-border underline-offset-4 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                >
+                  {link.label.toLocaleLowerCase("vi-VN")}
+                </a>
+                {index < links.length - 1 ? ", " : "."}
+              </span>
+            ))}
+          </span>
+        </label>
+        <p id="checkout-terms-help" className="mt-3 pl-8 text-xs leading-relaxed text-foreground-muted">
+          Việc đồng ý là điều kiện gửi yêu cầu đặt hàng trên website.
+        </p>
+        {termsError ? (
+          <p id="checkout-terms-error" className="mt-3 pl-8 text-sm font-medium text-accent">
+            {termsError}
+          </p>
+        ) : null}
+      </div>
 
       <button
         type="submit"

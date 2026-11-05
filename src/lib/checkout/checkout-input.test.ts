@@ -1,9 +1,19 @@
 import { describe, expect, it } from "vitest";
 
 import { MAX_QUANTITY_PER_VARIANT } from "@/contracts";
+import {
+  VIETNAM_COMMUNES,
+  getProvinceByCode,
+} from "@/data/vietnam-administrative-units";
 import type { CartItem } from "@/lib/cart/cart-types";
 
-import { createCheckoutInput, type CheckoutFormValues } from "./checkout-input";
+import {
+  MAX_ADDRESS_DETAIL_LENGTH,
+  composeCustomerAddress,
+  createCheckoutInput,
+  normalizeAddressDetail,
+  type CheckoutFormValues,
+} from "./checkout-input";
 
 const items: CartItem[] = [
   {
@@ -22,7 +32,9 @@ const values: CheckoutFormValues = {
   name: " Nguyễn Văn A ",
   phone: "+84 (912) 345-678",
   email: " CUSTOMER@EXAMPLE.COM ",
-  address: " 123 Đường Cà Phê ",
+  provinceCode: "01",
+  communeCode: "00004",
+  addressDetail: " 123   Đường Cà Phê ",
   note: "  Giao buổi sáng  ",
   paymentMethod: "cod",
 };
@@ -38,7 +50,7 @@ describe("createCheckoutInput", () => {
           name: "Nguyễn Văn A",
           phone: "+84912345678",
           email: "customer@example.com",
-          address: "123 Đường Cà Phê",
+          address: "123 Đường Cà Phê, Phường Ba Đình, Thành phố Hà Nội, Việt Nam",
           note: "Giao buổi sáng",
         },
         paymentMethod: "cod",
@@ -64,7 +76,7 @@ describe("createCheckoutInput", () => {
     expect(result.input.customer).toEqual({
       name: "Nguyễn Văn A",
       phone: "+84912345678",
-      address: "123 Đường Cà Phê",
+      address: "123 Đường Cà Phê, Phường Ba Đình, Thành phố Hà Nội, Việt Nam",
     });
   });
 
@@ -113,7 +125,9 @@ describe("createCheckoutInput", () => {
         name: "",
         phone: "abc",
         email: "bad",
-        address: "",
+        provinceCode: "",
+        communeCode: "",
+        addressDetail: "",
         note: "",
         paymentMethod: "",
       },
@@ -127,10 +141,70 @@ describe("createCheckoutInput", () => {
         name: "Vui lòng nhập họ và tên hợp lệ.",
         phone: "Vui lòng nhập số điện thoại hợp lệ.",
         email: "Vui lòng nhập email hợp lệ.",
-        address: "Vui lòng nhập địa chỉ nhận hàng hợp lệ.",
+        provinceCode: "Vui lòng chọn tỉnh / thành phố.",
+        communeCode: "Vui lòng chọn phường / xã / đặc khu.",
+        addressDetail: "Vui lòng nhập địa chỉ chi tiết.",
         paymentMethod: "Vui lòng chọn phương thức thanh toán.",
       },
       cartActionRecommended: false,
     });
+  });
+
+  it.each([
+    ["an unknown province", { provinceCode: "99" }, "provinceCode", "Vui lòng chọn tỉnh / thành phố."],
+    ["an unknown commune", { communeCode: "99999" }, "communeCode", "Vui lòng chọn phường / xã / đặc khu."],
+    ["a commune from another province", { communeCode: "26740" }, "communeCode", "Vui lòng chọn phường / xã / đặc khu."],
+    ["blank detail", { addressDetail: "   " }, "addressDetail", "Vui lòng nhập địa chỉ chi tiết."],
+  ])("rejects %s", (_caseName, overrides, field, message) => {
+    const result = createCheckoutInput({ ...values, ...overrides }, items);
+
+    expect(result.ok).toBe(false);
+    if (result.ok) throw new Error("Fixture must be invalid");
+    expect(result.fieldErrors[field as keyof typeof result.fieldErrors]).toBe(message);
+  });
+
+  it("normalizes detail whitespace while preserving case and punctuation", () => {
+    expect(normalizeAddressDetail("  148/4   Đường ABC,  Tòa A  ")).toBe(
+      "148/4 Đường ABC, Tòa A",
+    );
+    expect(
+      composeCustomerAddress(
+        "148/4 Đường ABC, Tòa A",
+        "Phường Ba Đình",
+        "Thành phố Hà Nội",
+      ),
+    ).toBe("148/4 Đường ABC, Tòa A, Phường Ba Đình, Thành phố Hà Nội, Việt Nam");
+  });
+
+  it("never inserts a district into the canonical payload", () => {
+    const result = createCheckoutInput(values, items);
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) throw new Error("Fixture must be valid");
+    expect(result.input.customer.address).not.toMatch(/Quận|Huyện|district/i);
+    expect(result.input.customer).not.toHaveProperty("provinceCode");
+    expect(result.input.customer).not.toHaveProperty("communeCode");
+    expect(result.input.customer).not.toHaveProperty("addressDetail");
+  });
+
+  it("keeps the detail cap within the server address limit for every official pair", () => {
+    for (const commune of VIETNAM_COMMUNES) {
+      const province = getProvinceByCode(commune.provinceCode);
+      if (!province) throw new Error(`Missing province ${commune.provinceCode}`);
+      const composed = composeCustomerAddress(
+        "x".repeat(MAX_ADDRESS_DETAIL_LENGTH),
+        commune.name,
+        province.name,
+      );
+      expect(composed.length).toBeLessThanOrEqual(500);
+    }
+
+    const result = createCheckoutInput(
+      { ...values, addressDetail: "x".repeat(MAX_ADDRESS_DETAIL_LENGTH + 1) },
+      items,
+    );
+    expect(result.ok).toBe(false);
+    if (result.ok) throw new Error("Over-limit detail must be invalid");
+    expect(result.fieldErrors.addressDetail).toBe("Vui lòng nhập địa chỉ chi tiết.");
   });
 });

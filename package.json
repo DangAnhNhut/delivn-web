@@ -14,6 +14,7 @@
     "db:studio": "drizzle-kit studio",
     "db:seed": "tsx src/server/db/seed.ts",
     "dev:seed": "tsx src/server/dev-products/seed.ts",
+    "data:generate:vn-address": "tsx scripts/generate-vietnam-administrative-units.ts",
     "demo:seed": "tsx src/server/demo/seed.ts",
     "demo:reset": "tsx src/server/demo/reset.ts",
     "test:e2e": "playwright test",
