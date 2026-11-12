@@ -7,10 +7,12 @@ import {
   fillCheckout,
 } from "./support/commerce-flow";
 import { resetDemoData } from "./support/demo-db";
+import { authenticateE2eUser, E2E_LEGACY_EMAIL } from "./support/auth";
 import { monitorRuntime } from "./support/runtime-monitor";
 
 test("catalog to checkout creates a real authoritative order", async ({ page }) => {
   await resetDemoData();
+  await authenticateE2eUser(page, E2E_LEGACY_EMAIL);
   const runtime = monitorRuntime(page);
 
   await addEspresso250ToCart(page);

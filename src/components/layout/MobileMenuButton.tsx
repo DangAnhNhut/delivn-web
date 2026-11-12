@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { CartLink } from "./CartLink";
+import { AccountLink } from "@/components/auth/AccountLink";
 
 interface NavItem {
   readonly label: string;
@@ -101,6 +102,7 @@ export function MobileMenuButton({
               onClick={close}
               className="text-base font-medium tracking-[0.2em] text-foreground-muted hover:text-foreground transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent rounded-sm"
             />
+            <AccountLink onClick={close} className="text-base font-medium tracking-[0.2em] text-foreground-muted" />
           </nav>
         </div>
       )}

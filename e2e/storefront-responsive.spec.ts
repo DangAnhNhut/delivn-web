@@ -3,6 +3,7 @@ import { expect, test } from "@playwright/test";
 import { DEMO_PRODUCTS } from "../src/server/demo/demo-data";
 import { addEspresso250ToCart } from "./support/commerce-flow";
 import { monitorRuntime } from "./support/runtime-monitor";
+import { authenticateE2eUser, E2E_LEGACY_EMAIL } from "./support/auth";
 
 const viewports = [
   { name: "desktop-1440", width: 1440, height: 1000 },
@@ -18,6 +19,7 @@ async function expectNoHorizontalOverflow(page: import("@playwright/test").Page)
 for (const viewport of viewports) {
   test(`${viewport.name} keeps catalog, PDP, cart, and checkout usable`, async ({ page }, testInfo) => {
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
+    await authenticateE2eUser(page, E2E_LEGACY_EMAIL);
     const runtime = monitorRuntime(page);
 
     await page.goto("/san-pham");

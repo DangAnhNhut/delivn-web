@@ -511,6 +511,7 @@ describe("CheckoutClient submission", () => {
 
     expect(container.textContent).toContain("ĐƠN HÀNG ĐÃ ĐƯỢC TIẾP NHẬN");
     expect(container.textContent).toContain(order.orderNumber);
+    expect(container.querySelector<HTMLAnchorElement>(`a[href="/tai-khoan/don-hang/${order.orderNumber}"]`)).toBeTruthy();
     expect(container.textContent).toContain("510.000 ₫");
     expect(document.activeElement?.textContent).toContain("ĐƠN HÀNG ĐÃ ĐƯỢC TIẾP NHẬN");
     expect(JSON.parse(localStorage.getItem(CART_STORAGE_KEY) ?? "null")).toEqual({
@@ -527,6 +528,7 @@ describe("CheckoutClient submission", () => {
     ["ORDER_VALUE_LIMIT_EXCEEDED", 422],
     ["SERVER_CONFIGURATION_ERROR", 500],
     ["INTERNAL_ERROR", 500],
+    ["AUTHENTICATION_REQUIRED", 401],
   ])("preserves cart and customer input for %s", async (code, status) => {
     vi.stubGlobal(
       "fetch",
@@ -547,6 +549,9 @@ describe("CheckoutClient submission", () => {
     );
     expect(container.textContent).not.toContain("Do not render this");
     expect(container.textContent).not.toContain("ĐƠN HÀNG ĐÃ ĐƯỢC TIẾP NHẬN");
+    if (code === "AUTHENTICATION_REQUIRED") {
+      expect(container.querySelector<HTMLAnchorElement>('a[href="/tai-khoan/dang-nhap?returnTo=%2Fthanh-toan"]')).toBeTruthy();
+    }
   });
 
   it.each([

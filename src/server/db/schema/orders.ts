@@ -15,6 +15,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 import { products, productVariants } from "./products";
+import { user } from "./auth";
 
 export const paymentMethodEnum = pgEnum("payment_method", ["cod", "bank_transfer"]);
 export const paymentStatusEnum = pgEnum("payment_status", [
@@ -43,6 +44,10 @@ export const orders = pgTable(
   "orders",
   {
     id: uuid("id").defaultRandom().primaryKey(),
+    userId: uuid("user_id").references(() => user.id, {
+      onDelete: "set null",
+      onUpdate: "restrict",
+    }),
     orderNumber: text("order_number").notNull(),
     customerName: text("customer_name").notNull(),
     phone: text("phone").notNull(),
@@ -61,6 +66,7 @@ export const orders = pgTable(
   (table) => [
     uniqueIndex("orders_order_number_unique").on(table.orderNumber),
     index("orders_created_at_idx").on(table.createdAt.desc()),
+    index("orders_user_id_created_at_idx").on(table.userId, table.createdAt.desc()),
     index("orders_phone_idx").on(table.phone),
     index("orders_status_idx").on(table.orderStatus),
     check("orders_customer_name_nonempty", sql`length(btrim(${table.customerName})) > 0`),

@@ -108,7 +108,7 @@ test.describe("Storefront Product UX - Direct Purchase Flow", () => {
     runtime.assertClean();
   });
 
-  test("MUA NGAY button on catalog card navigates directly to /thanh-toan", async ({
+  test("MUA NGAY preserves the cart and requires authentication before checkout", async ({
     page,
   }) => {
     const runtime = monitorRuntime(page);
@@ -122,8 +122,9 @@ test.describe("Storefront Product UX - Direct Purchase Flow", () => {
     await espressoCard.getByRole("radio", { name: "250g" }).click();
     await espressoCard.getByRole("button", { name: "MUA NGAY" }).click();
 
-    await expect(page).toHaveURL(/\/thanh-toan$/);
-    await expect(page.getByRole("heading", { level: 1, name: "HOÀN TẤT ĐƠN HÀNG." })).toBeVisible();
+    await expect(page).toHaveURL(/\/tai-khoan\/dang-nhap\?returnTo=%2Fthanh-toan$/);
+    await expect(page.getByRole("heading", { level: 1, name: "ĐĂNG NHẬP" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "GIỎ HÀNG (1)" }).first()).toBeVisible();
 
     runtime.assertClean();
   });

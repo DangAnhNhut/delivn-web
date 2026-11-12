@@ -72,6 +72,8 @@ export type CheckoutDependencies<TTransaction> = {
   calculateShippingFeeVnd(input: ShippingQuoteInput): number;
 };
 
+export type CheckoutOwnership = { userId: string };
+
 function productionDependencies(): CheckoutDependencies<DbTransaction> {
   return {
     withTransaction,
@@ -100,7 +102,10 @@ export function createCheckoutService<TTransaction = DbTransaction>(
     (productionDependencies() as unknown as CheckoutDependencies<TTransaction>);
 
   return {
-    async createOrder(input: NormalizedCheckoutInput): Promise<OrderDTO> {
+    async createOrder(
+      input: NormalizedCheckoutInput,
+      ownership: CheckoutOwnership,
+    ): Promise<OrderDTO> {
       const variantIds = input.items.map((item) => item.variantId);
       assertSortedUniqueIds(variantIds);
 
@@ -204,6 +209,7 @@ export function createCheckoutService<TTransaction = DbTransaction>(
         const paymentStatus = input.paymentMethod === "bank_transfer" ? "pending" : "unpaid";
 
         const order = await deps.orderRepository.insertOrder(transaction, {
+          userId: ownership.userId,
           orderNumber,
           customerName: input.customer.name,
           phone: input.customer.phone,

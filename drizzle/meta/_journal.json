@@ -8,6 +8,20 @@
       "when": 1790155334664,
       "tag": "0000_initial_ecommerce",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1793944953473,
+      "tag": "0001_zippy_slayback",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793952622776,
+      "tag": "0002_hard_beyonder",
+      "breakpoints": true
     }
   ]
 }

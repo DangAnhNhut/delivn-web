@@ -34,6 +34,7 @@ const PRODUCT_B = "00000000-0000-4000-8000-000000000020";
 const VARIANT_A = "00000000-0000-4000-8000-000000000001";
 const VARIANT_B = "00000000-0000-4000-8000-000000000002";
 const ORDER_ID = "00000000-0000-4000-8000-000000000099";
+const ownership = { userId: "00000000-0000-4000-8000-000000000077" };
 
 const input: NormalizedCheckoutInput = {
   customer: {
@@ -174,7 +175,7 @@ function createHarness(options?: {
 describe("checkout service", () => {
   it("uses locked server prices, snapshots lines, reserves stock, and returns OrderDTO", async () => {
     const harness = createHarness();
-    const result = await harness.service.createOrder(input);
+    const result = await harness.service.createOrder(input, ownership);
 
     expect(result).toEqual({
       id: ORDER_ID,
@@ -208,11 +209,12 @@ describe("checkout service", () => {
     expect(harness.getState().history).toEqual([
       { orderId: ORDER_ID, fromStatus: null, toStatus: "pending" },
     ]);
+    expect(harness.getState().orders[0]).toMatchObject({ userId: ownership.userId });
   });
 
   it("starts bank-transfer checkout in pending payment state", async () => {
     const harness = createHarness();
-    const result = await harness.service.createOrder({ ...input, paymentMethod: "bank_transfer" });
+    const result = await harness.service.createOrder({ ...input, paymentMethod: "bank_transfer" }, ownership);
 
     expect(result).toMatchObject({
       paymentMethod: "bank_transfer",
@@ -223,7 +225,7 @@ describe("checkout service", () => {
 
   it("locks each table in the global order with ascending IDs", async () => {
     const harness = createHarness();
-    await harness.service.createOrder(input);
+    await harness.service.createOrder(input, ownership);
     expect(harness.getLogs()[0]).toEqual([
       `discovery:${VARIANT_A},${VARIANT_B}`,
       `products:share:${PRODUCT_A},${PRODUCT_B}`,
@@ -237,7 +239,7 @@ describe("checkout service", () => {
     state.variants.find((variant) => variant.id === VARIANT_A)!.productId = PRODUCT_B;
     const harness = createHarness({ state });
 
-    await expect(harness.service.createOrder(input)).rejects.toBeInstanceOf(ItemUnavailableError);
+    await expect(harness.service.createOrder(input, ownership)).rejects.toBeInstanceOf(ItemUnavailableError);
     expect(harness.getLogs()[0]).toEqual([
       `discovery:${VARIANT_A},${VARIANT_B}`,
       `products:share:${PRODUCT_A},${PRODUCT_B}`,
@@ -259,7 +261,7 @@ describe("checkout service", () => {
     const state = initialState();
     mutate(state);
     const harness = createHarness({ state });
-    await expect(harness.service.createOrder(input)).rejects.toBeInstanceOf(ErrorType);
+    await expect(harness.service.createOrder(input, ownership)).rejects.toBeInstanceOf(ErrorType);
     expect(harness.getState().orders).toEqual([]);
   });
 
@@ -268,7 +270,7 @@ describe("checkout service", () => {
     async (failAt) => {
       const harness = createHarness({ failAt });
       const before = structuredClone(harness.getState());
-      await expect(harness.service.createOrder(input)).rejects.toThrow(`${failAt} failure`);
+      await expect(harness.service.createOrder(input, ownership)).rejects.toThrow(`${failAt} failure`);
       expect(harness.getState()).toEqual(before);
     },
   );
@@ -282,7 +284,7 @@ describe("checkout service", () => {
     state.inventory = [{ variantId: VARIANT_A, quantity: 1, reservedQuantity: 0 }];
     const harness = createHarness({ state });
     const oneItem = { ...input, items: [{ variantId: VARIANT_A, quantity: 1 }] };
-    await expect(harness.service.createOrder(oneItem)).resolves.toMatchObject({
+    await expect(harness.service.createOrder(oneItem, ownership)).resolves.toMatchObject({
       totalVnd: 2_147_483_647,
     });
   });
@@ -291,7 +293,7 @@ describe("checkout service", () => {
     const state = initialState();
     state.variants.find((variant) => variant.id === VARIANT_A)!.priceVnd = 1_073_741_824;
     const harness = createHarness({ state });
-    await expect(harness.service.createOrder(input)).rejects.toBeInstanceOf(MoneyLimitError);
+    await expect(harness.service.createOrder(input, ownership)).rejects.toBeInstanceOf(MoneyLimitError);
     expect(harness.getState().orders).toEqual([]);
   });
 
@@ -300,7 +302,7 @@ describe("checkout service", () => {
     state.variants.find((variant) => variant.id === VARIANT_A)!.priceVnd = 750_000_000;
     state.variants.find((variant) => variant.id === VARIANT_B)!.priceVnd = 1_000_000_000;
     const harness = createHarness({ state });
-    await expect(harness.service.createOrder(input)).rejects.toBeInstanceOf(MoneyLimitError);
+    await expect(harness.service.createOrder(input, ownership)).rejects.toBeInstanceOf(MoneyLimitError);
     expect(harness.getState().orders).toEqual([]);
   });
 
@@ -309,7 +311,7 @@ describe("checkout service", () => {
     state.variants.find((variant) => variant.id === VARIANT_A)!.priceVnd = 2_147_483_647;
     const harness = createHarness({ state, shippingFeeVnd: 1 });
     const oneItem = { ...input, items: [{ variantId: VARIANT_A, quantity: 1 }] };
-    await expect(harness.service.createOrder(oneItem)).rejects.toBeInstanceOf(MoneyLimitError);
+    await expect(harness.service.createOrder(oneItem, ownership)).rejects.toBeInstanceOf(MoneyLimitError);
     expect(harness.getState().orders).toEqual([]);
   });
 });

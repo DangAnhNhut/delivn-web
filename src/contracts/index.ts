@@ -9,3 +9,4 @@ export type {
   ProductMediaDTO,
   ProductVariantDTO,
 } from "./product";
+export * from "./customer-order";

@@ -7,6 +7,7 @@ import {
   fillCheckout,
 } from "./support/commerce-flow";
 import { resetDemoData } from "./support/demo-db";
+import { authenticateE2eUser, E2E_LEGACY_EMAIL } from "./support/auth";
 import { monitorRuntime } from "./support/runtime-monitor";
 
 async function expectNoHorizontalOverflow(page: Page) {
@@ -46,6 +47,7 @@ test("contact hub, legal routes and checkout consent remain usable across compli
   page,
 }, testInfo) => {
   await resetDemoData();
+  await authenticateE2eUser(page, E2E_LEGACY_EMAIL);
   await addEspresso250ToCart(page);
 
   for (const viewport of [
@@ -146,6 +148,7 @@ test("customer opens terms, explicitly accepts them, and completes a confirmed o
   page,
 }) => {
   await resetDemoData();
+  await authenticateE2eUser(page, E2E_LEGACY_EMAIL);
   const runtime = monitorRuntime(page);
   await addEspresso250ToCart(page);
   await continueToCheckout(page);

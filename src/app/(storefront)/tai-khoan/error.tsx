@@ -1,0 +1,2 @@
+"use client";
+export default function AccountError({ reset }: { error: Error; reset: () => void }) { return <main className="flex min-h-[60svh] items-center bg-background py-16"><div className="site-shell text-center"><h1 className="text-4xl font-bold uppercase">KHÔNG THỂ TẢI TÀI KHOẢN</h1><p className="mt-4 text-foreground-muted">Vui lòng thử lại.</p><button onClick={reset} className="mt-8 min-h-11 border border-foreground px-5 text-xs font-bold uppercase">THỬ LẠI</button></div></main>; }
