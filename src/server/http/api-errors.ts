@@ -36,3 +36,7 @@ export function validationErrorResponse(error: ZodError): Response {
   }));
   return errorResponse(400, "VALIDATION_ERROR", "Request validation failed.", details);
 }
+
+export function authenticationRequiredResponse(): Response {
+  return errorResponse(401, "AUTHENTICATION_REQUIRED", "Authentication is required.");
+}

@@ -44,10 +44,25 @@ export async function countOrdersByNote(note: string): Promise<number> {
   });
 }
 
+export async function readDemoInventory(variantId: string) {
+  if (!new Set<string>(DEMO_VARIANT_IDS).has(variantId)) {
+    throw new Error("Refusing to inspect a non-demo variant.");
+  }
+  return withDatabase(async (database) => {
+    const result = await database.query<{ quantity: number; reservedQuantity: number }>(
+      `select quantity, reserved_quantity as "reservedQuantity"
+       from inventory where variant_id = $1`,
+      [variantId],
+    );
+    return result.rows[0] ?? null;
+  });
+}
+
 export async function readOrderByNumber(orderNumber: string) {
   return withDatabase(async (database) => {
     const orderResult = await database.query<{
       id: string;
+      userId: string | null;
       customerName: string;
       phone: string;
       email: string | null;
@@ -58,7 +73,7 @@ export async function readOrderByNumber(orderNumber: string) {
       paymentStatus: string;
       orderStatus: string;
     }>(
-      `select id, customer_name as "customerName", phone, email, address, note,
+      `select id, user_id::text as "userId", customer_name as "customerName", phone, email, address, note,
         total_vnd as "totalVnd", payment_method as "paymentMethod",
         payment_status as "paymentStatus", order_status as "orderStatus"
        from orders where order_number = $1`,

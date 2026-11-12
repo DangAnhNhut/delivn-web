@@ -241,6 +241,12 @@ export function CheckoutClient() {
             </dl>
             <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
               <Link
+                href={`/tai-khoan/don-hang/${encodeURIComponent(order.orderNumber)}`}
+                className="inline-flex min-h-12 items-center justify-center border border-foreground bg-foreground px-7 py-3 text-xs font-bold tracking-[0.18em] text-background uppercase"
+              >
+                XEM ĐƠN HÀNG
+              </Link>
+              <Link
                 href="/san-pham"
                 className="inline-flex min-h-12 items-center justify-center border border-foreground bg-foreground px-7 py-3 text-xs font-bold tracking-[0.18em] text-background uppercase transition-colors hover:border-accent hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent motion-reduce:transition-none"
               >
@@ -331,6 +337,14 @@ export function CheckoutClient() {
                     className="mt-4 inline-flex min-h-11 items-center text-xs font-bold tracking-[0.16em] text-foreground underline decoration-border underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                   >
                     QUAY LẠI GIỎ HÀNG
+                  </Link>
+                ) : null}
+                {submission.status === "error" && errorMessage.includes("Phiên đăng nhập") ? (
+                  <Link
+                    href="/tai-khoan/dang-nhap?returnTo=%2Fthanh-toan"
+                    className="mt-4 inline-flex min-h-11 items-center text-xs font-bold tracking-[0.16em] underline"
+                  >
+                    ĐĂNG NHẬP LẠI
                   </Link>
                 ) : null}
               </div>

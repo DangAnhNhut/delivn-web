@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { MobileMenuButton } from "./MobileMenuButton";
 import { CartLink } from "./CartLink";
+import { AccountLink } from "@/components/auth/AccountLink";
 
 const navigation = [
   { label: "TRANG CHỦ", href: "/" },
@@ -49,6 +50,7 @@ export function Header() {
 
         {/* Cart link + mobile menu toggle — right */}
         <div className="flex-1 flex items-center justify-end gap-4">
+          <AccountLink className="hidden md:inline-flex text-xs lg:text-[13px] font-semibold tracking-[0.18em] text-foreground-muted hover:text-foreground" />
           <CartLink className="hidden md:inline-flex text-xs lg:text-[13px] font-semibold tracking-[0.18em] text-foreground-muted hover:text-foreground transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent rounded-sm" />
           <MobileMenuButton navigation={navigation} />
         </div>

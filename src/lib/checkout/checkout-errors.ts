@@ -11,6 +11,10 @@ export type CheckoutErrorPresentation = {
 const GENERIC_ERROR = "Không thể hoàn tất đơn hàng lúc này. Vui lòng thử lại sau.";
 
 const apiMessages: Record<string, Omit<CheckoutErrorPresentation, "canRetry">> = {
+  AUTHENTICATION_REQUIRED: {
+    message: "Phiên đăng nhập đã hết hạn. Giỏ hàng vẫn được giữ nguyên; vui lòng đăng nhập lại để tiếp tục.",
+    cartActionRecommended: false,
+  },
   INVALID_JSON: {
     message: "Không thể gửi thông tin đặt hàng. Vui lòng kiểm tra và thử lại.",
     cartActionRecommended: false,

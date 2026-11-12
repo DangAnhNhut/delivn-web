@@ -14,6 +14,7 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   reporter: "list",
   globalSetup: "./e2e/global-setup.ts",
+  globalTeardown: "./e2e/global-teardown.ts",
   use: {
     baseURL: local.baseURL,
     screenshot: "only-on-failure",

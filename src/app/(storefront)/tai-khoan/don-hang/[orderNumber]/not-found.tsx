@@ -1,0 +1,2 @@
+import Link from "next/link";
+export default function OrderNotFound() { return <main className="flex min-h-[60svh] items-center bg-background py-16"><div className="site-shell text-center"><h1 className="text-4xl font-bold uppercase">KHÔNG TÌM THẤY ĐƠN HÀNG</h1><p className="mt-4 text-foreground-muted">Đơn hàng không tồn tại hoặc không thuộc tài khoản này.</p><Link href="/tai-khoan/don-hang" className="mt-8 inline-flex min-h-11 items-center border border-foreground px-5 text-xs font-bold uppercase">VỀ ĐƠN HÀNG CỦA TÔI</Link></div></main>; }

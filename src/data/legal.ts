@@ -141,7 +141,7 @@ export const LEGAL_PAGES: Record<LegalRoute, LegalPageDefinition> = {
     title: "TÔN TRỌNG DỮ LIỆU KHÁCH HÀNG.",
     description:
       "Mô tả phạm vi dữ liệu mà luồng đặt hàng hiện tại thu thập và những nội dung quản trị dữ liệu còn phải được phê duyệt.",
-    updated: "31/10/2026",
+    updated: "06/11/2026",
     pendingNotice,
     sections: [
       {
@@ -150,6 +150,14 @@ export const LEGAL_PAGES: Record<LegalRoute, LegalPageDefinition> = {
           "Họ và tên, số điện thoại và địa chỉ nhận hàng.",
           "Email và ghi chú đơn hàng khi khách hàng tự nguyện cung cấp.",
           "Sản phẩm, biến thể, số lượng và phương thức thanh toán khách hàng lựa chọn.",
+        ],
+      },
+      {
+        title: "TÀI KHOẢN VÀ PHIÊN ĐĂNG NHẬP",
+        items: [
+          "Tài khoản sử dụng họ tên, email và thông tin xác thực để đăng ký, đăng nhập và liên kết đơn hàng với đúng khách hàng.",
+          "Phiên đăng nhập được lưu và kiểm tra trong cơ sở dữ liệu. Website có thể nhận thông tin nhận dạng cơ bản từ Google khi khách hàng chủ động chọn đăng nhập bằng Google.",
+          "Đơn hàng mới của khách hàng đã đăng nhập được liên kết với tài khoản để hiển thị lịch sử và chi tiết đơn hàng; đơn hàng lịch sử không được tự động gán theo email, số điện thoại hoặc tên.",
         ],
       },
       {

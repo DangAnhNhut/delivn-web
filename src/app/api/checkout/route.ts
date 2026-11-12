@@ -1,15 +1,25 @@
 import { createCheckoutService } from "@/server/services/checkout.service";
 import {
+  authenticationRequiredResponse,
   invalidJsonResponse,
   unexpectedErrorResponse,
   validationErrorResponse,
 } from "@/server/http/api-errors";
+import { getSessionFromHeaders } from "@/server/auth/session";
 import { normalizeCheckoutInput } from "@/server/validation/checkout-normalization";
 import { checkoutSchema } from "@/server/validation/checkout.schema";
 
 export const runtime = "nodejs";
 
 export async function POST(request: Request): Promise<Response> {
+  let session;
+  try {
+    session = await getSessionFromHeaders(request.headers);
+  } catch (error) {
+    return unexpectedErrorResponse(error);
+  }
+  if (!session) return authenticationRequiredResponse();
+
   let input: unknown;
   try {
     input = await request.json();
@@ -24,7 +34,9 @@ export async function POST(request: Request): Promise<Response> {
 
   try {
     const normalized = normalizeCheckoutInput(parsed.data);
-    const order = await createCheckoutService().createOrder(normalized);
+    const order = await createCheckoutService().createOrder(normalized, {
+      userId: session.user.id,
+    });
     return Response.json(order, { status: 201 });
   } catch (error) {
     return unexpectedErrorResponse(error);

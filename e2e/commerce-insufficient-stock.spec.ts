@@ -8,6 +8,7 @@ import {
   resetDemoData,
 } from "./support/demo-db";
 import { monitorRuntime } from "./support/runtime-monitor";
+import { authenticateE2eUser, E2E_LEGACY_EMAIL } from "./support/auth";
 
 const NOTE = "DEV-DEMO E2E INSUFFICIENT";
 
@@ -17,6 +18,7 @@ test.afterEach(async () => {
 
 test("insufficient inventory preserves checkout and creates no order", async ({ page }) => {
   await resetDemoData();
+  await authenticateE2eUser(page, E2E_LEGACY_EMAIL);
   const runtime = monitorRuntime(page, [{ path: "/api/checkout", status: 409 }]);
   const orderCountBefore = await countOrdersByNote(NOTE);
 

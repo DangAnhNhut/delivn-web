@@ -15,6 +15,7 @@ export type OrderRecord = {
 };
 
 export type NewOrder = {
+  userId: string;
   orderNumber: string;
   customerName: string;
   phone: string;

@@ -7,6 +7,7 @@ import {
   fillCheckoutDetails,
 } from "./support/commerce-flow";
 import { resetDemoData } from "./support/demo-db";
+import { authenticateE2eUser, E2E_LEGACY_EMAIL } from "./support/auth";
 import { monitorRuntime } from "./support/runtime-monitor";
 
 test.use({ viewport: { width: 1440, height: 900 } });
@@ -27,6 +28,7 @@ async function revealFooterForScreenshot(page: import("@playwright/test").Page) 
 
 test("homepage visitor completes the direct customer sales journey", async ({ page }, testInfo) => {
   await resetDemoData();
+  await authenticateE2eUser(page, E2E_LEGACY_EMAIL);
   const runtime = monitorRuntime(page);
 
   await page.goto("/");
