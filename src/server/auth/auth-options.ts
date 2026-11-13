@@ -16,7 +16,10 @@ export function createAuthOptions(environment: AuthEnvironment): BetterAuthOptio
       minPasswordLength: 8,
       maxPasswordLength: 128,
     },
-    rateLimit: { enabled: true },
+    rateLimit: {
+      enabled: true,
+      storage: "database",
+    },
     account: {
       accountLinking: {
         allowDifferentEmails: false,

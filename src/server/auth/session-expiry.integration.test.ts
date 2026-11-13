@@ -39,7 +39,11 @@ function cookieHeader(response: Response): string {
 
 async function authRequest(path: string, init?: RequestInit): Promise<Response> {
   if (!testAuth) throw new Error("Integration target is unavailable.");
-  return testAuth.handler(new Request(`http://127.0.0.1:3000/api/auth${path}`, init));
+  const headers = new Headers(init?.headers);
+  if (!headers.has("x-forwarded-for")) {
+    headers.set("x-forwarded-for", "198.51.100.80");
+  }
+  return testAuth.handler(new Request(`http://127.0.0.1:3000/api/auth${path}`, { ...init, headers }));
 }
 
 suite("database-backed session expiry", () => {

@@ -10,7 +10,7 @@ describe("createAuthOptions", () => {
     expect(options.emailAndPassword).toMatchObject({ enabled: true, minPasswordLength: 8, maxPasswordLength: 128 });
     expect(options.session).toMatchObject({ expiresIn: 60 * 60 * 24 * 7, updateAge: 60 * 60 * 24 });
     expect(options.session?.cookieCache).toBeUndefined();
-    expect(options.rateLimit?.enabled).toBe(true);
+    expect(options.rateLimit).toMatchObject({ enabled: true, storage: "database" });
     expect(options.account?.accountLinking?.allowDifferentEmails).toBe(false);
     expect(options.account?.accountLinking?.requireLocalEmailVerified).toBe(false);
     expect(options.account?.accountLinking?.trustedProviders).toBeUndefined();

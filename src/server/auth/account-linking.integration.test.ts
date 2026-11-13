@@ -66,9 +66,16 @@ function responseCookies(response: Response): string {
   return response.headers.getSetCookie().map((value) => value.split(";", 1)[0]).join("; ");
 }
 
+let requestCounter = 0;
+
 async function authRequest(path: string, init?: RequestInit): Promise<Response> {
   if (!testAuth) throw new Error("Integration target unavailable.");
-  return testAuth.handler(new Request(`${baseURL}/api/auth${path}`, init));
+  requestCounter++;
+  const headers = new Headers(init?.headers);
+  if (!headers.has("x-forwarded-for")) {
+    headers.set("x-forwarded-for", `198.51.100.${10 + (requestCounter % 50)}`);
+  }
+  return testAuth.handler(new Request(`${baseURL}/api/auth${path}`, { ...init, headers }));
 }
 
 async function createCredentialUser(email: string): Promise<string> {
