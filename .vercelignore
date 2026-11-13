@@ -1,0 +1,6 @@
+design-reference
+test-results
+playwright-report
+*.psd
+*.zip
+*.tsbuildinfo
