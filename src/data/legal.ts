@@ -233,9 +233,8 @@ export const LEGAL_PAGES: Record<LegalRoute, LegalPageDefinition> = {
       {
         title: "THỜI GIAN GIAO HÀNG DỰ KIẾN",
         paragraphs: [
-          "Khu vực nội tỉnh / nội thành trung tâm: Dự kiến từ 1 - 3 ngày làm việc.",
-          "Khu vực liên tỉnh / huyện xã: Dự kiến từ 3 - 5 ngày làm việc.",
-          "Thời gian giao hàng thực tế có thể thay đổi tùy thuộc vào điều kiện thời tiết, tuyến giao hàng của đơn vị chuyển phát hoặc các sự kiện bất khả kháng. Trong trường hợp có sự cố giao hàng chậm trễ, DELIVN sẽ chủ động phối hợp với đơn vị vận chuyển để thông báo và hỗ trợ khách hàng.",
+          "Thời gian giao hàng phụ thuộc vào địa chỉ nhận hàng của khách hàng, đơn vị dịch vụ logistics được lựa chọn và điều kiện cung ứng dịch vụ thực tế của đơn vị vận chuyển.",
+          "Trong trường hợp phát sinh chậm trễ do điều kiện thời tiết hoặc sự cố vận hành khách quan, DELIVN sẽ phối hợp chặt chẽ với đối tác chuyển phát để thông báo và cập nhật tiến độ kịp thời tới khách hàng.",
         ],
       },
     ],

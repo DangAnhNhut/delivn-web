@@ -44,6 +44,14 @@ export class InsufficientInventoryError extends CommerceError {
   }
 }
 
+export class ShippingQuoteRequiredError extends CommerceError {
+  constructor(
+    message = "Phí vận chuyển cần được xác định theo địa chỉ nhận hàng và biểu phí thực tế của đơn vị vận chuyển trước khi hoàn tất đơn hàng.",
+  ) {
+    super("SHIPPING_QUOTE_REQUIRED", message, 422);
+  }
+}
+
 export class SeedConfigurationError extends Error {
   constructor(message: string) {
     super(message);

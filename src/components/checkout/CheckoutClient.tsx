@@ -19,6 +19,7 @@ import {
 } from "@/lib/checkout/checkout-input";
 import type { CartItem } from "@/lib/cart/cart-types";
 import { formatVnd } from "@/lib/storefront/product-presentation";
+import type { ShippingQuote } from "@/server/services/shipping.service";
 
 import { CheckoutForm } from "./CheckoutForm";
 import { CheckoutSummary } from "./CheckoutSummary";
@@ -72,7 +73,11 @@ function cloneCartItems(items: readonly CartItem[]): CartItem[] {
   }));
 }
 
-export function CheckoutClient() {
+type CheckoutClientProps = {
+  initialShippingQuote?: ShippingQuote | null;
+};
+
+export function CheckoutClient({ initialShippingQuote = null }: CheckoutClientProps) {
   const { items, isHydrated, reconcileSubmittedItems } = useCart();
   const [values, setValues] = useState<CheckoutFormValues>(initialValues);
   const [fieldErrors, setFieldErrors] = useState<
@@ -80,10 +85,18 @@ export function CheckoutClient() {
   >({});
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [termsError, setTermsError] = useState<string | undefined>();
+  const [shippingQuote] = useState<ShippingQuote | null>(initialShippingQuote);
   const [submission, setSubmission] = useState<SubmissionState>({ status: "idle" });
+  const isUncertain = submission.status === "uncertain";
   const submittingRef = useRef(false);
   const errorRef = useRef<HTMLDivElement>(null);
   const successRef = useRef<HTMLHeadingElement>(null);
+
+  const isShippingValid =
+    shippingQuote !== null &&
+    typeof shippingQuote.amountVnd === "number" &&
+    shippingQuote.amountVnd > 0;
+  const isSubmitBlocked = isUncertain || !isShippingValid;
 
   useEffect(() => {
     if (submission.status === "error" || submission.status === "uncertain") {
@@ -133,6 +146,18 @@ export function CheckoutClient() {
         status: "error",
         message: inputResult.summary,
         cartActionRecommended: inputResult.cartActionRecommended,
+      });
+      submittingRef.current = false;
+      return;
+    }
+
+    if (!isShippingValid) {
+      const message =
+        "Phí vận chuyển cần được xác định theo địa chỉ nhận hàng và biểu phí thực tế của đơn vị vận chuyển trước khi hoàn tất đơn hàng.";
+      setSubmission({
+        status: "error",
+        message,
+        cartActionRecommended: false,
       });
       submittingRef.current = false;
       return;
@@ -292,7 +317,6 @@ export function CheckoutClient() {
 
   const summaryItems = keepsSubmittedView ? submission.submittedItems : items;
   const isSubmitting = submission.status === "submitting";
-  const isUncertain = submission.status === "uncertain";
   const errorMessage =
     submission.status === "error" || submission.status === "uncertain"
       ? submission.message
@@ -355,7 +379,7 @@ export function CheckoutClient() {
                 values={values}
                 fieldErrors={fieldErrors}
                 isSubmitting={isSubmitting}
-                submitBlocked={isUncertain}
+                submitBlocked={isSubmitBlocked}
                 termsAccepted={termsAccepted}
                 termsError={termsError}
                 onChange={updateField}
@@ -367,7 +391,10 @@ export function CheckoutClient() {
             </form>
           </section>
           <div className="lg:col-span-5">
-            <CheckoutSummary items={summaryItems} />
+            <CheckoutSummary
+              items={summaryItems}
+              shippingFeeVnd={shippingQuote?.amountVnd ?? null}
+            />
           </div>
         </div>
       </div>

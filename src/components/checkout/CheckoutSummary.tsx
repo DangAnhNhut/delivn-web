@@ -5,7 +5,16 @@ import {
 } from "@/lib/cart/cart-selectors";
 import { formatVnd } from "@/lib/storefront/product-presentation";
 
-export function CheckoutSummary({ items }: { items: readonly CartItem[] }) {
+type CheckoutSummaryProps = {
+  items: readonly CartItem[];
+  shippingFeeVnd?: number | null;
+};
+
+export function CheckoutSummary({ items, shippingFeeVnd }: CheckoutSummaryProps) {
+  const subtotal = selectCartSubtotalVnd(items);
+  const isShippingQuoted = typeof shippingFeeVnd === "number" && shippingFeeVnd > 0;
+  const totalPayable = isShippingQuoted ? subtotal + BigInt(shippingFeeVnd) : null;
+
   return (
     <aside aria-labelledby="checkout-summary-title">
       <div className="border-y border-border bg-cream px-6 py-8 sm:px-8 lg:sticky lg:top-[calc(var(--header-height)+2.5rem)]">
@@ -38,26 +47,45 @@ export function CheckoutSummary({ items }: { items: readonly CartItem[] }) {
           ))}
         </ul>
 
+        {/* Subtotal line */}
         <div className="mt-6 flex items-baseline justify-between gap-4">
           <p className="text-[10px] font-bold tracking-[0.16em] text-foreground uppercase">
             TẠM TÍNH THAM KHẢO
           </p>
           <p className="text-xl font-semibold text-foreground">
-            {formatVnd(selectCartSubtotalVnd(items))}
+            {formatVnd(subtotal)}
           </p>
         </div>
 
+        {/* Shipping line */}
         <div className="mt-4 flex items-baseline justify-between gap-4 border-t border-border/60 pt-4">
           <p className="text-[10px] font-bold tracking-[0.16em] text-foreground uppercase">
             PHÍ VẬN CHUYỂN
           </p>
-          <p className="text-xs font-semibold tracking-[0.08em] text-foreground-muted uppercase">
-            TÍNH THEO BIỂU PHÍ THỰC TẾ
+          <p
+            className={`text-xs font-semibold tracking-[0.08em] uppercase ${
+              isShippingQuoted ? "text-foreground font-mono" : "text-foreground-muted"
+            }`}
+          >
+            {isShippingQuoted ? formatVnd(shippingFeeVnd) : "Chưa xác định"}
           </p>
         </div>
-        <p className="mt-2 text-xs leading-relaxed text-foreground-muted">
-          Phí vận chuyển được tính theo biểu phí thực tế của đơn vị vận chuyển và địa chỉ nhận hàng. Website không áp dụng chính sách miễn phí vận chuyển mặc định.
-        </p>
+
+        {/* Total line (only authoritative when shipping is quoted) */}
+        {isShippingQuoted ? (
+          <div className="mt-4 flex items-baseline justify-between gap-4 border-t border-border pt-4">
+            <p className="text-xs font-bold tracking-[0.18em] text-foreground uppercase">
+              TỔNG THANH TOÁN
+            </p>
+            <p className="text-2xl font-bold tracking-tight text-accent">
+              {formatVnd(totalPayable!)}
+            </p>
+          </div>
+        ) : (
+          <p className="mt-3 text-xs leading-relaxed text-foreground-muted">
+            Phí vận chuyển cần được xác định theo địa chỉ nhận hàng và biểu phí thực tế của đơn vị vận chuyển trước khi hoàn tất đơn hàng.
+          </p>
+        )}
 
         <p className="mt-5 border-t border-border pt-5 text-xs leading-relaxed text-foreground-muted">
           Giá sản phẩm là giá bán cuối cùng đã bao gồm thuế giá trị gia tăng (VAT). DELIVN hỗ trợ xuất hóa đơn điện tử theo yêu cầu.

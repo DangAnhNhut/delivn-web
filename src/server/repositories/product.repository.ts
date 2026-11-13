@@ -54,6 +54,7 @@ export type LockedVariant = {
   sku: string;
   active: boolean;
   priceVnd: number;
+  weightGrams?: number;
 };
 
 type DatabaseProvider = () => Database;
@@ -183,6 +184,7 @@ export function createProductRepository(provider: DatabaseProvider = getDb) {
           sku: productVariants.sku,
           active: productVariants.active,
           priceVnd: productVariants.priceVnd,
+          weightGrams: productVariants.weightGrams,
         })
         .from(productVariants)
         .where(inArray(productVariants.id, [...variantIds]))

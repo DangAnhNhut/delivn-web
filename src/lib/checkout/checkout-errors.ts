@@ -40,6 +40,11 @@ const apiMessages: Record<string, Omit<CheckoutErrorPresentation, "canRetry">> =
     message: "Hệ thống đặt hàng tạm thời chưa sẵn sàng. Vui lòng thử lại sau.",
     cartActionRecommended: false,
   },
+  SHIPPING_QUOTE_REQUIRED: {
+    message:
+      "Phí vận chuyển cần được xác định theo địa chỉ nhận hàng và biểu phí thực tế của đơn vị vận chuyển trước khi hoàn tất đơn hàng.",
+    cartActionRecommended: false,
+  },
   INTERNAL_ERROR: {
     message: GENERIC_ERROR,
     cartActionRecommended: false,

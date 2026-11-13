@@ -290,10 +290,19 @@ export function CheckoutForm({
         ) : null}
       </div>
 
+      {submitBlocked ? (
+        <p
+          data-shipping-blocked-notice
+          className="mt-6 text-center text-xs leading-relaxed text-foreground-muted"
+        >
+          Phí vận chuyển cần được xác định theo địa chỉ nhận hàng và biểu phí thực tế của đơn vị vận chuyển trước khi hoàn tất đơn hàng.
+        </p>
+      ) : null}
+
       <button
         type="submit"
         disabled={isSubmitting || submitBlocked}
-        className="mt-9 inline-flex min-h-12 w-full items-center justify-center border border-foreground bg-foreground px-6 py-3.5 text-xs font-bold tracking-[0.2em] text-background uppercase transition-colors duration-200 hover:border-accent hover:bg-accent disabled:cursor-not-allowed disabled:border-border disabled:bg-surface disabled:text-foreground-muted focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent motion-reduce:transition-none"
+        className="mt-4 inline-flex min-h-12 w-full items-center justify-center border border-foreground bg-foreground px-6 py-3.5 text-xs font-bold tracking-[0.2em] text-background uppercase transition-colors duration-200 hover:border-accent hover:bg-accent disabled:cursor-not-allowed disabled:border-border disabled:bg-surface disabled:text-foreground-muted focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent motion-reduce:transition-none"
       >
         {isSubmitting ? "ĐANG GỬI ĐƠN HÀNG" : "ĐẶT HÀNG"}
       </button>

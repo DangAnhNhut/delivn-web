@@ -10,6 +10,7 @@ vi.mock("@/server/services/checkout.service", () => ({
   createCheckoutService: () => ({ createOrder: mocks.createOrder }),
 }));
 
+import { ShippingQuoteRequiredError } from "@/server/errors/commerce-error";
 import { POST } from "./route";
 
 const payload = {
@@ -40,5 +41,16 @@ describe("POST /api/checkout ownership", () => {
     }));
     expect(response.status).toBe(201);
     expect(mocks.createOrder).toHaveBeenCalledWith(expect.not.objectContaining({ userId: payload.userId }), { userId });
+  });
+
+  it("returns HTTP 422 when shipping quote is required", async () => {
+    const userId = "00000000-0000-4000-8000-000000000077";
+    mocks.getSession.mockResolvedValue({ user: { id: userId } });
+    mocks.createOrder.mockRejectedValue(new ShippingQuoteRequiredError());
+    const response = await POST(new Request("http://local/api/checkout", {
+      method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(payload),
+    }));
+    expect(response.status).toBe(422);
+    expect(await response.json()).toMatchObject({ error: { code: "SHIPPING_QUOTE_REQUIRED" } });
   });
 });

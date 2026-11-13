@@ -4,6 +4,7 @@ import {
   CheckoutValidationError,
   InsufficientInventoryError,
   ItemUnavailableError,
+  ShippingQuoteRequiredError,
 } from "@/server/errors/commerce-error";
 import {
   createInventoryRepository,
@@ -28,7 +29,11 @@ import { formatOrderNumber } from "@/server/utils/order-number";
 import type { NormalizedCheckoutInput } from "@/server/validation/checkout-normalization";
 
 import { mapOrderToDto } from "./order.service";
-import { calculateShippingFeeVnd, type ShippingQuoteInput } from "./shipping.service";
+import {
+  createDefaultShippingQuoteService,
+  type ShippingQuoteRequest,
+  type ShippingQuoteResult,
+} from "./shipping.service";
 
 type ProductCheckoutRepository<TTransaction> = {
   discoverVariantRelationships(
@@ -70,18 +75,21 @@ export type CheckoutDependencies<TTransaction> = {
   productRepository: ProductCheckoutRepository<TTransaction>;
   inventoryRepository: InventoryCheckoutRepository<TTransaction>;
   orderRepository: OrderCheckoutRepository<TTransaction>;
-  calculateShippingFeeVnd(input: ShippingQuoteInput): number;
+  getShippingQuote(
+    request: ShippingQuoteRequest,
+  ): Promise<ShippingQuoteResult> | ShippingQuoteResult;
 };
 
 export type CheckoutOwnership = { userId: string };
 
 function productionDependencies(): CheckoutDependencies<DbTransaction> {
+  const shippingService = createDefaultShippingQuoteService();
   return {
     withTransaction,
     productRepository: createProductRepository(),
     inventoryRepository: createInventoryRepository(),
     orderRepository: createOrderRepository(),
-    calculateShippingFeeVnd,
+    getShippingQuote: (request) => shippingService.getQuote(request),
   };
 }
 
@@ -203,10 +211,24 @@ export function createCheckoutService<TTransaction = DbTransaction>(
           };
         });
 
-        const shippingFeeVnd = deps.calculateShippingFeeVnd({
+        const totalWeightGrams = pendingItems.reduce((acc, item) => {
+          const variant = variantById.get(item.variantId);
+          return acc + (variant?.weightGrams ?? 500) * item.quantity;
+        }, 0);
+
+        const quoteResult = await deps.getShippingQuote({
           subtotalVnd,
           address: input.customer.address,
+          weightGrams: totalWeightGrams,
         });
+
+        if (quoteResult.status !== "QUOTED" || quoteResult.quote.amountVnd <= 0) {
+          throw new ShippingQuoteRequiredError(
+            quoteResult.status === "UNAVAILABLE" ? quoteResult.reason : undefined,
+          );
+        }
+
+        const shippingFeeVnd = quoteResult.quote.amountVnd;
         const totalVnd = checkedAddVnd(subtotalVnd, shippingFeeVnd);
         const { createdAt, sequenceValue } = await deps.orderRepository.getNextOrderNumberParts(
           transaction,

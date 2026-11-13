@@ -6,12 +6,14 @@ import {
   InsufficientInventoryError,
   ItemUnavailableError,
   MoneyLimitError,
+  ShippingQuoteRequiredError,
 } from "@/server/errors/commerce-error";
 
 import {
   createCheckoutService,
   type CheckoutDependencies,
 } from "./checkout.service";
+import type { ShippingQuoteResult } from "./shipping.service";
 
 type FakeProduct = { id: string; name: string; status: "draft" | "active" | "archived" };
 type FakeVariant = {
@@ -98,6 +100,7 @@ function createHarness(options?: {
   state?: FakeState;
   failAt?: "order" | "items" | "reservation" | "history";
   shippingFeeVnd?: number;
+  shippingQuoteResult?: ShippingQuoteResult;
 }) {
   let committed = structuredClone(options?.state ?? initialState());
   const transactionLogs: string[][] = [];
@@ -167,7 +170,28 @@ function createHarness(options?: {
         transaction.state.history.push({ orderId, fromStatus: null, toStatus: "pending" });
       },
     },
-    calculateShippingFeeVnd: () => options?.shippingFeeVnd ?? 0,
+    getShippingQuote: (request) => {
+      if (options?.shippingQuoteResult) return options.shippingQuoteResult;
+      const fee = options?.shippingFeeVnd ?? 30_000;
+      if (fee <= 0) {
+        return {
+          status: "UNAVAILABLE",
+          reason: "Phí vận chuyển chưa được xác định.",
+        };
+      }
+      return {
+        status: "QUOTED",
+        quote: {
+          amountVnd: fee,
+          providerId: "test-carrier",
+          providerName: "Test Carrier",
+          destination: { address: request.address },
+          weightGrams: request.weightGrams ?? 500,
+          orderValueVnd: request.subtotalVnd,
+          quotedAt: new Date().toISOString(),
+        },
+      };
+    },
   };
 
   return {
@@ -185,7 +209,7 @@ describe("checkout service", () => {
     expect(result).toEqual({
       id: ORDER_ID,
       orderNumber: "DLV-20260923-000041",
-      totalVnd: 470_000,
+      totalVnd: 500_000,
       paymentMethod: "cod",
       orderStatus: "pending",
       paymentStatus: "unpaid",
@@ -279,7 +303,7 @@ describe("checkout service", () => {
   it("accepts a total exactly at the PostgreSQL integer maximum", async () => {
     const state = initialState();
     state.variants = [
-      { ...state.variants[0], id: VARIANT_A, productId: PRODUCT_A, priceVnd: 2_147_483_647 },
+      { ...state.variants[0], id: VARIANT_A, productId: PRODUCT_A, priceVnd: 2_147_483_647 - 30_000 },
     ];
     state.relationships = [{ variantId: VARIANT_A, productId: PRODUCT_A }];
     state.inventory = [{ variantId: VARIANT_A, quantity: 1, reservedQuantity: 0 }];
@@ -314,5 +338,66 @@ describe("checkout service", () => {
     const oneItem = { ...input, items: [{ variantId: VARIANT_A, quantity: 1 }] };
     await expect(harness.service.createOrder(oneItem, ownership)).rejects.toBeInstanceOf(MoneyLimitError);
     expect(harness.getState().orders).toEqual([]);
+  });
+
+  it("rejects order creation when shipping quote is unavailable and leaves state unmutated", async () => {
+    const harness = createHarness({
+      shippingQuoteResult: {
+        status: "UNAVAILABLE",
+        reason: "Phí vận chuyển cần được xác định theo địa chỉ nhận hàng và biểu phí thực tế.",
+      },
+    });
+    const beforeState = structuredClone(harness.getState());
+
+    await expect(harness.service.createOrder(input, ownership)).rejects.toBeInstanceOf(
+      ShippingQuoteRequiredError,
+    );
+    expect(harness.getState()).toEqual(beforeState);
+  });
+
+  it("rejects order creation when shipping quote is zero (no fake free shipping)", async () => {
+    const harness = createHarness({
+      shippingQuoteResult: {
+        status: "QUOTED",
+        quote: {
+          amountVnd: 0,
+          providerId: "test",
+          providerName: "Test",
+          destination: { address: input.customer.address },
+          weightGrams: 500,
+          orderValueVnd: 470_000,
+          quotedAt: new Date().toISOString(),
+        },
+      },
+    });
+    const beforeState = structuredClone(harness.getState());
+
+    await expect(harness.service.createOrder(input, ownership)).rejects.toBeInstanceOf(
+      ShippingQuoteRequiredError,
+    );
+    expect(harness.getState()).toEqual(beforeState);
+  });
+
+  it("rejects order creation when shipping quote is negative", async () => {
+    const harness = createHarness({
+      shippingQuoteResult: {
+        status: "QUOTED",
+        quote: {
+          amountVnd: -15_000,
+          providerId: "test",
+          providerName: "Test",
+          destination: { address: input.customer.address },
+          weightGrams: 500,
+          orderValueVnd: 470_000,
+          quotedAt: new Date().toISOString(),
+        },
+      },
+    });
+    const beforeState = structuredClone(harness.getState());
+
+    await expect(harness.service.createOrder(input, ownership)).rejects.toBeInstanceOf(
+      ShippingQuoteRequiredError,
+    );
+    expect(harness.getState()).toEqual(beforeState);
   });
 });

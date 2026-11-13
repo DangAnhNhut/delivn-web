@@ -69,10 +69,31 @@ function storeCart(items: CartItem[]) {
   localStorage.setItem(CART_STORAGE_KEY, JSON.stringify({ version: 1, items }));
 }
 
-async function mount(items: CartItem[] = [first]) {
+const testShippingQuote = {
+  amountVnd: 30_000,
+  providerId: "test-carrier",
+  providerName: "Đơn vị vận chuyển thử nghiệm",
+  destination: { address: "123 Đường Cà Phê, Phường Ba Đình, Thành phố Hà Nội, Việt Nam" },
+  weightGrams: 500,
+  orderValueVnd: 470_000,
+  quotedAt: "2026-09-24T09:00:00.000Z",
+};
+
+async function mount(
+  items: CartItem[] = [first],
+  options?: { shippingQuote?: typeof testShippingQuote | null },
+) {
   storeCart(items);
+  const quote =
+    options && "shippingQuote" in options ? options.shippingQuote : testShippingQuote;
   await act(async () => {
-    root.render(createElement(CartProvider, null, createElement(CheckoutClient)));
+    root.render(
+      createElement(
+        CartProvider,
+        null,
+        createElement(CheckoutClient, { initialShippingQuote: quote }),
+      ),
+    );
   });
 }
 
@@ -228,7 +249,9 @@ describe("CheckoutClient hydration and form", () => {
     expect(container.textContent).toContain("TẠM TÍNH THAM KHẢO");
     expect(container.textContent).toContain("470.000 ₫");
     expect(container.textContent).toContain("PHÍ VẬN CHUYỂN");
-    expect(container.textContent).toContain("TÍNH THEO BIỂU PHÍ THỰC TẾ");
+    expect(container.textContent).toContain("30.000 ₫");
+    expect(container.textContent).toContain("TỔNG THANH TOÁN");
+    expect(container.textContent).toContain("500.000 ₫");
     expect(container.textContent).toContain("đã bao gồm thuế giá trị gia tăng (VAT)");
     expect(container.textContent).toContain("hóa đơn điện tử");
     expect(container.textContent).not.toContain("MIỄN PHÍ VẬN CHUYỂN");
@@ -238,6 +261,34 @@ describe("CheckoutClient hydration and form", () => {
     expect(terms?.required).toBe(true);
     expect(container.querySelector('a[href="/dieu-khoan-giao-dich"]')).not.toBeNull();
     expect(container.querySelector('a[href="/chinh-sach-bao-mat"]')).not.toBeNull();
+  });
+
+  it("disables submit button and shows unquoted shipping notice when quote is unavailable", async () => {
+    await mount([first], { shippingQuote: null });
+
+    const submitButton = container.querySelector<HTMLButtonElement>('button[type="submit"]');
+    expect(submitButton?.disabled).toBe(true);
+    expect(container.textContent).toContain("PHÍ VẬN CHUYỂN");
+    expect(container.textContent).toContain("Chưa xác định");
+    expect(container.textContent).toContain(
+      "Phí vận chuyển cần được xác định theo địa chỉ nhận hàng và biểu phí thực tế của đơn vị vận chuyển trước khi hoàn tất đơn hàng.",
+    );
+    expect(container.textContent).not.toContain("0 đ");
+    expect(container.textContent).not.toContain("Miễn phí");
+    expect(container.textContent).not.toContain("TỔNG THANH TOÁN");
+  });
+
+  it("blocks submit action when quote is unavailable and leaves cart intact", async () => {
+    const fetcher = vi.fn<typeof fetch>();
+    vi.stubGlobal("fetch", fetcher);
+    await mount([first], { shippingQuote: null });
+    fillValidForm({ acceptTerms: true });
+
+    await submitForm();
+
+    expect(fetcher).not.toHaveBeenCalled();
+    const errorSummary = container.querySelector<HTMLElement>("[data-checkout-error]");
+    expect(errorSummary?.textContent).toContain("Phí vận chuyển cần được xác định");
   });
 
   it("requires a fresh commune selection whenever the province changes", async () => {
