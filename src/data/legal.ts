@@ -158,6 +158,7 @@ export const LEGAL_PAGES: Record<LegalRoute, LegalPageDefinition> = {
           "Tài khoản sử dụng họ tên, email và thông tin xác thực để đăng ký, đăng nhập và liên kết đơn hàng với đúng khách hàng.",
           "Phiên đăng nhập được lưu và kiểm tra trong cơ sở dữ liệu. Website có thể nhận thông tin nhận dạng cơ bản từ Google khi khách hàng chủ động chọn đăng nhập bằng Google.",
           "Đơn hàng mới của khách hàng đã đăng nhập được liên kết với tài khoản để hiển thị lịch sử và chi tiết đơn hàng; đơn hàng lịch sử không được tự động gán theo email, số điện thoại hoặc tên.",
+          "Hệ thống ghi nhận và lưu trữ có thời hạn địa chỉ IP và định danh kỹ thuật trong cơ sở dữ liệu nhằm kiểm soát tần suất truy cập (rate limiting), bảo vệ an toàn tài khoản và phòng ngừa lạm dụng hoặc can thiệp trái phép.",
         ],
       },
       {
