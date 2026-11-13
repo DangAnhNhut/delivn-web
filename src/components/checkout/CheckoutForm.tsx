@@ -30,11 +30,13 @@ const paymentMethods = [
     value: "cod",
     name: "Thanh toán khi nhận hàng",
     description: "Thanh toán khi đơn hàng được giao đến bạn.",
+    disabled: false,
   },
   {
     value: "bank_transfer",
     name: "Chuyển khoản ngân hàng",
-    description: "Chọn chuyển khoản làm phương thức thanh toán cho đơn hàng.",
+    description: "Chuyển khoản ngân hàng / QR sẽ được cập nhật.",
+    disabled: true,
   },
 ] as const;
 
@@ -187,13 +189,16 @@ export function CheckoutForm({
         >
           {paymentMethods.map((method) => {
             const isSelected = values.paymentMethod === method.value;
+            const isDisabled = "disabled" in method && Boolean(method.disabled);
             return (
               <label
                 key={method.value}
-                className={`relative flex min-h-28 cursor-pointer items-start gap-4 border px-5 py-5 transition-colors focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent motion-reduce:transition-none ${
-                  isSelected
-                    ? "border-accent bg-cream"
-                    : "border-border bg-background hover:border-foreground-muted"
+                className={`relative flex min-h-28 items-start gap-4 border px-5 py-5 transition-colors motion-reduce:transition-none ${
+                  isDisabled
+                    ? "cursor-not-allowed border-border bg-surface/50 opacity-60"
+                    : isSelected
+                      ? "cursor-pointer border-accent bg-cream focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent"
+                      : "cursor-pointer border-border bg-background hover:border-foreground-muted focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent"
                 }`}
               >
                 <input
@@ -201,9 +206,12 @@ export function CheckoutForm({
                   name="paymentMethod"
                   value={method.value}
                   required
+                  disabled={isDisabled}
                   checked={isSelected}
-                  onChange={(event) => onChange("paymentMethod", event.target.value)}
-                  className="mt-0.5 size-4 shrink-0 accent-[var(--accent)]"
+                  onChange={(event) => {
+                    if (!isDisabled) onChange("paymentMethod", event.target.value);
+                  }}
+                  className="mt-0.5 size-4 shrink-0 accent-[var(--accent)] disabled:cursor-not-allowed"
                 />
                 <span className="min-w-0 flex-1">
                   <span className="flex items-start justify-between gap-3">
@@ -211,7 +219,7 @@ export function CheckoutForm({
                       {method.name}
                     </span>
                     <span className="shrink-0 text-[9px] font-bold tracking-[0.14em] text-accent uppercase">
-                      {isSelected ? "ĐÃ CHỌN" : "CHỌN"}
+                      {isDisabled ? "ĐANG CẬP NHẬT" : isSelected ? "ĐÃ CHỌN" : "CHỌN"}
                     </span>
                   </span>
                   <span className="mt-2 block text-xs leading-relaxed text-foreground-muted">
@@ -233,29 +241,13 @@ export function CheckoutForm({
             <p className="text-xs font-bold tracking-[0.18em] text-foreground uppercase">
               THANH TOÁN CHUYỂN KHOẢN
             </p>
-            <div className="mt-5 flex flex-col items-center gap-5 sm:flex-row sm:items-center">
-              <div
-                aria-label="Mã QR không hoạt động, đang cập nhật"
-                className="relative flex aspect-square w-40 shrink-0 items-center justify-center border border-foreground/25 bg-background text-center"
-              >
-                <span
-                  aria-hidden="true"
-                  className="absolute inset-3 border border-dashed border-foreground/20"
-                />
-                <span className="relative text-[11px] font-bold leading-relaxed tracking-[0.18em] text-foreground-muted uppercase">
-                  MÃ QR
-                  <br />
-                  ĐANG CẬP NHẬT
-                </span>
-              </div>
-              <div className="max-w-sm text-center sm:text-left">
-                <p className="text-sm font-semibold text-foreground">
-                  Mã QR thanh toán đang được hoàn thiện.
-                </p>
-                <p className="mt-2 text-xs leading-relaxed text-foreground-muted">
-                  Khu vực này chưa cung cấp mã thanh toán và không thể quét.
-                </p>
-              </div>
+            <div className="mt-4 max-w-lg">
+              <p className="text-sm font-semibold text-foreground">
+                Chuyển khoản ngân hàng / QR sẽ được cập nhật.
+              </p>
+              <p className="mt-2 text-xs leading-relaxed text-foreground-muted">
+                Phương thức chuyển khoản ngân hàng đang được cập nhật hạ tầng tài khoản doanh nghiệp chính thức. Quý khách vui lòng chọn phương thức Thanh toán khi nhận hàng (COD).
+              </p>
             </div>
           </section>
         ) : null}

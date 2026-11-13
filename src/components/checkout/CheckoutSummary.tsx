@@ -46,9 +46,21 @@ export function CheckoutSummary({ items }: { items: readonly CartItem[] }) {
             {formatVnd(selectCartSubtotalVnd(items))}
           </p>
         </div>
-        <p className="mt-5 border-t border-border pt-5 text-sm leading-relaxed text-foreground-muted">
-          Giá hiển thị là dữ liệu tham khảo từ giỏ hàng. Máy chủ sẽ xác nhận lại
-          sản phẩm, khả năng đáp ứng và tổng tiền khi bạn đặt hàng.
+
+        <div className="mt-4 flex items-baseline justify-between gap-4 border-t border-border/60 pt-4">
+          <p className="text-[10px] font-bold tracking-[0.16em] text-foreground uppercase">
+            PHÍ VẬN CHUYỂN
+          </p>
+          <p className="text-xs font-semibold tracking-[0.08em] text-foreground-muted uppercase">
+            TÍNH THEO BIỂU PHÍ THỰC TẾ
+          </p>
+        </div>
+        <p className="mt-2 text-xs leading-relaxed text-foreground-muted">
+          Phí vận chuyển được tính theo biểu phí thực tế của đơn vị vận chuyển và địa chỉ nhận hàng. Website không áp dụng chính sách miễn phí vận chuyển mặc định.
+        </p>
+
+        <p className="mt-5 border-t border-border pt-5 text-xs leading-relaxed text-foreground-muted">
+          Giá sản phẩm là giá bán cuối cùng đã bao gồm thuế giá trị gia tăng (VAT). DELIVN hỗ trợ xuất hóa đơn điện tử theo yêu cầu.
         </p>
       </div>
     </aside>

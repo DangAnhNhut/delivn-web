@@ -1,6 +1,7 @@
 import type { OrderDTO } from "@/contracts";
 import { withTransaction, type DbTransaction } from "@/server/db";
 import {
+  CheckoutValidationError,
   InsufficientInventoryError,
   ItemUnavailableError,
 } from "@/server/errors/commerce-error";
@@ -106,6 +107,11 @@ export function createCheckoutService<TTransaction = DbTransaction>(
       input: NormalizedCheckoutInput,
       ownership: CheckoutOwnership,
     ): Promise<OrderDTO> {
+      if (input.paymentMethod === "bank_transfer") {
+        throw new CheckoutValidationError(
+          "Phương thức thanh toán chuyển khoản ngân hàng đang được cập nhật, vui lòng chọn phương thức khác.",
+        );
+      }
       const variantIds = input.items.map((item) => item.variantId);
       assertSortedUniqueIds(variantIds);
 

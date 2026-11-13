@@ -98,6 +98,10 @@ export function createCheckoutInput(
   if (!addressDetail || addressDetail.length > MAX_ADDRESS_DETAIL_LENGTH) {
     structuredFieldErrors.addressDetail = fieldMessages.addressDetail;
   }
+  if (values.paymentMethod === "bank_transfer") {
+    structuredFieldErrors.paymentMethod =
+      "Phương thức chuyển khoản ngân hàng đang được cập nhật, vui lòng chọn Thanh toán khi nhận hàng (COD).";
+  }
 
   const composedAddress =
     province && commune && isCommuneInProvince(commune.code, province.code) && addressDetail

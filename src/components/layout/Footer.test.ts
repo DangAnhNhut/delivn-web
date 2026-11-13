@@ -12,6 +12,7 @@ describe("Footer compliance navigation", () => {
     expect(html).toContain("3703119501");
     expect(html).toContain("Thành phố Hồ Chí Minh");
     expect(html).toContain("0961122226");
+    expect(html).toContain("Vietnamdelicoffee@gmail.com");
     for (const href of [
       "/lien-he",
       "/thong-tin-doanh-nghiep",

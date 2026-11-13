@@ -8,6 +8,7 @@ export const COMPANY_INFORMATION = {
   registeredOffice:
     "Ô 32, Lô H37, Đường NH15, Khu dân cư Ấp 6, Khu phố 1, Phường Thới Hòa, Thành phố Hồ Chí Minh, Việt Nam",
   phone: "0961122226",
+  email: "Vietnamdelicoffee@gmail.com",
   legalRepresentative: "ĐẶNG VĂN NAM",
   representativeTitle: "Giám đốc",
   registrationAuthority:
@@ -44,29 +45,27 @@ export type LegalPageDefinition = {
   sections: readonly LegalSection[];
 };
 
-const pendingNotice =
-  "THÔNG TIN ĐANG CHỜ DOANH NGHIỆP XÁC NHẬN — Nội dung vận hành dưới đây chưa phải chính sách hoàn chỉnh để áp dụng hoặc công bố khi kinh doanh.";
-
 export const LEGAL_PAGES: Record<LegalRoute, LegalPageDefinition> = {
   "/lien-he": {
     eyebrow: "LIÊN HỆ DELIVN",
     title: "KẾT NỐI VỚI DELIVN.",
     description:
       "Thông tin liên hệ công khai của CÔNG TY TNHH CÀ PHÊ DELIVN.",
-    updated: "31/10/2026",
+    updated: "13/11/2026",
     sections: [
       {
         title: "THÔNG TIN LIÊN HỆ",
         items: [
           COMPANY_INFORMATION.legalName,
           `Điện thoại: ${COMPANY_INFORMATION.phone}`,
+          `Email: ${COMPANY_INFORMATION.email}`,
           `Trụ sở đăng ký: ${COMPANY_INFORMATION.registeredOffice}`,
         ],
       },
       {
         title: "HỖ TRỢ ĐƠN HÀNG",
         paragraphs: [
-          "Khi cần trao đổi về một đơn hàng, vui lòng chuẩn bị mã đơn hàng và liên hệ theo số điện thoại công khai ở trên.",
+          `Khi cần trao đổi về đơn hàng hoặc các vấn đề liên quan, quý khách vui lòng chuẩn bị mã đơn hàng và liên hệ theo hotline ${COMPANY_INFORMATION.phone} hoặc email ${COMPANY_INFORMATION.email}.`,
         ],
       },
     ],
@@ -76,7 +75,7 @@ export const LEGAL_PAGES: Record<LegalRoute, LegalPageDefinition> = {
     title: "DELIVN COFFEE.",
     description:
       "Thông tin đăng ký công khai của đơn vị sở hữu và vận hành website DELIVN.",
-    updated: "31/10/2026",
+    updated: "13/11/2026",
     sections: [
       {
         title: "NHẬN DIỆN PHÁP LÝ",
@@ -85,6 +84,8 @@ export const LEGAL_PAGES: Record<LegalRoute, LegalPageDefinition> = {
           `Tên tiếng Anh: ${COMPANY_INFORMATION.englishName}`,
           `Tên viết tắt: ${COMPANY_INFORMATION.abbreviatedName}`,
           `Mã số doanh nghiệp: ${COMPANY_INFORMATION.enterpriseNumber}`,
+          `Email liên hệ: ${COMPANY_INFORMATION.email}`,
+          `Hotline: ${COMPANY_INFORMATION.phone}`,
         ],
       },
       {
@@ -108,146 +109,178 @@ export const LEGAL_PAGES: Record<LegalRoute, LegalPageDefinition> = {
     eyebrow: "ĐIỀU KHOẢN GIAO DỊCH",
     title: "GIAO DỊCH MINH BẠCH.",
     description:
-      "Thông tin về luồng đặt hàng hiện có trên website DELIVN và các nội dung đang chờ doanh nghiệp xác nhận.",
-    updated: "31/10/2026",
-    pendingNotice,
+      "Quy chế và điều khoản giao dịch thương mại điện tử áp dụng cho khách hàng mua sắm tại DELIVN.",
+    updated: "13/11/2026",
     sections: [
       {
-        title: "QUY TRÌNH ĐẶT HÀNG HIỆN CÓ",
+        title: "QUY TRÌNH ĐẶT HÀNG",
         items: [
-          "Khách hàng chọn sản phẩm, biến thể và số lượng vào giỏ hàng.",
-          "Tại bước thanh toán, khách hàng cung cấp thông tin nhận hàng và chọn một phương thức thanh toán được hệ thống hỗ trợ.",
-          "Khi gửi yêu cầu, máy chủ kiểm tra lại sản phẩm, giá, trạng thái và khả năng đáp ứng trước khi tạo đơn hàng.",
-          "Đơn hàng chỉ được xác nhận trên giao diện khi máy chủ trả về mã đơn và tổng tiền xác nhận.",
+          "Khách hàng lựa chọn sản phẩm, quy cách đóng gói và số lượng phù hợp vào giỏ hàng.",
+          "Tại trang thanh toán, khách hàng cung cấp chính xác thông tin người nhận (họ tên, số điện thoại, địa chỉ nhận hàng) và lựa chọn phương thức thanh toán được hỗ trợ.",
+          "Máy chủ kiểm tra tính hợp lệ của sản phẩm, tồn kho khả dụng và tính toán đơn hàng trước khi tạo mã đơn.",
+          "Đơn hàng được ghi nhận và hiển thị thông tin xác nhận sau khi quá trình gửi thông tin thành công.",
         ],
       },
       {
-        title: "GIÁ VÀ KHẢ NĂNG ĐÁP ỨNG",
+        title: "GIÁ BÁN VÀ THUẾ GIÁ TRỊ GIA TĂNG (VAT)",
         paragraphs: [
-          "Giá trong giỏ hàng là dữ liệu hiển thị tham khảo. Giá và tình trạng sản phẩm do máy chủ xác nhận tại thời điểm đặt hàng.",
-          "Cách thể hiện thuế, phí vận chuyển, phí đóng gói và chi phí khác đang chờ doanh nghiệp xác nhận trước khi triển khai thương mại.",
+          "Giá sản phẩm niêm yết trên website là giá bán cuối cùng đã bao gồm thuế giá trị gia tăng (VAT) theo quy định của pháp luật Việt Nam.",
+          "DELIVN hỗ trợ xuất hóa đơn điện tử cho các đơn hàng theo yêu cầu của khách hàng khi cung cấp đầy đủ thông tin xuất hóa đơn.",
         ],
       },
       {
-        title: "NỘI DUNG CHƯA HOÀN TẤT",
+        title: "GIAO NHẬN VÀ PHÍ VẬN CHUYỂN",
         paragraphs: [
-          "Phương thức và thời gian giao hàng, quy trình hủy đơn, hóa đơn, đổi trả, hoàn tiền và cơ chế tra cứu đơn sau mua chưa được doanh nghiệp phê duyệt. Website chưa sẵn sàng triển khai thương mại cho đến khi các nội dung này được hoàn tất.",
+          "DELIVN giao hàng toàn quốc trên 34 tỉnh, thành phố trực thuộc Trung ương thông qua các đơn vị dịch vụ logistics bên thứ ba uy tín (như GHN, J&T Express hoặc đối tác vận chuyển phù hợp khác).",
+          "Phí vận chuyển được tính theo biểu phí thực tế của đơn vị vận chuyển đối tác dựa trên khối lượng kiện hàng và địa chỉ nhận hàng. Website không áp dụng chính sách miễn phí vận chuyển mặc định.",
+        ],
+      },
+      {
+        title: "THANH TOÁN, ĐỔI TRẢ VÀ HOÀN TIỀN",
+        paragraphs: [
+          "Khách hàng có thể thanh toán khi nhận hàng (COD). Phương thức chuyển khoản ngân hàng đang được chuẩn bị hạ tầng kỹ thuật và tài khoản doanh nghiệp chính thức.",
+          "Khách hàng được quyền gửi yêu cầu đổi trả trong vòng 07 ngày kể từ khi nhận hàng. DELIVN chịu chi phí vận chuyển đổi trả nếu lỗi thuộc về DELIVN; khách hàng chịu chi phí vận chuyển nếu xuất phát từ nhu cầu thay đổi của khách hàng. Khoản tiền hoàn lại được chi trả qua chuyển khoản ngân hàng trong vòng 48 giờ làm việc sau khi yêu cầu được chấp thuận.",
         ],
       },
     ],
   },
   "/chinh-sach-bao-mat": {
     eyebrow: "CHÍNH SÁCH BẢO MẬT",
-    title: "TÔN TRỌNG DỮ LIỆU KHÁCH HÀNG.",
+    title: "BẢO VỆ DỮ LIỆU CÁ NHÂN.",
     description:
-      "Mô tả phạm vi dữ liệu mà luồng đặt hàng hiện tại thu thập và những nội dung quản trị dữ liệu còn phải được phê duyệt.",
-    updated: "06/11/2026",
-    pendingNotice,
+      "Chính sách bảo vệ dữ liệu cá nhân theo Luật Bảo vệ dữ liệu cá nhân số 91/2025/QH15 và Nghị định số 356/2025/NĐ-CP.",
+    updated: "13/11/2026",
     sections: [
       {
-        title: "DỮ LIỆU TRONG LUỒNG ĐẶT HÀNG",
+        title: "DỮ LIỆU THU THẬP KHI ĐẶT HÀNG",
         items: [
-          "Họ và tên, số điện thoại và địa chỉ nhận hàng.",
-          "Email và ghi chú đơn hàng khi khách hàng tự nguyện cung cấp.",
-          "Sản phẩm, biến thể, số lượng và phương thức thanh toán khách hàng lựa chọn.",
+          "Họ và tên, số điện thoại liên lạc và địa chỉ nhận hàng.",
+          "Địa chỉ email và ghi chú đơn hàng khi khách hàng tự nguyện cung cấp.",
+          "Chi tiết đơn hàng gồm sản phẩm, quy cách, số lượng và phương thức thanh toán lựa chọn.",
         ],
       },
       {
-        title: "TÀI KHOẢN VÀ PHIÊN ĐĂNG NHẬP",
+        title: "TÀI KHOẢN VÀ BIỆN PHÁP AN TOÀN KỸ THUẬT",
         items: [
-          "Tài khoản sử dụng họ tên, email và thông tin xác thực để đăng ký, đăng nhập và liên kết đơn hàng với đúng khách hàng.",
-          "Phiên đăng nhập được lưu và kiểm tra trong cơ sở dữ liệu. Website có thể nhận thông tin nhận dạng cơ bản từ Google khi khách hàng chủ động chọn đăng nhập bằng Google.",
-          "Đơn hàng mới của khách hàng đã đăng nhập được liên kết với tài khoản để hiển thị lịch sử và chi tiết đơn hàng; đơn hàng lịch sử không được tự động gán theo email, số điện thoại hoặc tên.",
-          "Hệ thống ghi nhận và lưu trữ có thời hạn địa chỉ IP và định danh kỹ thuật trong cơ sở dữ liệu nhằm kiểm soát tần suất truy cập (rate limiting), bảo vệ an toàn tài khoản và phòng ngừa lạm dụng hoặc can thiệp trái phép.",
+          "Tài khoản sử dụng họ tên, email và mật khẩu xác thực để quản lý và theo dõi lịch sử đơn hàng.",
+          "Phiên đăng nhập được quản lý an toàn trong cơ sở dữ liệu.",
+          "Hệ thống ghi nhận và lưu trữ có thời hạn địa chỉ IP cùng định danh kỹ thuật trong cơ sở dữ liệu nhằm kiểm soát tần suất truy cập (rate limiting), bảo vệ an toàn tài khoản và phòng ngừa các hành vi truy cập trái phép hoặc tấn công dịch vụ.",
         ],
       },
       {
-        title: "MỤC ĐÍCH HIỆN CÓ",
+        title: "MỤC ĐÍCH XỬ LÝ DỮ LIỆU",
         paragraphs: [
-          "Dữ liệu được sử dụng để kiểm tra yêu cầu đặt hàng, tạo đơn hàng và hiển thị kết quả giao dịch. Thông tin biểu mẫu không được lưu vào localStorage hoặc URL bởi giao diện thanh toán.",
+          "Dữ liệu được xử lý nhằm mục đích xác nhận và xử lý đơn hàng, điều phối giao nhận qua đối tác chuyển phát, hỗ trợ khách hàng, xuất hóa đơn điện tử khi có yêu cầu và bảo đảm an toàn hệ thống thông tin.",
         ],
       },
       {
-        title: "NỘI DUNG CẦN DOANH NGHIỆP PHÊ DUYỆT",
+        title: "THỜI HẠN LƯU TRỮ VÀ QUYỀN CỦA CHỦ THỂ DỮ LIỆU",
         paragraphs: [
-          "Thời hạn lưu trữ, bên xử lý hoặc bên nhận dữ liệu, quy trình bảo mật vận hành, đầu mối thực hiện quyền của chủ thể dữ liệu và quy trình xử lý yêu cầu chưa được doanh nghiệp xác nhận.",
+          "Dữ liệu đơn hàng được lưu trữ theo thời hạn quy định của pháp luật về kế toán và thương mại điện tử. Dữ liệu kỹ thuật phục vụ kiểm soát tần suất truy cập được thu dọn định kỳ.",
+          `Khách hàng có quyền yêu cầu tra cứu, điều chỉnh hoặc rút lại sự đồng ý đối với dữ liệu cá nhân của mình bằng cách liên hệ email ${COMPANY_INFORMATION.email} hoặc hotline ${COMPANY_INFORMATION.phone}.`,
         ],
       },
     ],
   },
   "/chinh-sach-thanh-toan": {
     eyebrow: "CHÍNH SÁCH THANH TOÁN",
-    title: "LỰA CHỌN THANH TOÁN.",
+    title: "PHƯƠNG THỨC THANH TOÁN.",
     description:
-      "Các lựa chọn đang được hệ thống ghi nhận, không phải hướng dẫn chuyển tiền hoàn chỉnh.",
-    updated: "31/10/2026",
-    pendingNotice,
+      "Thông tin chi tiết về các phương thức thanh toán được hỗ trợ khi mua hàng tại DELIVN.",
+    updated: "13/11/2026",
     sections: [
       {
-        title: "PHƯƠNG THỨC HỆ THỐNG HỖ TRỢ",
-        items: ["Thanh toán khi nhận hàng (COD).", "Chuyển khoản ngân hàng."],
-      },
-      {
-        title: "TRẠNG THÁI THANH TOÁN",
-        paragraphs: [
-          "Việc chọn chuyển khoản không đồng nghĩa khoản tiền đã được thanh toán. Sau khi tạo đơn, giao diện chỉ hiển thị trạng thái thanh toán do máy chủ trả về.",
+        title: "PHƯƠNG THỨC ĐANG HOẠT ĐỘNG",
+        items: [
+          "Thanh toán khi nhận hàng (COD): Quý khách thanh toán bằng tiền mặt trực tiếp cho nhân viên giao hàng sau khi nhận và kiểm tra bao bì sản phẩm.",
         ],
       },
       {
-        title: "HƯỚNG DẪN CÒN THIẾU",
+        title: "PHƯƠNG THỨC ĐANG CẬP NHẬT",
+        items: [
+          "Chuyển khoản ngân hàng / Mã QR: Hệ thống đang trong quá trình cập nhật hạ tầng thanh toán tự động và tài khoản doanh nghiệp chính thức. Phương thức này tạm thời chưa kích hoạt tại bước thanh toán.",
+        ],
+      },
+      {
+        title: "LƯU Ý AN TOÀN THANH TOÁN",
         paragraphs: [
-          "Doanh nghiệp chưa cung cấp tài khoản thụ hưởng, nội dung chuyển khoản hoặc quy trình đối soát. Không thực hiện chuyển tiền dựa trên thông tin không xuất hiện trong chính sách đã được doanh nghiệp phê duyệt.",
+          "DELIVN hiện chưa công bố số tài khoản ngân hàng chính thức trên trang thanh toán trực tuyến. Quý khách vui lòng không thực hiện chuyển tiền vào bất kỳ tài khoản cá nhân nào không được xác thực chính thức từ DELIVN.",
         ],
       },
     ],
   },
   "/chinh-sach-van-chuyen": {
     eyebrow: "CHÍNH SÁCH VẬN CHUYỂN",
-    title: "THÔNG TIN GIAO NHẬN.",
+    title: "GIAO NHẬN HÀNG HÓA.",
     description:
-      "Phương thức, phạm vi, thời gian và chi phí giao hàng chưa được doanh nghiệp phê duyệt.",
-    updated: "31/10/2026",
-    pendingNotice,
+      "Quy định về phạm vi giao hàng, đối tác vận chuyển, cách tính cước phí và thời gian giao hàng.",
+    updated: "13/11/2026",
     sections: [
       {
-        title: "NỘI DUNG CẦN XÁC NHẬN",
+        title: "PHẠM VI VÀ ĐƠN VỊ VẬN CHUYỂN",
         items: [
-          "Đơn vị và phương thức giao hàng.",
-          "Khu vực phục vụ và giới hạn địa lý.",
-          "Thời gian xử lý, thời gian giao dự kiến và cách xử lý chậm trễ.",
-          "Phí vận chuyển và cách hiển thị phí trước khi khách hàng đặt hàng.",
+          "Phạm vi giao hàng: Áp dụng trên toàn quốc tại tất cả 34 tỉnh, thành phố trực thuộc Trung ương của Việt Nam.",
+          "Đơn vị vận chuyển: DELIVN liên kết với các đơn vị dịch vụ logistics bên thứ ba chuyên nghiệp (như GHN, J&T Express hoặc đối tác vận chuyển phù hợp khác) để đảm bảo hàng hóa đến tay khách hàng nhanh chóng và an toàn.",
         ],
       },
       {
-        title: "TRẠNG THÁI HIỆN TẠI",
+        title: "CƯỚC PHÍ VẬN CHUYỂN",
         paragraphs: [
-          "Website chưa công bố cam kết giao hàng. Giá trị vận chuyển trong môi trường phát triển không phải chính sách thương mại và không được dùng làm cam kết với khách hàng.",
+          "Cước phí vận chuyển không phải là một mức cố định và website không áp dụng chính sách miễn phí vận chuyển mặc định.",
+          "Phí giao hàng được tính toán dựa trên biểu phí thực tế của đơn vị vận chuyển đối tác, phụ thuộc vào khối lượng kiện hàng, kích thước đóng gói và địa bàn nhận hàng cụ thể của khách hàng.",
+        ],
+      },
+      {
+        title: "THỜI GIAN GIAO HÀNG DỰ KIẾN",
+        paragraphs: [
+          "Khu vực nội tỉnh / nội thành trung tâm: Dự kiến từ 1 - 3 ngày làm việc.",
+          "Khu vực liên tỉnh / huyện xã: Dự kiến từ 3 - 5 ngày làm việc.",
+          "Thời gian giao hàng thực tế có thể thay đổi tùy thuộc vào điều kiện thời tiết, tuyến giao hàng của đơn vị chuyển phát hoặc các sự kiện bất khả kháng. Trong trường hợp có sự cố giao hàng chậm trễ, DELIVN sẽ chủ động phối hợp với đơn vị vận chuyển để thông báo và hỗ trợ khách hàng.",
         ],
       },
     ],
   },
   "/chinh-sach-doi-tra-hoan-tien": {
     eyebrow: "ĐỔI TRẢ & HOÀN TIỀN",
-    title: "QUY TRÌNH CẦN ĐƯỢC XÁC NHẬN.",
+    title: "QUY ĐỊNH ĐỔI TRẢ VÀ HOÀN TIỀN.",
     description:
-      "Điều kiện đổi trả và hoàn tiền chưa được doanh nghiệp phê duyệt để áp dụng thương mại.",
-    updated: "31/10/2026",
-    pendingNotice,
+      "Chính sách bảo vệ quyền lợi người tiêu dùng, quy định về đổi trả sản phẩm và thủ tục hoàn tiền tại DELIVN.",
+    updated: "13/11/2026",
     sections: [
       {
-        title: "NỘI DUNG CẦN XÁC NHẬN",
-        items: [
-          "Trường hợp được đổi hoặc trả hàng và thời hạn yêu cầu.",
-          "Tình trạng sản phẩm, chứng từ và bằng chứng cần cung cấp.",
-          "Cách gửi trả hàng và bên chịu chi phí phát sinh.",
-          "Phương thức, thời hạn hoàn tiền và quy trình giải quyết khiếu nại.",
-          "Phạm vi bảo hành, nếu doanh nghiệp áp dụng.",
+        title: "THỜI HẠN YÊU CẦU ĐỔI TRẢ",
+        paragraphs: [
+          "Khách hàng có quyền gửi yêu cầu đổi hoặc trả sản phẩm trong vòng 07 ngày kể từ ngày nhận hàng từ đơn vị giao vận.",
         ],
       },
       {
-        title: "LIÊN HỆ",
+        title: "ĐIỀU KIỆN ĐỔI TRẢ",
+        items: [
+          "Sản phẩm được giao không đúng chủng loại, quy cách đóng gói hoặc số lượng như trong đơn đặt hàng đã xác nhận.",
+          "Sản phẩm hoặc bao bì bị biến dạng, rách hỏng do quá trình đóng gói hoặc vận chuyển.",
+          "Khách hàng vui lòng lưu giữ hóa đơn hoặc phiếu giao hàng, kèm theo hình ảnh hoặc video mở kiện hàng làm bằng chứng đối soát.",
+          "Lưu ý: Tiêu chuẩn chi tiết về tình trạng bao bì và niêm phong sản phẩm khi đổi trả đang được doanh nghiệp hoàn thiện quy chế ban hành nội bộ.",
+        ],
+      },
+      {
+        title: "TRÁCH NHIỆM CHI PHÍ VẬN CHUYỂN ĐỔI TRẢ",
         paragraphs: [
-          `Trong thời gian chính sách chưa được phê duyệt, vui lòng không coi trang này là cam kết đổi trả. Có thể liên hệ ${COMPANY_INFORMATION.phone} để yêu cầu thông tin từ doanh nghiệp.`,
+          "Trường hợp đổi trả do lỗi của DELIVN hoặc đơn vị vận chuyển (sai hàng, hàng hư hỏng): DELIVN chịu 100% chi phí vận chuyển đổi trả hai chiều.",
+          "Trường hợp đổi trả phát sinh do nhu cầu cá nhân của khách hàng: Khách hàng chịu toàn bộ chi phí vận chuyển phát sinh theo biểu phí của đơn vị giao nhận.",
+        ],
+      },
+      {
+        title: "PHƯƠNG THỨC VÀ THỜI GIAN HOÀN TIỀN",
+        paragraphs: [
+          "Sau khi nhận lại sản phẩm và kiểm tra xác nhận đáp ứng điều kiện đổi trả, DELIVN sẽ tiến hành hoàn tiền cho khách hàng.",
+          "Hình thức hoàn tiền: Chuyển khoản ngân hàng trực tiếp vào số tài khoản do khách hàng cung cấp.",
+          "Thời hạn hoàn tiền: Trong vòng 48 giờ làm việc kể từ thời điểm yêu cầu đổi trả được DELIVN phê duyệt.",
+        ],
+      },
+      {
+        title: "ĐẦU MỐI TIẾP NHẬN YÊU CẦU",
+        paragraphs: [
+          `Mọi yêu cầu hỗ trợ đổi trả và hoàn tiền, quý khách vui lòng liên hệ hotline ${COMPANY_INFORMATION.phone} hoặc gửi thư điện tử đến ${COMPANY_INFORMATION.email} kèm theo mã đơn hàng để được giải quyết nhanh chóng.`,
         ],
       },
     ],

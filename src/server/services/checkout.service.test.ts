@@ -1,7 +1,12 @@
 import { describe, expect, it } from "vitest";
 
 import type { NormalizedCheckoutInput } from "@/server/validation/checkout-normalization";
-import { InsufficientInventoryError, ItemUnavailableError, MoneyLimitError } from "@/server/errors/commerce-error";
+import {
+  CheckoutValidationError,
+  InsufficientInventoryError,
+  ItemUnavailableError,
+  MoneyLimitError,
+} from "@/server/errors/commerce-error";
 
 import {
   createCheckoutService,
@@ -212,15 +217,11 @@ describe("checkout service", () => {
     expect(harness.getState().orders[0]).toMatchObject({ userId: ownership.userId });
   });
 
-  it("starts bank-transfer checkout in pending payment state", async () => {
+  it("rejects bank-transfer checkout while payment method is updating", async () => {
     const harness = createHarness();
-    const result = await harness.service.createOrder({ ...input, paymentMethod: "bank_transfer" }, ownership);
-
-    expect(result).toMatchObject({
-      paymentMethod: "bank_transfer",
-      paymentStatus: "pending",
-      orderStatus: "pending",
-    });
+    await expect(
+      harness.service.createOrder({ ...input, paymentMethod: "bank_transfer" }, ownership),
+    ).rejects.toBeInstanceOf(CheckoutValidationError);
   });
 
   it("locks each table in the global order with ascending IDs", async () => {

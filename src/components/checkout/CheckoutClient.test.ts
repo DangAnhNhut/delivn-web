@@ -209,7 +209,9 @@ describe("CheckoutClient hydration and form", () => {
       'input[value="bank_transfer"]',
     );
     expect(cod?.disabled).toBe(false);
-    expect(bankTransfer?.disabled).toBe(false);
+    expect(bankTransfer?.disabled).toBe(true);
+    expect(container.textContent).toContain("ĐANG CẬP NHẬT");
+    expect(container.textContent).toContain("Chuyển khoản ngân hàng / QR sẽ được cập nhật.");
     expect(container.querySelector("[data-bank-transfer-placeholder]")).toBeNull();
     expect(container.textContent).not.toContain("VietQR");
     expect(container.textContent).not.toContain("MoMo");
@@ -217,31 +219,18 @@ describe("CheckoutClient hydration and form", () => {
     expect(container.textContent).not.toContain("VNPay");
     expect(container.textContent).not.toContain("SẮP HỖ TRỢ");
 
-    act(() => bankTransfer?.click());
-    expect(bankTransfer?.checked).toBe(true);
-    expect(container.textContent).toContain("ĐÃ CHỌN");
-    const placeholder = container.querySelector("[data-bank-transfer-placeholder]");
-    expect(placeholder?.textContent).toContain("THANH TOÁN CHUYỂN KHOẢN");
-    expect(placeholder?.textContent).toContain("MÃ QR");
-    expect(placeholder?.textContent).toContain("ĐANG CẬP NHẬT");
-    expect(placeholder?.textContent).toContain("Mã QR thanh toán đang được hoàn thiện.");
-    expect(placeholder?.textContent).not.toContain("SỐ TÀI KHOẢN");
-    expect(placeholder?.textContent).not.toContain("CHỦ TÀI KHOẢN");
-    expect(placeholder?.textContent).not.toContain("NỘI DUNG CHUYỂN KHOẢN");
-
     act(() => cod?.click());
     expect(cod?.checked).toBe(true);
+    expect(container.textContent).toContain("ĐÃ CHỌN");
     expect(container.querySelector("[data-bank-transfer-placeholder]")).toBeNull();
     expect(container.textContent).toContain("Cà phê A");
     expect(container.textContent).toContain("Cà phê B");
     expect(container.textContent).toContain("TẠM TÍNH THAM KHẢO");
     expect(container.textContent).toContain("470.000 ₫");
-    expect(container.textContent).toContain(
-      "Giá hiển thị là dữ liệu tham khảo từ giỏ hàng.",
-    );
-    expect(container.textContent).toContain(
-      "Máy chủ sẽ xác nhận lại sản phẩm, khả năng đáp ứng và tổng tiền khi bạn đặt hàng.",
-    );
+    expect(container.textContent).toContain("PHÍ VẬN CHUYỂN");
+    expect(container.textContent).toContain("TÍNH THEO BIỂU PHÍ THỰC TẾ");
+    expect(container.textContent).toContain("đã bao gồm thuế giá trị gia tăng (VAT)");
+    expect(container.textContent).toContain("hóa đơn điện tử");
     expect(container.textContent).not.toContain("MIỄN PHÍ VẬN CHUYỂN");
     expect(container.querySelector('input[name="company"]')).toBeNull();
     const terms = container.querySelector<HTMLInputElement>('input[name="termsAccepted"]');

@@ -143,6 +143,15 @@ export function Footer() {
                 {COMPANY_INFORMATION.phone}
               </a>
             </p>
+            <p>
+              <span className="text-neutral-500 font-mono">Email:</span>{" "}
+              <a
+                href={`mailto:${COMPANY_INFORMATION.email}`}
+                className="text-neutral-300 hover:text-white transition-colors"
+              >
+                {COMPANY_INFORMATION.email}
+              </a>
+            </p>
           </div>
 
           {/* COL 3: Information links */}

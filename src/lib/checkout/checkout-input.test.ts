@@ -150,6 +150,16 @@ describe("createCheckoutInput", () => {
     });
   });
 
+  it("rejects bank_transfer while payment method is updating", () => {
+    const result = createCheckoutInput({ ...values, paymentMethod: "bank_transfer" }, items);
+
+    expect(result.ok).toBe(false);
+    if (result.ok) throw new Error("bank_transfer must be rejected");
+    expect(result.fieldErrors.paymentMethod).toBe(
+      "Phương thức chuyển khoản ngân hàng đang được cập nhật, vui lòng chọn Thanh toán khi nhận hàng (COD).",
+    );
+  });
+
   it.each([
     ["an unknown province", { provinceCode: "99" }, "provinceCode", "Vui lòng chọn tỉnh / thành phố."],
     ["an unknown commune", { communeCode: "99999" }, "communeCode", "Vui lòng chọn phường / xã / đặc khu."],
