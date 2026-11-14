@@ -20,6 +20,9 @@ async function withDatabase<T>(work: (database: ReturnType<typeof createDemoData
 
 export async function resetDemoData(): Promise<void> {
   await runDemoOperation("reset");
+  await withDatabase(async (database) => {
+    await database.query('delete from "rate_limit"');
+  });
 }
 
 export async function makeDemoVariantUnavailable(variantId: string): Promise<void> {

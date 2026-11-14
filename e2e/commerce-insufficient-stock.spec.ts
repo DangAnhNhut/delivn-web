@@ -27,10 +27,13 @@ test("insufficient inventory preserves checkout and creates no order", async ({ 
   await continueToCheckout(page);
   await fillCheckout(page, NOTE);
 
+  const submitButton = page.getByRole("button", { name: "ĐẶT HÀNG" });
+  await expect(submitButton).toBeEnabled();
+
   const responsePromise = page.waitForResponse(
     (response) => response.url().endsWith("/api/checkout") && response.request().method() === "POST",
   );
-  await page.getByRole("button", { name: "ĐẶT HÀNG" }).click();
+  await submitButton.click();
   expect((await responsePromise).status()).toBe(409);
 
   await expect(page.locator('[data-checkout-error="true"]')).toContainText(

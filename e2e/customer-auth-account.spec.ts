@@ -46,7 +46,9 @@ async function placeOrder(page: Page): Promise<{ orderNumber: string; requestBod
     (response) =>
       response.url().endsWith("/api/checkout") && response.request().method() === "POST",
   );
-  await page.getByRole("button", { name: "ĐẶT HÀNG" }).click();
+  const submitButton = page.getByRole("button", { name: "ĐẶT HÀNG" });
+  await expect(submitButton).toBeEnabled();
+  await submitButton.click();
   const [request, response] = await Promise.all([requestPromise, responsePromise]);
   expect(response.status()).toBe(201);
   await expect(

@@ -13,10 +13,18 @@ import type { OrderDTO, PaymentMethod } from "@/contracts";
 import { presentCheckoutError } from "@/lib/checkout/checkout-errors";
 import { postCheckout } from "@/lib/checkout/checkout-http";
 import {
+  composeCustomerAddress,
   createCheckoutInput,
+  normalizeAddressDetail,
   type CheckoutFieldName,
   type CheckoutFormValues,
 } from "@/lib/checkout/checkout-input";
+import {
+  getCommuneByCode,
+  getProvinceByCode,
+  isCommuneInProvince,
+} from "@/data/vietnam-administrative-units";
+import { selectCartSubtotalVnd } from "@/lib/cart/cart-selectors";
 import type { CartItem } from "@/lib/cart/cart-types";
 import { formatVnd } from "@/lib/storefront/product-presentation";
 import type { ShippingQuote } from "@/server/services/shipping.service";
@@ -77,7 +85,7 @@ type CheckoutClientProps = {
   initialShippingQuote?: ShippingQuote | null;
 };
 
-export function CheckoutClient({ initialShippingQuote = null }: CheckoutClientProps) {
+export function CheckoutClient({ initialShippingQuote }: CheckoutClientProps) {
   const { items, isHydrated, reconcileSubmittedItems } = useCart();
   const [values, setValues] = useState<CheckoutFormValues>(initialValues);
   const [fieldErrors, setFieldErrors] = useState<
@@ -85,18 +93,83 @@ export function CheckoutClient({ initialShippingQuote = null }: CheckoutClientPr
   >({});
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [termsError, setTermsError] = useState<string | undefined>();
-  const [shippingQuote] = useState<ShippingQuote | null>(initialShippingQuote);
+  const [fetchedQuote, setFetchedQuote] = useState<ShippingQuote | null>(null);
   const [submission, setSubmission] = useState<SubmissionState>({ status: "idle" });
   const isUncertain = submission.status === "uncertain";
   const submittingRef = useRef(false);
   const errorRef = useRef<HTMLDivElement>(null);
   const successRef = useRef<HTMLHeadingElement>(null);
 
+  const province = getProvinceByCode(values.provinceCode);
+  const commune = getCommuneByCode(values.communeCode);
+  const addressDetail = normalizeAddressDetail(values.addressDetail);
+  const isAddressComplete = Boolean(
+    province &&
+    commune &&
+    isCommuneInProvince(commune.code, province.code) &&
+    addressDetail &&
+    items.length > 0,
+  );
+
+  const shippingQuote: ShippingQuote | null =
+    initialShippingQuote !== undefined
+      ? initialShippingQuote
+      : isAddressComplete
+        ? fetchedQuote
+        : null;
+
   const isShippingValid =
     shippingQuote !== null &&
     typeof shippingQuote.amountVnd === "number" &&
     shippingQuote.amountVnd > 0;
   const isSubmitBlocked = isUncertain || !isShippingValid;
+
+  useEffect(() => {
+    if (
+      initialShippingQuote !== undefined ||
+      !isAddressComplete ||
+      !province ||
+      !commune ||
+      !addressDetail
+    ) {
+      return;
+    }
+    let active = true;
+    const composed = composeCustomerAddress(addressDetail, commune.name, province.name);
+    fetch("/api/shipping/quote", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        address: composed,
+        provinceCode: province.code,
+        communeCode: commune.code,
+        addressDetail,
+        subtotalVnd: Number(selectCartSubtotalVnd(items)),
+      }),
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!active) return;
+        if (data && data.status === "QUOTED" && data.quote && data.quote.amountVnd > 0) {
+          setFetchedQuote(data.quote);
+        } else {
+          setFetchedQuote(null);
+        }
+      })
+      .catch(() => {
+        if (active) setFetchedQuote(null);
+      });
+    return () => {
+      active = false;
+    };
+  }, [
+    isAddressComplete,
+    province,
+    commune,
+    addressDetail,
+    items,
+    initialShippingQuote,
+  ]);
 
   useEffect(() => {
     if (submission.status === "error" || submission.status === "uncertain") {

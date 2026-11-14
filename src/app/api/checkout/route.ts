@@ -1,4 +1,5 @@
 import { createCheckoutService } from "@/server/services/checkout.service";
+import { NullShippingQuoteProvider } from "@/server/services/shipping.service";
 import {
   authenticationRequiredResponse,
   invalidJsonResponse,
@@ -34,7 +35,15 @@ export async function POST(request: Request): Promise<Response> {
 
   try {
     const normalized = normalizeCheckoutInput(parsed.data);
-    const order = await createCheckoutService().createOrder(normalized, {
+    const forceNull =
+      process.env.NODE_ENV !== "production" &&
+      process.env.DELIVN_ENABLE_DEMO_SEED === "true" &&
+      request.headers.get("x-delivn-test-shipping") === "disabled";
+    const checkoutService = createCheckoutService(
+      undefined,
+      forceNull ? { shippingProvider: new NullShippingQuoteProvider() } : undefined,
+    );
+    const order = await checkoutService.createOrder(normalized, {
       userId: session.user.id,
     });
     return Response.json(order, { status: 201 });

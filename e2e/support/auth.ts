@@ -16,6 +16,17 @@ export const E2E_LEGACY_EMAIL = "e2e-legacy@invalid.example";
 type BrowserCookies = Awaited<ReturnType<BrowserContext["cookies"]>>;
 const cachedCookies = new Map<string, BrowserCookies>();
 
+export async function clearDemoRateLimits(): Promise<void> {
+  const environment = loadDemoEnvironment(process.env);
+  const database = createDemoDatabase(environment);
+  try {
+    await database.assertTarget();
+    await database.query('delete from "rate_limit"');
+  } finally {
+    await database.close();
+  }
+}
+
 export async function authenticateE2eUser(
   page: Page,
   email: string,
@@ -26,6 +37,7 @@ export async function authenticateE2eUser(
     await page.context().addCookies(cached);
     return;
   }
+  await clearDemoRateLimits();
   const origin = "http://127.0.0.1:3100";
   const registration = await page.request.post("/api/auth/sign-up/email", {
     headers: { origin },
@@ -36,6 +48,7 @@ export async function authenticateE2eUser(
     return;
   }
 
+  await clearDemoRateLimits();
   const login = await page.request.post("/api/auth/sign-in/email", {
     headers: { origin },
     data: { email, password: E2E_AUTH_PASSWORD },
@@ -50,11 +63,13 @@ export async function cleanupE2eAuthUsers(
   if (emails.some((email) => !E2E_AUTH_EMAILS.includes(email as (typeof E2E_AUTH_EMAILS)[number]))) {
     throw new Error("Refusing to clean a non-E2E identity.");
   }
+  cachedCookies.clear();
   const environment = loadDemoEnvironment(process.env);
   const database = createDemoDatabase(environment);
   try {
     await database.assertTarget();
     await database.query('delete from "user" where email = any($1::text[])', [[...emails]]);
+    await database.query('delete from "rate_limit"');
   } finally {
     await database.close();
   }

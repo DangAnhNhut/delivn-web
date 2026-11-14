@@ -132,7 +132,9 @@ test("contact hub, legal routes and checkout consent remain usable across compli
 
     await page.goto("/chinh-sach-van-chuyen");
     await expect(page).toHaveTitle("Chính sách vận chuyển | DELIVN");
-    await expect(page.getByText(/THÔNG TIN ĐANG CHỜ DOANH NGHIỆP XÁC NHẬN/)).toBeVisible();
+    await expect(
+      page.getByRole("heading", { level: 1, name: "GIAO NHẬN HÀNG HÓA." }),
+    ).toBeVisible();
     await expect(page.getByRole("link", { name: "ĐIỀU KHOẢN GIAO DỊCH" }).first()).toBeVisible();
     await expectNoHorizontalOverflow(page);
 
@@ -162,11 +164,14 @@ test("customer opens terms, explicitly accepts them, and completes a confirmed o
   await fillCheckout(page);
   await expect(page.getByRole("checkbox", { name: /Tôi đã đọc và đồng ý/i })).toBeChecked();
 
+  const submitButton = page.getByRole("button", { name: "ĐẶT HÀNG" });
+  await expect(submitButton).toBeEnabled();
+
   const checkoutResponse = page.waitForResponse(
     (response) =>
       response.url().endsWith("/api/checkout") && response.request().method() === "POST",
   );
-  await page.getByRole("button", { name: "ĐẶT HÀNG" }).click();
+  await submitButton.click();
   const response = await checkoutResponse;
   expect(response.status()).toBe(201);
 

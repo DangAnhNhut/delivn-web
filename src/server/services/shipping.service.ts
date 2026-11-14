@@ -86,6 +86,19 @@ export class FakeTestShippingQuoteProvider implements ShippingQuoteProvider {
         "CRITICAL: FakeTestShippingQuoteProvider is strictly forbidden in production.",
       );
     }
+    if (process.env.NODE_ENV !== "test") {
+      if (process.env.DELIVN_ENABLE_DEMO_SEED !== "true") {
+        throw new Error(
+          "CRITICAL: FakeTestShippingQuoteProvider requires DELIVN_ENABLE_DEMO_SEED=true.",
+        );
+      }
+      const dbUrl = process.env.DATABASE_URL || process.env.DELIVN_E2E_DATABASE_URL || "";
+      if (!dbUrl.includes("delivn_e2e")) {
+        throw new Error(
+          "CRITICAL: FakeTestShippingQuoteProvider requires delivn_e2e database.",
+        );
+      }
+    }
     if (fixedAmountVnd <= 0) {
       throw new Error("Test shipping quote amount must be strictly positive (> 0 VND).");
     }
@@ -131,18 +144,27 @@ export class ShippingQuoteService {
   }
 }
 
-function resolveActiveProvider(): ShippingQuoteProvider {
-  // If explicitly configured for test in non-production:
+export function resolveActiveProvider(options?: { forceNull?: boolean }): ShippingQuoteProvider {
+  if (options?.forceNull) {
+    return new NullShippingQuoteProvider();
+  }
+  // If explicitly configured for test in non-production E2E:
   if (
     process.env.NODE_ENV !== "production" &&
+    process.env.DELIVN_ENABLE_DEMO_SEED === "true" &&
     process.env.DELIVN_TEST_SHIPPING_RATE_VND
   ) {
-    const rate = Number(process.env.DELIVN_TEST_SHIPPING_RATE_VND);
-    return new FakeTestShippingQuoteProvider(Number.isFinite(rate) && rate > 0 ? rate : 30_000);
+    const dbUrl = process.env.DATABASE_URL || process.env.DELIVN_E2E_DATABASE_URL || "";
+    if (dbUrl.includes("delivn_e2e")) {
+      const rate = Number(process.env.DELIVN_TEST_SHIPPING_RATE_VND);
+      return new FakeTestShippingQuoteProvider(Number.isFinite(rate) && rate > 0 ? rate : 30_000);
+    }
   }
   return new NullShippingQuoteProvider();
 }
 
-export function createDefaultShippingQuoteService(): ShippingQuoteService {
-  return new ShippingQuoteService();
+export function createDefaultShippingQuoteService(
+  provider: ShippingQuoteProvider = resolveActiveProvider(),
+): ShippingQuoteService {
+  return new ShippingQuoteService(provider);
 }

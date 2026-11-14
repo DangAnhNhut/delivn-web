@@ -81,7 +81,10 @@ export async function fillCheckout(
   await acceptCheckoutTerms(page);
 }
 
-export async function expectPersistedEspresso250Order(orderNumber: string): Promise<void> {
+export async function expectPersistedEspresso250Order(
+  orderNumber: string,
+  shippingFeeVnd = 30_000,
+): Promise<void> {
   const persisted = await readOrderByNumber(orderNumber);
   expect(persisted).not.toBeNull();
   expect(persisted?.order).toMatchObject({
@@ -90,7 +93,7 @@ export async function expectPersistedEspresso250Order(orderNumber: string): Prom
     email: E2E_CUSTOMER.email,
     address: E2E_CUSTOMER.address,
     note: E2E_CUSTOMER.note,
-    totalVnd: 173_000,
+    totalVnd: 173_000 + shippingFeeVnd,
     paymentMethod: "cod",
     paymentStatus: "unpaid",
     orderStatus: "pending",

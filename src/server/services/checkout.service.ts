@@ -31,6 +31,7 @@ import type { NormalizedCheckoutInput } from "@/server/validation/checkout-norma
 import { mapOrderToDto } from "./order.service";
 import {
   createDefaultShippingQuoteService,
+  type ShippingQuoteProvider,
   type ShippingQuoteRequest,
   type ShippingQuoteResult,
 } from "./shipping.service";
@@ -80,10 +81,16 @@ export type CheckoutDependencies<TTransaction> = {
   ): Promise<ShippingQuoteResult> | ShippingQuoteResult;
 };
 
+export type CheckoutServiceOptions = {
+  shippingProvider?: ShippingQuoteProvider;
+};
+
 export type CheckoutOwnership = { userId: string };
 
-function productionDependencies(): CheckoutDependencies<DbTransaction> {
-  const shippingService = createDefaultShippingQuoteService();
+function productionDependencies(
+  shippingProvider?: ShippingQuoteProvider,
+): CheckoutDependencies<DbTransaction> {
+  const shippingService = createDefaultShippingQuoteService(shippingProvider);
   return {
     withTransaction,
     productRepository: createProductRepository(),
@@ -105,10 +112,11 @@ function requireCompleteSet<T extends { id?: string; variantId?: string }>(
 
 export function createCheckoutService<TTransaction = DbTransaction>(
   dependencies?: CheckoutDependencies<TTransaction>,
+  options?: CheckoutServiceOptions,
 ) {
   const deps =
     dependencies ??
-    (productionDependencies() as unknown as CheckoutDependencies<TTransaction>);
+    (productionDependencies(options?.shippingProvider) as unknown as CheckoutDependencies<TTransaction>);
 
   return {
     async createOrder(

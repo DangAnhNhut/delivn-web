@@ -69,20 +69,13 @@ test("homepage visitor completes the direct customer sales journey", async ({ pa
 
   const cod = page.getByRole("radio", { name: /Thanh toán khi nhận hàng/i });
   const bankTransfer = page.getByRole("radio", { name: /Chuyển khoản ngân hàng/i });
+  await expect(cod).toBeVisible();
+  await expect(bankTransfer).toBeVisible();
+  await expect(bankTransfer).toBeDisabled();
+  await expect(page.getByText("ĐANG CẬP NHẬT").first()).toBeVisible();
   await cod.check();
-  await expect(page.locator("[data-bank-transfer-placeholder]")).toHaveCount(0);
   await page.screenshot({
     path: testInfo.outputPath("checkout-cod-desktop-1440.png"),
-    fullPage: true,
-  });
-
-  await bankTransfer.check();
-  const bankPlaceholder = page.locator("[data-bank-transfer-placeholder]");
-  await expect(bankPlaceholder).toContainText("MÃ QR");
-  await expect(bankPlaceholder).toContainText("ĐANG CẬP NHẬT");
-  await expect(bankPlaceholder).toContainText("không thể quét");
-  await page.screenshot({
-    path: testInfo.outputPath("checkout-bank-transfer-desktop-1440.png"),
     fullPage: true,
   });
 
@@ -91,12 +84,10 @@ test("homepage visitor completes the direct customer sales journey", async ({ pa
     await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
   ).toBe(true);
   await page.screenshot({
-    path: testInfo.outputPath("checkout-bank-transfer-mobile-390.png"),
+    path: testInfo.outputPath("checkout-cod-mobile-390.png"),
     fullPage: true,
   });
   await page.setViewportSize({ width: 1440, height: 900 });
-  await cod.check();
-  await expect(bankPlaceholder).toHaveCount(0);
 
   const province = page.getByRole("combobox", { name: /Tỉnh \/ thành phố/i });
   const commune = page.getByRole("combobox", { name: /Phường \/ xã \/ đặc khu/i });
@@ -136,7 +127,9 @@ test("homepage visitor completes the direct customer sales journey", async ({ pa
     }
   });
 
-  await page.getByRole("button", { name: "ĐẶT HÀNG" }).click();
+  const submitButton = page.getByRole("button", { name: "ĐẶT HÀNG" });
+  await expect(submitButton).toBeEnabled();
+  await submitButton.click();
   await expect(page.locator("#checkout-terms-error")).toContainText(
     /cần đồng ý với điều khoản giao dịch/i,
   );
@@ -149,7 +142,7 @@ test("homepage visitor completes the direct customer sales journey", async ({ pa
     (response) =>
       response.url().endsWith("/api/checkout") && response.request().method() === "POST",
   );
-  await page.getByRole("button", { name: "ĐẶT HÀNG" }).click();
+  await submitButton.click();
   const response = await checkoutResponse;
   expect(response.status()).toBe(201);
 
@@ -158,7 +151,7 @@ test("homepage visitor completes the direct customer sales journey", async ({ pa
   ).toBeVisible();
   const orderNumber = await page.getByText(/^DLV-\d{8}-\d{6}$/).textContent();
   expect(orderNumber).toBeTruthy();
-  await expect(page.getByText("173.000 ₫", { exact: true })).toBeVisible();
+  await expect(page.getByText("203.000 ₫", { exact: true })).toBeVisible();
   await expect(page.getByText("Thanh toán khi nhận hàng", { exact: true })).toBeVisible();
   await expect(page.getByText("Chưa thanh toán", { exact: true })).toBeVisible();
   await expect(page.getByRole("link", { name: "GIỎ HÀNG (0)" }).first()).toBeVisible();
