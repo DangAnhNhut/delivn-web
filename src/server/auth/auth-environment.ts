@@ -30,8 +30,8 @@ export function resolveAuthEnvironment(
     throw new Error("BETTER_AUTH_URL must be an absolute HTTP(S) URL");
   }
 
-  const clientId = environment.GOOGLE_CLIENT_ID;
-  const clientSecret = environment.GOOGLE_CLIENT_SECRET;
+  const clientId = environment.GOOGLE_CLIENT_ID?.trim() || undefined;
+  const clientSecret = environment.GOOGLE_CLIENT_SECRET?.trim() || undefined;
   if (Boolean(clientId) !== Boolean(clientSecret)) {
     throw new Error(clientId ? "GOOGLE_CLIENT_SECRET is required" : "GOOGLE_CLIENT_ID is required");
   }

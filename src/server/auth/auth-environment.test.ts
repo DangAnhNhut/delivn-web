@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 import { resolveAuthEnvironment } from "./auth-environment";
@@ -17,8 +19,38 @@ describe("resolveAuthEnvironment", () => {
   });
 
   it("accepts complete Google configuration", () => {
-    expect(resolveAuthEnvironment({ ...valid, GOOGLE_CLIENT_ID: "client", GOOGLE_CLIENT_SECRET: "secret" }).google)
+    expect(resolveAuthEnvironment({ ...valid, GOOGLE_CLIENT_ID: "  client  ", GOOGLE_CLIENT_SECRET: "  secret  " }).google)
       .toEqual({ clientId: "client", clientSecret: "secret" });
+  });
+
+  it("treats two whitespace-only Google values as disabled", () => {
+    expect(resolveAuthEnvironment({
+      ...valid,
+      GOOGLE_CLIENT_ID: "   ",
+      GOOGLE_CLIENT_SECRET: "\t",
+    }).google).toBeNull();
+  });
+
+  it("keeps Google credentials as empty placeholders in the committed environment example", () => {
+    const example = readFileSync(resolve(process.cwd(), ".env.example"), "utf8");
+    expect(example).toMatch(/^GOOGLE_CLIENT_ID=\s*$/m);
+    expect(example).toMatch(/^GOOGLE_CLIENT_SECRET=\s*$/m);
+    expect(example).not.toMatch(/^GOOGLE_(?:CLIENT_ID|CLIENT_SECRET)=.+$/m);
+  });
+
+  it("keeps Google credentials out of the client-side auth boundary", () => {
+    const clientSources = [
+      "src/components/auth/AuthForm.tsx",
+      "src/lib/auth/auth-client.ts",
+      "src/lib/auth/google-oauth.ts",
+    ].map((path) => readFileSync(resolve(process.cwd(), path), "utf8"));
+
+    for (const source of clientSources) {
+      expect(source).not.toContain("GOOGLE_CLIENT_ID");
+      expect(source).not.toContain("GOOGLE_CLIENT_SECRET");
+      expect(source).not.toContain("clientSecret");
+      expect(source).not.toContain("@/server/auth");
+    }
   });
 
   it.each([
@@ -52,6 +84,8 @@ describe("resolveAuthEnvironment", () => {
     [{ ...valid, BETTER_AUTH_URL: "not a url" }, "BETTER_AUTH_URL"],
     [{ ...valid, GOOGLE_CLIENT_ID: "private-client" }, "GOOGLE_CLIENT_SECRET"],
     [{ ...valid, GOOGLE_CLIENT_SECRET: "private-secret" }, "GOOGLE_CLIENT_ID"],
+    [{ ...valid, GOOGLE_CLIENT_ID: "private-client", GOOGLE_CLIENT_SECRET: "   " }, "GOOGLE_CLIENT_SECRET"],
+    [{ ...valid, GOOGLE_CLIENT_ID: "   ", GOOGLE_CLIENT_SECRET: "private-secret" }, "GOOGLE_CLIENT_ID"],
   ])("rejects invalid configuration without leaking values", (environment, variable) => {
     expect(() => resolveAuthEnvironment(environment)).toThrow(variable);
     try {

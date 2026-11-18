@@ -20,14 +20,27 @@ export function createAuthOptions(environment: AuthEnvironment): BetterAuthOptio
       enabled: true,
       storage: "database",
     },
+    onAPIError: {
+      errorURL: new URL(
+        "/tai-khoan/dang-nhap?oauthError=1",
+        environment.baseURL,
+      ).toString(),
+    },
     account: {
       accountLinking: {
         allowDifferentEmails: false,
-        requireLocalEmailVerified: false,
+        requireLocalEmailVerified: true,
       },
     },
     socialProviders: environment.google
-      ? { google: { clientId: environment.google.clientId, clientSecret: environment.google.clientSecret } }
+      ? {
+          google: {
+            clientId: environment.google.clientId,
+            clientSecret: environment.google.clientSecret,
+            disableDefaultScope: true,
+            scope: ["openid", "email", "profile"],
+          },
+        }
       : {},
     user: {
       validateUserInfo({ source }) {

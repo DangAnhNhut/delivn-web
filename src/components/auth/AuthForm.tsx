@@ -4,13 +4,17 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRef, useState, type FormEvent } from "react";
 import { authClient } from "@/lib/auth/auth-client";
+import {
+  buildGoogleOAuthErrorCallback,
+  GOOGLE_OAUTH_ERROR_MESSAGE,
+} from "@/lib/auth/google-oauth";
 import { sanitizeReturnTo } from "@/lib/auth/return-to";
 
-export function AuthForm({ mode, returnTo, googleEnabled }: { mode: "login" | "register"; returnTo: string; googleEnabled: boolean }) {
+export function AuthForm({ mode, returnTo, googleEnabled, googleOAuthError = false }: { mode: "login" | "register"; returnTo: string; googleEnabled: boolean; googleOAuthError?: boolean }) {
   const router = useRouter();
   const pendingRef = useRef(false);
   const [pending, setPending] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(googleOAuthError ? GOOGLE_OAUTH_ERROR_MESSAGE : "");
   const destination = sanitizeReturnTo(returnTo, "/tai-khoan");
 
   async function submit(event: FormEvent<HTMLFormElement>) {
@@ -57,6 +61,29 @@ export function AuthForm({ mode, returnTo, googleEnabled }: { mode: "login" | "r
     }
   }
 
+  async function startGoogle() {
+    if (pendingRef.current) return;
+    pendingRef.current = true;
+    setPending(true);
+    setError("");
+    try {
+      const result = await authClient.signIn.social({
+        provider: "google",
+        callbackURL: destination,
+        errorCallbackURL: buildGoogleOAuthErrorCallback(mode, destination),
+      });
+      if (result.error) {
+        setError("Không thể kết nối với Google. Vui lòng thử lại.");
+        pendingRef.current = false;
+        setPending(false);
+      }
+    } catch {
+      setError("Không thể kết nối với Google. Vui lòng thử lại.");
+      pendingRef.current = false;
+      setPending(false);
+    }
+  }
+
   return (
     <form onSubmit={submit} aria-busy={pending} className="mx-auto max-w-xl space-y-5 border-y border-border bg-surface px-6 py-10 sm:px-10">
       {mode === "register" ? (
@@ -95,10 +122,10 @@ export function AuthForm({ mode, returnTo, googleEnabled }: { mode: "login" | "r
         <button
           type="button"
           disabled={pending}
-          onClick={() => authClient.signIn.social({ provider: "google", callbackURL: destination })}
+          onClick={startGoogle}
           className="min-h-12 w-full border border-foreground px-6 text-xs font-bold tracking-[0.14em] uppercase"
         >
-          TIẾP TỤC VỚI GOOGLE
+          {pending ? "ĐANG KẾT NỐI GOOGLE" : "TIẾP TỤC VỚI GOOGLE"}
         </button>
       ) : null}
       <p className="text-center text-sm text-foreground-muted">

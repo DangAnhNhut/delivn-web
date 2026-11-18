@@ -12,14 +12,22 @@ describe("createAuthOptions", () => {
     expect(options.session?.cookieCache).toBeUndefined();
     expect(options.rateLimit).toMatchObject({ enabled: true, storage: "database" });
     expect(options.account?.accountLinking?.allowDifferentEmails).toBe(false);
-    expect(options.account?.accountLinking?.requireLocalEmailVerified).toBe(false);
+    expect(options.account?.accountLinking?.requireLocalEmailVerified).toBe(true);
     expect(options.account?.accountLinking?.trustedProviders).toBeUndefined();
     expect(options.socialProviders).toEqual({});
+    expect(options.onAPIError?.errorURL).toBe(
+      "http://127.0.0.1:3000/tai-khoan/dang-nhap?oauthError=1",
+    );
   });
 
   it("rejects an unverified Google profile before persistence", async () => {
     const options = createAuthOptions({ ...env, google: { clientId: "id", clientSecret: "secret" } });
-    expect(options.socialProviders?.google).toMatchObject({ clientId: "id", clientSecret: "secret" });
+    expect(options.socialProviders?.google).toMatchObject({
+      clientId: "id",
+      clientSecret: "secret",
+      disableDefaultScope: true,
+      scope: ["openid", "email", "profile"],
+    });
     const validate = options.user?.validateUserInfo;
     expect(validate).toBeTypeOf("function");
     const context = {} as never;

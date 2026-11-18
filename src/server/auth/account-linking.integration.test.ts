@@ -89,6 +89,10 @@ async function createCredentialUser(email: string): Promise<string> {
   return body.user.id;
 }
 
+async function markLocalEmailVerified(userId: string): Promise<void> {
+  await pool.query('update "user" set email_verified = true where id = $1::uuid', [userId]);
+}
+
 async function completeGoogle(profile: GoogleProfileInput): Promise<Response> {
   activeProfile = profile;
   const start = await authRequest("/sign-in/social", {
@@ -133,6 +137,7 @@ suite("Google account linking boundaries", () => {
 
   it("links a verified matching Google email to the existing credential identity", async () => {
     const userId = await createCredentialUser(emails[0]);
+    await markLocalEmailVerified(userId);
     const callback = await completeGoogle({ sub: "google-same", name: "Google same", email: emails[0], email_verified: true });
     expect(callback.status).toBe(302);
     const users = await pool.query<{ id: string }>('select id::text from "user" where email = $1', [emails[0]]);
@@ -144,8 +149,34 @@ suite("Google account linking boundaries", () => {
     ]);
   });
 
+  it("signs in through an existing Google link without creating duplicate users or accounts", async () => {
+    const userId = await createCredentialUser(emails[0]);
+    await markLocalEmailVerified(userId);
+    const profile = { sub: "google-repeat", name: "Google repeat", email: emails[0], email_verified: true };
+    expect((await completeGoogle(profile)).status).toBe(302);
+
+    const repeat = await completeGoogle(profile);
+    expect(repeat.status).toBe(302);
+    expect(responseCookies(repeat)).toContain("session_token");
+    const users = await pool.query<{ count: string }>('select count(*)::text as count from "user" where email = $1', [emails[0]]);
+    const accounts = await pool.query<{ count: string }>('select count(*)::text as count from account where user_id = $1::uuid and provider_id = $2', [userId, "google"]);
+    expect(users.rows).toEqual([{ count: "1" }]);
+    expect(accounts.rows).toEqual([{ count: "1" }]);
+  });
+
+  it("rejects implicit linking when the matching local identity is unverified", async () => {
+    const userId = await createCredentialUser(emails[1]);
+    const callback = await completeGoogle({ sub: "google-local-unverified", name: "Google local unverified", email: emails[1], email_verified: true });
+    expect(callback.status).toBe(302);
+    expect(callback.headers.get("location")).toContain("error=");
+    expect(responseCookies(callback)).not.toContain("session_token");
+    const accounts = await pool.query<{ provider_id: string }>('select provider_id from account where user_id = $1::uuid order by provider_id', [userId]);
+    expect(accounts.rows).toEqual([{ provider_id: "credential" }]);
+  });
+
   it("rejects an unverified matching Google email before persistence", async () => {
     const userId = await createCredentialUser(emails[1]);
+    await markLocalEmailVerified(userId);
     const callback = await completeGoogle({ sub: "google-unverified", name: "Google unverified", email: emails[1], email_verified: false });
     expect(callback.status).toBe(302);
     expect(callback.headers.get("location")).toContain("error=");

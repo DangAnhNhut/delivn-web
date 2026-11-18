@@ -36,10 +36,57 @@ describe("AuthForm", () => {
     expect(sessionStorage.length).toBe(0);
   });
 
-  it("never sends an unsafe Google callback", async () => {
+  it("never sends unsafe Google callback or error URLs", async () => {
+    mocks.social.mockResolvedValue({ data: {}, error: null });
     act(() => root.render(createElement(AuthForm, { mode: "login", returnTo: "https://evil.test", googleEnabled: true })));
     await act(async () => (container.querySelectorAll("button")[1] as HTMLButtonElement).click());
-    expect(mocks.social).toHaveBeenCalledWith({ provider: "google", callbackURL: "/tai-khoan" });
+    expect(mocks.social).toHaveBeenCalledWith({
+      provider: "google",
+      callbackURL: "/tai-khoan",
+      errorCallbackURL: "/tai-khoan/dang-nhap?oauthError=1&returnTo=%2Ftai-khoan",
+    });
+  });
+
+  it("blocks duplicate Google starts, shows loading state, and preserves the cart", async () => {
+    const cart = '{"version":1,"items":[]}';
+    localStorage.setItem("delivn.cart.v1", cart);
+    let finish!: (value: { data: object; error: null }) => void;
+    mocks.social.mockReturnValue(new Promise((resolve) => { finish = resolve; }));
+    act(() => root.render(createElement(AuthForm, { mode: "register", returnTo: "/thanh-toan", googleEnabled: true })));
+    const googleButton = Array.from(container.querySelectorAll("button")).find((button) => button.textContent?.includes("GOOGLE"))!;
+
+    act(() => {
+      googleButton.click();
+      googleButton.click();
+    });
+
+    expect(mocks.social).toHaveBeenCalledTimes(1);
+    expect(googleButton.disabled).toBe(true);
+    expect(googleButton.textContent).toContain("ĐANG KẾT NỐI");
+    expect(localStorage.getItem("delivn.cart.v1")).toBe(cart);
+    await act(async () => finish({ data: {}, error: null }));
+  });
+
+  it("recovers safely when Google initiation fails", async () => {
+    mocks.social.mockRejectedValue(new Error("provider unavailable"));
+    act(() => root.render(createElement(AuthForm, { mode: "login", returnTo: "/tai-khoan", googleEnabled: true })));
+    const googleButton = Array.from(container.querySelectorAll("button")).find((button) => button.textContent?.includes("GOOGLE"))!;
+
+    await act(async () => googleButton.click());
+
+    expect(container.querySelector('[role="alert"]')?.textContent).toContain("Không thể kết nối với Google");
+    expect(googleButton.disabled).toBe(false);
+  });
+
+  it("shows a generic callback error without raw provider details", () => {
+    act(() => root.render(createElement(AuthForm, {
+      mode: "login",
+      returnTo: "/tai-khoan",
+      googleEnabled: true,
+      googleOAuthError: true,
+    })));
+    expect(container.querySelector('[role="alert"]')?.textContent).toContain("Không thể hoàn tất đăng nhập bằng Google");
+    expect(container.textContent).not.toContain("access_denied");
   });
 
   it("recovers from a rejected credential request without navigating", async () => {
