@@ -21,126 +21,170 @@ export function BrandStoryMotion({ sectionRef }: BrandStoryMotionProps) {
       "(prefers-reduced-motion: reduce)"
     ).matches;
 
+    // 0. ACCESSIBILITY OVERRIDE: If user prefers reduced motion, set everything static immediately
+    if (prefersReducedMotion) {
+      section.classList.remove("story-motion-in-view");
+      gsap.set(
+        [
+          ".story-intro-eyebrow",
+          ".story-intro-title",
+          ".story-intro-sublead",
+          ".story-chapter-card",
+          ".story-image-column",
+          ".story-text-column",
+          ".story-pill",
+          ".story-tagline",
+          ".story-title",
+          ".story-desc",
+          ".story-closing-wrap",
+          ".story-closing-draw",
+          ".story-sunburst-rotate",
+          ".story-orbit-c1",
+          ".steam-wisp-1",
+          ".steam-wisp-2",
+          ".steam-wisp-3",
+          ".story-bean-sway",
+          ".story-roast-arc",
+          ".story-dot-pulse",
+          ".story-line-pulse",
+          ".story-indicator-shimmer",
+          ".story-frame-glow",
+          ".story-ambient-drift",
+        ],
+        { opacity: 1, y: 0, x: 0, scale: 1, scaleX: 1, rotation: 0, clearProps: "all" }
+      );
+      return;
+    }
+
+    // 1. PERFORMANCE: Viewport Visibility Manager via IntersectionObserver
+    // Activates GPU CSS loop animations ONLY when the Brand Story section is within viewport
+    // Automatically pauses all CSS loops when the user scrolls away to save CPU/GPU cycles
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          section.classList.add("story-motion-in-view");
+        } else {
+          section.classList.remove("story-motion-in-view");
+        }
+      },
+      { rootMargin: "150px 0px 150px 0px", threshold: 0 }
+    );
+
+    io.observe(section);
+
+    // 2. GSAP ENTRANCE STAGGER (Fires once on scroll into view, zero scroll jank)
     const ctx = gsap.context(() => {
-      if (prefersReducedMotion) {
-        gsap.set(
-          [
-            ".story-header-item",
-            ".story-sunburst",
-            ".story-image-container",
-            ".story-image-badge",
-            ".story-content-item",
-            ".story-closing-item",
-          ],
-          { opacity: 1, y: 0, scale: 1, clearProps: "all" }
-        );
-        return;
-      }
-
-      // Initial resting states
-      gsap.set(".story-header-item", { opacity: 0, y: 28 });
-      gsap.set(".story-sunburst", { opacity: 0, scale: 0.92, rotation: -8 });
-      gsap.set(".story-image-container", { opacity: 0, y: 32, scale: 0.985 });
-      gsap.set(".story-image-badge", { opacity: 0, y: 10 });
-      gsap.set(".story-step-nav", { opacity: 0, x: 18 });
-      gsap.set(".story-active-panel", { opacity: 0, y: 16 });
-      gsap.set(".story-closing-item", { opacity: 0, y: 24 });
-
-      // Screen 04 Initial Section Entrance Timeline
-      const sectionTl = gsap.timeline({
+      // Intro header entrance
+      const introTl = gsap.timeline({
         scrollTrigger: {
-          trigger: section,
-          start: "top 78%",
+          trigger: ".story-intro-header",
+          start: "top 88%",
           toggleActions: "play none none none",
         },
-        defaults: { ease: "power3.out" },
       });
 
-      sectionTl
-        .to(".story-header-item", {
-          opacity: 1,
-          y: 0,
-          duration: 0.85,
-          stagger: 0.12,
+      introTl
+        .from(".story-intro-eyebrow", {
+          opacity: 0,
+          y: 14,
+          duration: 0.6,
+          ease: "power2.out",
         })
-        .to(
-          ".story-sunburst",
+        .from(
+          ".story-intro-title",
           {
-            opacity: 0.08,
-            scale: 1,
-            rotation: 0,
-            duration: 1.2,
-            ease: "power2.out",
-          },
-          "-=0.6"
-        )
-        .to(
-          ".story-image-container",
-          {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            duration: 0.9,
-          },
-          "-=0.5"
-        )
-        .to(
-          ".story-image-badge",
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.5,
+            opacity: 0,
+            y: 22,
+            duration: 0.8,
+            ease: "power3.out",
           },
           "-=0.4"
         )
-        .to(
-          ".story-step-nav",
+        .from(
+          ".story-intro-sublead",
           {
-            opacity: 1,
-            x: 0,
-            duration: 0.75,
-          },
-          "-=0.6"
-        )
-        .to(
-          ".story-active-panel",
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.75,
+            opacity: 0,
+            y: 18,
+            duration: 0.7,
+            ease: "power2.out",
           },
           "-=0.5"
         );
 
-      // Sunburst parallax on section scroll
-      gsap.to(".story-sunburst", {
-        scrollTrigger: {
-          trigger: section,
-          start: "top bottom",
-          end: "bottom top",
-          scrub: 1.2,
-        },
-        yPercent: -15,
-        rotation: 6,
-        ease: "none",
-      });
+      // Chapter cards entrance (Image + Text elements stagger)
+      const chapters = gsap.utils.toArray<HTMLElement>(".story-chapter-card");
+      chapters.forEach((chapterEl, idx) => {
+        const imgCol = chapterEl.querySelector(".story-image-column");
+        const pill = chapterEl.querySelector(".story-pill");
+        const tagline = chapterEl.querySelector(".story-tagline");
+        const title = chapterEl.querySelector(".story-title");
+        const desc = chapterEl.querySelector(".story-desc");
 
-      // Closing Statement entrance
-      gsap.to(".story-closing-item", {
-        scrollTrigger: {
-          trigger: ".story-closing-wrapper",
-          start: "top 80%",
-          toggleActions: "play none none none",
-        },
-        opacity: 1,
-        y: 0,
-        duration: 0.85,
-        stagger: 0.14,
-        ease: "power3.out",
+        const chTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: chapterEl,
+            start: "top 82%",
+            toggleActions: "play none none none",
+          },
+        });
+
+        // Image entrance: subtle scale 0.985 -> 1, translateY 22px -> 0, opacity 0 -> 1
+        if (imgCol) {
+          chTl.from(imgCol, {
+            opacity: 0,
+            y: 22,
+            scale: 0.985,
+            duration: 0.8,
+            ease: "power2.out",
+          });
+        }
+
+        // Text stagger: pill -> tagline -> title -> desc
+        const textElements = [pill, tagline, title, desc].filter(Boolean);
+        if (textElements.length > 0) {
+          chTl.from(
+            textElements,
+            {
+              opacity: 0,
+              y: 16,
+              duration: 0.65,
+              stagger: 0.1,
+              ease: "power2.out",
+            },
+            "-=0.55"
+          );
+        }
+
+        // Chapter 03 specific: Closing statement & animated underline draw
+        if (idx === 2) {
+          const closingWrap = chapterEl.querySelector(".story-closing-wrap");
+          const underline = chapterEl.querySelector(".story-closing-draw");
+          if (closingWrap && underline) {
+            chTl.from(
+              closingWrap,
+              {
+                opacity: 0,
+                y: 16,
+                duration: 0.6,
+                ease: "power2.out",
+              },
+              "-=0.2"
+            );
+            chTl.fromTo(
+              underline,
+              { scaleX: 0, transformOrigin: "left" },
+              { scaleX: 1, duration: 0.85, ease: "power2.out" },
+              "-=0.25"
+            );
+          }
+        }
       });
     }, section);
 
-    return () => ctx.revert();
+    return () => {
+      io.disconnect();
+      ctx.revert();
+    };
   }, [sectionRef]);
 
   return null;

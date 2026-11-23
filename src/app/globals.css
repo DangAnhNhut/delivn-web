@@ -67,3 +67,251 @@ body {
   background: var(--background);
   color: var(--foreground);
 }
+
+/* ==========================================================================
+   Brand Story Continuous Loop Animations & Visual Continuity Motifs
+   Compositor-only (transform & opacity), zero layout recalculations, 60/120fps
+   Active only when section has .story-motion-in-view via IntersectionObserver
+   ========================================================================== */
+
+/* 1. Chapter 01: Ambient Sunburst Sway & Solar Orbit Pulse */
+@keyframes delivn-sunburst-sway {
+  0% {
+    transform: rotate(-4deg);
+  }
+  50% {
+    transform: rotate(4deg);
+  }
+  100% {
+    transform: rotate(-4deg);
+  }
+}
+
+@keyframes delivn-orbit-pulse {
+  0% {
+    transform: rotate(0deg) scale(1);
+    opacity: 0.10;
+  }
+  50% {
+    transform: rotate(6deg) scale(1.02);
+    opacity: 0.16;
+  }
+  100% {
+    transform: rotate(0deg) scale(1);
+    opacity: 0.10;
+  }
+}
+
+/* 2. Chapter 02: Artisanal Phin Coffee Steam Wisps */
+@keyframes delivn-steam-rise-1 {
+  0% {
+    transform: translateY(0) scaleY(0.9) scaleX(1);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.55;
+  }
+  70% {
+    opacity: 0.45;
+  }
+  100% {
+    transform: translateY(-10px) scaleY(1.08) scaleX(0.95);
+    opacity: 0;
+  }
+}
+
+@keyframes delivn-steam-rise-2 {
+  0% {
+    transform: translateY(0) scaleY(0.92) scaleX(1);
+    opacity: 0;
+  }
+  35% {
+    opacity: 0.65;
+  }
+  75% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: translateY(-12px) scaleY(1.1) scaleX(0.92);
+    opacity: 0;
+  }
+}
+
+@keyframes delivn-steam-rise-3 {
+  0% {
+    transform: translateY(0) scaleY(0.9) scaleX(1);
+    opacity: 0;
+  }
+  40% {
+    opacity: 0.5;
+  }
+  80% {
+    opacity: 0.35;
+  }
+  100% {
+    transform: translateY(-9px) scaleY(1.06) scaleX(0.96);
+    opacity: 0;
+  }
+}
+
+/* 3. Chapter 03: Line-Art Roasted Bean Sway & Roast Development Arc Drift */
+@keyframes delivn-bean-sway {
+  0% {
+    transform: rotate(-5deg) translateY(0);
+  }
+  50% {
+    transform: rotate(5deg) translateY(-3px);
+  }
+  100% {
+    transform: rotate(-5deg) translateY(0);
+  }
+}
+
+@keyframes delivn-arc-drift {
+  0% {
+    transform: rotate(0deg);
+    opacity: 0.08;
+  }
+  50% {
+    transform: rotate(8deg);
+    opacity: 0.16;
+  }
+  100% {
+    transform: rotate(0deg);
+    opacity: 0.08;
+  }
+}
+
+/* 4. Cross-Chapter Visual Continuity: Dot Pulse, Line Expand & Counter Shimmer */
+@keyframes delivn-dot-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.22);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+}
+
+@keyframes delivn-line-expand {
+  0% {
+    transform: scaleX(0.9);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scaleX(1.15);
+    opacity: 0.85;
+  }
+  100% {
+    transform: scaleX(0.9);
+    opacity: 0.5;
+  }
+}
+
+@keyframes delivn-indicator-breath {
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.95;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
+
+/* 5. Image Frame Ambient Warmth Breathing */
+@keyframes delivn-frame-glow {
+  0% {
+    border-color: rgba(217, 206, 189, 0.6);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.02);
+  }
+  50% {
+    border-color: rgba(239, 78, 62, 0.22);
+    box-shadow: 0 4px 14px -2px rgba(239, 78, 62, 0.05);
+  }
+  100% {
+    border-color: rgba(217, 206, 189, 0.6);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.02);
+  }
+}
+
+/* 6. Section Background Ambient Ring Drift */
+@keyframes delivn-ambient-drift {
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(-6deg);
+  }
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+}
+
+/* Active in-view loop animation bindings (controlled by IntersectionObserver) */
+.story-motion-in-view .story-sunburst-rotate {
+  animation: delivn-sunburst-sway 14s ease-in-out infinite;
+}
+.story-motion-in-view .story-orbit-c1 {
+  animation: delivn-orbit-pulse 11s ease-in-out infinite;
+}
+.story-motion-in-view .steam-wisp-1 {
+  animation: delivn-steam-rise-1 5.2s ease-in-out infinite;
+}
+.story-motion-in-view .steam-wisp-2 {
+  animation: delivn-steam-rise-2 5.8s ease-in-out 1.2s infinite;
+}
+.story-motion-in-view .steam-wisp-3 {
+  animation: delivn-steam-rise-3 6.4s ease-in-out 2.4s infinite;
+}
+.story-motion-in-view .story-bean-sway {
+  animation: delivn-bean-sway 5.5s ease-in-out infinite;
+}
+.story-motion-in-view .story-roast-arc {
+  animation: delivn-arc-drift 12s ease-in-out infinite;
+}
+.story-motion-in-view .story-dot-pulse {
+  animation: delivn-dot-pulse 3.6s ease-in-out infinite;
+}
+.story-motion-in-view .story-line-pulse {
+  animation: delivn-line-expand 4.2s ease-in-out infinite;
+}
+.story-motion-in-view .story-indicator-shimmer {
+  animation: delivn-indicator-breath 4.8s ease-in-out infinite;
+}
+.story-motion-in-view .story-frame-glow {
+  animation: delivn-frame-glow 7s ease-in-out infinite;
+}
+.story-motion-in-view .story-ambient-drift {
+  animation: delivn-ambient-drift 18s ease-in-out infinite;
+}
+
+/* Accessibility: Complete override for reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .story-sunburst-rotate,
+  .story-orbit-c1,
+  .steam-wisp-1,
+  .steam-wisp-2,
+  .steam-wisp-3,
+  .story-bean-sway,
+  .story-roast-arc,
+  .story-dot-pulse,
+  .story-line-pulse,
+  .story-indicator-shimmer,
+  .story-frame-glow,
+  .story-ambient-drift {
+    animation: none !important;
+    transform: none !important;
+  }
+  .steam-wisp-1,
+  .steam-wisp-2,
+  .steam-wisp-3 {
+    opacity: 0.5 !important;
+  }
+}

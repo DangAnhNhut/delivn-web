@@ -1,231 +1,45 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useRef } from "react";
 import Image from "next/image";
 import { brandStoryContent } from "@/data/content/home";
 import { BrandStoryMotion } from "./BrandStoryMotion";
-import { gsap } from "gsap";
 
 export function BrandStory() {
   const sectionRef = useRef<HTMLElement>(null);
-  const [activeStepIndex, setActiveStepIndex] = useState<number>(0);
-  const isTransitioningRef = useRef(false);
-
   const { eyebrow, headline, sublead, steps, closing } = brandStoryContent;
-  const activeStep = steps[activeStepIndex];
-
-  // Image and text refs for refined editorial transitions
-  const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const titleRef = useRef<HTMLHeadingElement>(null);
-  const descRef = useRef<HTMLParagraphElement>(null);
-  const badgeRef = useRef<HTMLSpanElement>(null);
-  const stepButtonsRef = useRef<(HTMLButtonElement | null)[]>([]);
-
-  // Transition handler
-  // Transition handler with editorial crossfade, masked reveal, and subtle scale
-  const goToStep = useCallback(
-    (newIndex: number) => {
-      if (newIndex === activeStepIndex) return;
-
-      const prevIndex = activeStepIndex;
-      const prefersReducedMotion =
-        typeof window !== "undefined" &&
-        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-      setActiveStepIndex(newIndex);
-
-      if (prefersReducedMotion) {
-        // Instant/opacity-only switch for reduced motion
-        imageRefs.current.forEach((el, idx) => {
-          if (!el) return;
-          gsap.killTweensOf(el);
-          if (idx === newIndex) {
-            gsap.set(el, {
-              opacity: 1,
-              zIndex: 10,
-              scale: 1,
-              x: 0,
-              clipPath: "inset(0 0% 0 0)",
-              clearProps: "transform,clipPath",
-            });
-          } else {
-            gsap.set(el, {
-              opacity: 0,
-              zIndex: 1,
-              scale: 1,
-              x: 0,
-              clipPath: "inset(0 0% 0 0)",
-              clearProps: "transform,clipPath",
-            });
-          }
-        });
-        if (titleRef.current) {
-          gsap.killTweensOf(titleRef.current);
-          gsap.set(titleRef.current, { opacity: 1, y: 0, clearProps: "transform" });
-        }
-        if (descRef.current) {
-          gsap.killTweensOf(descRef.current);
-          gsap.set(descRef.current, { opacity: 1, y: 0, clearProps: "transform" });
-        }
-        if (badgeRef.current) {
-          gsap.killTweensOf(badgeRef.current);
-          gsap.set(badgeRef.current, { opacity: 1, clearProps: "opacity" });
-        }
-        return;
-      }
-
-      isTransitioningRef.current = true;
-
-      const prevImage = imageRefs.current[prevIndex];
-      const nextImage = imageRefs.current[newIndex];
-
-      // Kill any running tweens to prevent glitching on rapid clicks
-      imageRefs.current.forEach((el, idx) => {
-        if (!el) return;
-        gsap.killTweensOf(el);
-        if (idx !== prevIndex && idx !== newIndex) {
-          gsap.set(el, {
-            opacity: 0,
-            zIndex: 1,
-            x: 0,
-            scale: 1,
-            clipPath: "inset(0 0% 0 0)",
-            clearProps: "transform,clipPath",
-          });
-        }
-      });
-      if (titleRef.current) gsap.killTweensOf(titleRef.current);
-      if (descRef.current) gsap.killTweensOf(descRef.current);
-      if (badgeRef.current) gsap.killTweensOf(badgeRef.current);
-
-      // 1. Outgoing image transition:
-      // opacity: 1 -> 0, scale: 1 -> 1.012, x: 0 -> -6px, duration: ~0.45s
-      if (prevImage) {
-        gsap.set(prevImage, { zIndex: 5 });
-        gsap.to(prevImage, {
-          opacity: 0,
-          scale: 1.012,
-          x: -6,
-          duration: 0.45,
-          ease: "power3.out",
-          onComplete: () => {
-            gsap.set(prevImage, {
-              zIndex: 1,
-              opacity: 0,
-              x: 0,
-              scale: 1,
-              clipPath: "inset(0 0% 0 0)",
-              clearProps: "transform,clipPath",
-            });
-          },
-        });
-      }
-
-      // 2. Incoming image transition:
-      // opacity: 0 -> 1, scale: 1.018 -> 1, x: 8px -> 0,
-      // clip-path: inset(0 6% 0 0) -> inset(0 0% 0 0), duration: ~0.6s, ease: power3.out
-      if (nextImage) {
-        gsap.fromTo(
-          nextImage,
-          {
-            opacity: 0,
-            scale: 1.018,
-            x: 8,
-            clipPath: "inset(0 6% 0 0)",
-            zIndex: 10,
-          },
-          {
-            opacity: 1,
-            scale: 1,
-            x: 0,
-            clipPath: "inset(0 0% 0 0)",
-            duration: 0.6,
-            ease: "power3.out",
-            onComplete: () => {
-              isTransitioningRef.current = false;
-            },
-          }
-        );
-      }
-
-      // 3. Text transition: Title (opacity 0 -> 1, y 10px -> 0), Description (opacity 0 -> 1, y 12px -> 0)
-      if (titleRef.current) {
-        gsap.fromTo(
-          titleRef.current,
-          { opacity: 0, y: 10 },
-          { opacity: 1, y: 0, duration: 0.38, ease: "power2.out" }
-        );
-      }
-
-      if (descRef.current) {
-        gsap.fromTo(
-          descRef.current,
-          { opacity: 0, y: 12 },
-          { opacity: 1, y: 0, duration: 0.42, delay: 0.06, ease: "power2.out" }
-        );
-      }
-
-      // Counter / badge: short fade only (no y movement)
-      if (badgeRef.current) {
-        gsap.fromTo(
-          badgeRef.current,
-          { opacity: 0 },
-          { opacity: 1, duration: 0.3, ease: "power2.out" }
-        );
-      }
-    },
-    [activeStepIndex]
-  );
-
-  // Keyboard navigation for accessible tabs
-  const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
-    let targetIndex = index;
-    if (e.key === "ArrowDown" || e.key === "ArrowRight") {
-      e.preventDefault();
-      targetIndex = (index + 1) % steps.length;
-    } else if (e.key === "ArrowUp" || e.key === "ArrowLeft") {
-      e.preventDefault();
-      targetIndex = (index - 1 + steps.length) % steps.length;
-    } else if (e.key === "Home") {
-      e.preventDefault();
-      targetIndex = 0;
-    } else if (e.key === "End") {
-      e.preventDefault();
-      targetIndex = steps.length - 1;
-    }
-
-    if (targetIndex !== index) {
-      goToStep(targetIndex);
-      stepButtonsRef.current[targetIndex]?.focus();
-    }
-  };
 
   return (
     <section
       ref={sectionRef}
       id="nguon-cam-hung"
-      className="relative w-full bg-background overflow-hidden border-t border-border/40 pt-20 sm:pt-24 lg:pt-32 pb-20 sm:pb-24 lg:pb-32 scroll-mt-20"
+      className="relative w-full bg-background overflow-hidden border-t border-border/40 scroll-mt-20 pb-16 sm:pb-20 lg:pb-24"
       aria-labelledby="brand-story-title"
     >
-      {/* GSAP ScrollTrigger Motion Controller */}
+      {/* GSAP Entrance Controller & IntersectionObserver Loop State Manager */}
       <BrandStoryMotion sectionRef={sectionRef} />
 
-      {/* Subtle organic paper grain overlay for editorial tactility */}
+      {/* Subtle organic paper grain overlay */}
       <div
         aria-hidden="true"
         className="absolute inset-0 pointer-events-none opacity-[0.025] select-none"
         style={{
-          backgroundImage: "radial-gradient(#161616 0.45px, transparent 0.45px)",
+          backgroundImage:
+            "radial-gradient(#161616 0.45px, transparent 0.45px)",
           backgroundSize: "24px 24px",
         }}
       />
 
-      {/* Sunburst Motif Accent (Packaging visual language origin) */}
+      {/* Background Cultural Sunburst Motif Accent with Gentle Continuous Loop Sway */}
       <div
         aria-hidden="true"
-        className="story-sunburst absolute -top-8 -right-8 sm:-top-10 sm:-right-10 w-56 h-56 sm:w-72 sm:h-72 lg:w-80 lg:h-80 opacity-[0.08] pointer-events-none text-foreground select-none z-0"
+        className="story-sunburst-ambient absolute top-8 right-4 sm:top-12 sm:right-10 w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 opacity-[0.07] pointer-events-none text-foreground select-none z-0"
       >
-        <svg className="w-full h-full" fill="currentColor" viewBox="0 0 100 100">
+        <svg
+          className="story-sunburst-rotate w-full h-full"
+          fill="currentColor"
+          viewBox="0 0 100 100"
+        >
           <circle cx="50" cy="50" r="14" />
           <path d="M50 8 L53 30 L47 30 Z" />
           <path d="M50 92 L53 70 L47 70 Z" />
@@ -238,224 +52,362 @@ export function BrandStory() {
         </svg>
       </div>
 
-      <div className="site-shell relative z-10 flex flex-col">
-        {/* SECTION HEADER */}
-        <header className="w-full max-w-4xl">
-          {/* Eyebrow with Brand Terracotta Dot */}
-          <div className="story-header-item inline-flex items-center gap-2.5 mb-5 sm:mb-6">
-            <span
-              className="w-2 h-2 rounded-full bg-accent flex-shrink-0"
-              aria-hidden="true"
-            />
-            <span className="text-xs md:text-[13px] font-semibold tracking-[0.28em] text-foreground uppercase">
-              {eyebrow}
-            </span>
-          </div>
+      {/* Background Ambient Contour Ring Motif at bottom left */}
+      <div
+        aria-hidden="true"
+        className="story-ambient-ring absolute -bottom-12 -left-12 sm:-bottom-16 sm:-left-16 w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 opacity-[0.04] pointer-events-none text-foreground select-none z-0"
+      >
+        <svg
+          className="story-ambient-drift w-full h-full"
+          viewBox="0 0 100 100"
+          fill="none"
+          stroke="currentColor"
+        >
+          <circle cx="50" cy="50" r="46" strokeWidth="0.8" strokeDasharray="4 4" />
+          <circle cx="50" cy="50" r="32" strokeWidth="0.6" />
+          <ellipse cx="50" cy="50" rx="20" ry="12" strokeWidth="0.8" strokeDasharray="2 3" transform="rotate(30 50 50)" />
+        </svg>
+      </div>
 
-          {/* Main Editorial Headline */}
-          <h2
-            id="brand-story-title"
-            className="story-header-item text-[28px] xs:text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-extrabold tracking-tight text-foreground leading-[1.15] sm:leading-[1.1] uppercase"
-          >
-            <span className="block">{headline.line1}</span>
-            <span className="block">{headline.line2}</span>
-          </h2>
-
-          {/* Supporting Serif Quotation */}
-          <p className="story-header-item text-lg sm:text-xl font-display-serif italic text-foreground-muted font-light mt-5 sm:mt-6 max-w-3xl leading-relaxed">
-            {sublead}
-          </p>
-        </header>
-
-        {/* ASYMMETRIC INTERACTIVE 3-STEP STORY AREA */}
-        <div className="story-spread-grid grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 xl:gap-18 items-center mt-12 sm:mt-16 lg:mt-20">
-          {/* LEFT: Large Visual Frame displaying ONE active image (approx 58-60% on desktop: 7 cols) */}
-          <div className="lg:col-span-7 relative order-1">
-            {/* Mountain Line Motif Accent (Extending beyond image frame) */}
-            <div
-              aria-hidden="true"
-              className="absolute -bottom-6 -left-6 sm:-bottom-8 sm:-left-8 w-28 h-28 sm:w-36 sm:h-36 opacity-10 pointer-events-none text-foreground select-none z-0"
+      {/* SECTION INTRO HEADER (ALIGNED WITH SITE-SHELL) */}
+      <header className="story-intro-header relative z-10 site-shell pt-14 sm:pt-18 lg:pt-22 pb-6 sm:pb-8 lg:pb-10 border-b border-border/40">
+        <div className="story-intro-eyebrow flex items-center gap-2.5 mb-3 sm:mb-4">
+          <span
+            className="w-2 h-2 rounded-full bg-accent story-dot-pulse flex-shrink-0"
+            aria-hidden="true"
+          />
+          <span className="text-xs sm:text-[13px] font-semibold tracking-[0.28em] text-foreground uppercase">
+            {eyebrow}
+          </span>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 xl:gap-16 items-end">
+          <div className="lg:col-span-7">
+            <h2
+              id="brand-story-title"
+              className="story-intro-title text-3xl xs:text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-foreground uppercase leading-[1.1]"
             >
-              <svg className="w-full h-full" fill="currentColor" viewBox="0 0 120 120">
-                <path d="M10 110 Q 30 60 70 80 T 110 50 L 110 110 Z" />
-                <circle cx="35" cy="40" r="8" />
-                <path d="M30 50 Q 50 20 85 45" fill="none" stroke="currentColor" strokeWidth="6" />
-              </svg>
-            </div>
+              <span>{headline.line1}</span>
+              <span className="block text-foreground-muted">{headline.line2}</span>
+            </h2>
+          </div>
+          <div className="lg:col-span-5">
+            <p className="story-intro-sublead text-base sm:text-lg lg:text-xl font-display-serif italic text-foreground-muted font-light leading-relaxed">
+              {sublead}
+            </p>
+          </div>
+        </div>
+      </header>
 
-            {/* Editorial Photography Frame: Consistent 16/10 aspect ratio */}
-            <div className="story-image-container relative overflow-hidden rounded-xs border border-border/40 bg-surface/40 aspect-[16/10] shadow-xs z-10">
-              {/* Stacked Image Layers */}
-              {steps.map((step, idx) => (
+      {/* 3 INDEPENDENT STORY CHAPTERS IN NATURAL DOCUMENT FLOW */}
+      <div className="relative z-10 flex flex-col w-full">
+        {steps.map((step, idx) => {
+          const isEven = idx % 2 === 1; // Step 02 has inverted layout: Text left, Image right
+
+          return (
+            <article
+              key={step.id}
+              className={`story-chapter-card relative w-full h-auto min-h-0 ${
+                idx === 0
+                  ? "pt-10 sm:pt-12 lg:pt-14 pb-12 sm:pb-14 lg:pb-16"
+                  : "pt-12 sm:pt-14 lg:pt-16 pb-12 sm:pb-14 lg:pb-16 border-t border-border/30"
+              }`}
+              aria-label={`Chương ${step.number}: ${step.name}`}
+            >
+              {/* CROSS-CHAPTER CONTINUITY NODE ON DIVIDER */}
+              {idx > 0 && (
                 <div
-                  key={step.id}
-                  ref={(el) => {
-                    imageRefs.current[idx] = el;
-                  }}
-                  className={`absolute inset-0 w-full h-full will-change-transform ${
-                    idx === 0 ? "opacity-100 z-10" : "opacity-0 z-1 pointer-events-none"
-                  }`}
-                  style={{
-                    transformOrigin: "center center",
-                  }}
-                  aria-hidden={idx !== activeStepIndex}
+                  aria-hidden="true"
+                  className="story-connector-node absolute -top-[5px] left-1/2 -translate-x-1/2 flex items-center justify-center pointer-events-none select-none z-20"
                 >
-                  <Image
-                    src={step.image.src}
-                    alt={step.image.alt}
-                    fill
-                    quality={90}
-                    sizes="(max-width: 768px) 100vw, (max-width: 1279px) 100vw, 60vw"
-                    style={{
-                      objectFit: "cover",
-                      objectPosition: step.image.objectPosition,
-                    }}
-                    priority={idx === 0}
-                    loading={idx === 0 ? "eager" : "lazy"}
-                  />
+                  <div className="w-2.5 h-2.5 rounded-full bg-background border border-border/80 flex items-center justify-center shadow-xs">
+                    <div className="w-1 h-1 rounded-full bg-accent/70 story-dot-pulse" />
+                  </div>
                 </div>
-              ))}
+              )}
 
-              {/* Subtle inner rim */}
-              <div
-                aria-hidden="true"
-                className="absolute inset-0 ring-1 ring-inset ring-black/5 pointer-events-none z-20"
-              />
+              <div className="site-shell">
+                {isEven ? (
+                  /* CHAPTER 02: INVERTED LAYOUT (TEXT LEFT 39%, IMAGE RIGHT 61% ON DESKTOP; IMAGE TOP ON MOBILE) */
+                  <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.55fr] gap-8 sm:gap-10 lg:gap-14 xl:gap-16 items-center">
+                    {/* TEXT COLUMN (Desktop: col 1 / Mobile: order-2) */}
+                    <div className="story-text-column order-2 lg:order-1 flex flex-col justify-center w-full">
+                      <div className="w-full max-w-[580px] lg:max-w-[620px]">
+                        {/* Chapter Pill & Visual Continuity Indicator */}
+                        <div className="flex items-center justify-between gap-4 mb-4 sm:mb-6">
+                          <div className="story-pill inline-flex items-center gap-2.5 px-3.5 py-1.5 bg-surface border border-border/70 rounded-full shadow-xs">
+                            <span
+                              className="story-dot story-dot-pulse w-1.5 h-1.5 rounded-full bg-accent"
+                              aria-hidden="true"
+                            />
+                            <span className="font-mono text-xs font-bold text-accent">
+                              CHƯƠNG {step.number}
+                            </span>
+                            <span className="text-foreground-muted/40">•</span>
+                            <span className="text-[11.5px] font-bold tracking-[0.2em] uppercase text-foreground">
+                              {step.name}
+                            </span>
+                          </div>
 
-              {/* Editorial Image Caption Badge */}
-              <div className="story-image-badge absolute bottom-3 left-3 sm:bottom-5 sm:left-5 z-30 bg-background/90 backdrop-blur-md px-3 sm:px-4 py-1.5 sm:py-2 border border-border/60 shadow-xs">
-                <span
-                  ref={badgeRef}
-                  className="text-[9.5px] sm:text-[11px] font-medium tracking-[0.18em] sm:tracking-[0.22em] text-foreground uppercase block"
-                >
-                  {activeStep.image.badge}
-                </span>
+                          {/* Visual Continuity Thread & Step Counter */}
+                          <div className="flex items-center gap-2">
+                            <span
+                              className="story-line story-line-pulse hidden sm:block w-7 h-[1px] bg-border/80"
+                              aria-hidden="true"
+                            />
+                            <span className="story-indicator-shimmer font-mono text-xs sm:text-[13px] font-bold text-foreground-muted/70 tracking-widest">
+                              {step.number} / 03
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Tagline */}
+                        <p className="story-tagline text-xs sm:text-sm font-bold tracking-[0.22em] text-accent uppercase mb-3">
+                          {step.tagline}
+                        </p>
+
+                        {/* Chapter Title */}
+                        <h3 className="story-title text-2xl sm:text-3xl md:text-4xl lg:text-[40px] xl:text-[44px] 2xl:text-[48px] font-extrabold tracking-tight text-foreground uppercase leading-[1.12]">
+                          {step.title}
+                        </h3>
+
+                        {/* Narrative Description */}
+                        <p className="story-desc mt-5 sm:mt-6 text-base sm:text-[17px] lg:text-[18px] text-foreground-muted leading-[1.75] font-normal">
+                          {step.description}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* IMAGE COLUMN (Desktop: col 2 / Mobile: order-1) */}
+                    <div className="story-image-column order-1 lg:order-2 w-full">
+                      <div className="group/img story-frame-glow relative w-full h-[360px] sm:h-[440px] md:h-[500px] lg:h-[540px] xl:h-[600px] 2xl:h-[640px] rounded-xs border border-border/60 bg-[#F4EFE6] overflow-hidden shadow-xs flex items-center justify-center p-3 sm:p-5 lg:p-6 transition-all duration-500 ease-out hover:border-border hover:shadow-md">
+                        {/* CHAPTER 02 DECORATIVE MICRO-MOTION: ARTISANAL COFFEE PHIN STEAM WISPS LOOP */}
+                        <div
+                          aria-hidden="true"
+                          className="absolute top-4 right-5 sm:top-6 sm:right-7 flex items-center gap-1.5 opacity-70 pointer-events-none select-none z-20"
+                        >
+                          <svg
+                            width="28"
+                            height="32"
+                            viewBox="0 0 28 32"
+                            fill="none"
+                            className="text-accent/80"
+                          >
+                            <path
+                              className="steam-wisp-1"
+                              d="M6 28 C4 21 8 16 6 11 C4 7 7 3 6 0"
+                              stroke="currentColor"
+                              strokeWidth="1.3"
+                              strokeLinecap="round"
+                            />
+                            <path
+                              className="steam-wisp-2"
+                              d="M14 30 C11 23 16 17 13 12 C11 8 14 4 13 0"
+                              stroke="currentColor"
+                              strokeWidth="1.5"
+                              strokeLinecap="round"
+                            />
+                            <path
+                              className="steam-wisp-3"
+                              d="M22 27 C19 21 24 16 21 10 C19 6 22 2 21 0"
+                              stroke="currentColor"
+                              strokeWidth="1.3"
+                              strokeLinecap="round"
+                            />
+                          </svg>
+                        </div>
+
+                        {/* Image Canvas */}
+                        <div className="relative w-full h-full flex items-center justify-center">
+                          <Image
+                            src={step.image.src}
+                            alt={step.image.alt}
+                            fill
+                            sizes="(max-width: 1024px) 100vw, 62vw"
+                            style={{
+                              objectFit: step.image.fit,
+                              objectPosition: step.image.objectPosition,
+                            }}
+                            priority={idx === 0}
+                            loading={idx === 0 ? "eager" : "lazy"}
+                            className="transition-transform duration-700 ease-out group-hover/img:scale-[1.018]"
+                          />
+                        </div>
+
+                        {/* Inner rim overlay */}
+                        <div
+                          aria-hidden="true"
+                          className="absolute inset-0 ring-1 ring-inset ring-black/5 pointer-events-none z-20"
+                        />
+
+                        {/* Badge on Image Frame */}
+                        <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 z-30 pointer-events-none">
+                          <div className="bg-background/90 backdrop-blur-md px-3 sm:px-3.5 py-1.5 border border-border/60 shadow-xs flex items-center gap-2">
+                            <span className="text-[10px] sm:text-[11px] font-semibold tracking-[0.2em] text-foreground uppercase block">
+                              {step.image.badge}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  /* CHAPTER 01 & 03: STANDARD LAYOUT (IMAGE LEFT 61%, TEXT RIGHT 39% ON DESKTOP; IMAGE TOP ON MOBILE) */
+                  <div className="grid grid-cols-1 lg:grid-cols-[1.55fr_1fr] gap-8 sm:gap-10 lg:gap-14 xl:gap-16 items-center">
+                    {/* IMAGE COLUMN (Desktop: col 1 / Mobile: top) */}
+                    <div className="story-image-column w-full">
+                      <div className="group/img story-frame-glow relative w-full h-[360px] sm:h-[440px] md:h-[500px] lg:h-[540px] xl:h-[600px] 2xl:h-[640px] rounded-xs border border-border/60 bg-[#F4EFE6] overflow-hidden shadow-xs flex items-center justify-center p-3 sm:p-5 lg:p-6 transition-all duration-500 ease-out hover:border-border hover:shadow-md">
+                        {/* CHAPTER 01 DECORATIVE MOTIF: DELICATE SOLAR ORBIT EMBLEM */}
+                        {idx === 0 && (
+                          <div
+                            aria-hidden="true"
+                            className="story-orbit-c1 absolute -top-8 -left-8 w-32 h-32 opacity-10 pointer-events-none select-none text-accent"
+                          >
+                            <svg className="w-full h-full" viewBox="0 0 100 100" fill="none" stroke="currentColor">
+                              <circle cx="50" cy="50" r="42" strokeWidth="1" strokeDasharray="3 3" />
+                              <circle cx="50" cy="50" r="28" strokeWidth="1.2" />
+                              <circle cx="50" cy="8" r="3" fill="currentColor" />
+                            </svg>
+                          </div>
+                        )}
+
+                        {/* CHAPTER 03 DECORATIVE MOTIF: DELICATE ROAST DEVELOPMENT ARC AURA */}
+                        {idx === 2 && (
+                          <div
+                            aria-hidden="true"
+                            className="story-roast-arc absolute -top-8 -right-8 w-36 h-36 opacity-[0.08] pointer-events-none select-none text-accent"
+                          >
+                            <svg className="w-full h-full" viewBox="0 0 100 100" fill="none" stroke="currentColor">
+                              <circle cx="50" cy="50" r="44" strokeWidth="1" strokeDasharray="4 4" />
+                              <circle cx="50" cy="50" r="30" strokeWidth="1.2" />
+                              <path d="M50 6 A44 44 0 0 1 94 50" strokeWidth="1.8" />
+                            </svg>
+                          </div>
+                        )}
+
+                        {/* Image Canvas */}
+                        <div className="relative w-full h-full flex items-center justify-center">
+                          <Image
+                            src={step.image.src}
+                            alt={step.image.alt}
+                            fill
+                            sizes="(max-width: 1024px) 100vw, 62vw"
+                            style={{
+                              objectFit: step.image.fit,
+                              objectPosition: step.image.objectPosition,
+                            }}
+                            priority={idx === 0}
+                            loading={idx === 0 ? "eager" : "lazy"}
+                            className="transition-transform duration-700 ease-out group-hover/img:scale-[1.018]"
+                          />
+                        </div>
+
+                        {/* Inner rim overlay */}
+                        <div
+                          aria-hidden="true"
+                          className="absolute inset-0 ring-1 ring-inset ring-black/5 pointer-events-none z-20"
+                        />
+
+                        {/* Badge on Image Frame */}
+                        <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 z-30 pointer-events-none">
+                          <div className="bg-background/90 backdrop-blur-md px-3 sm:px-3.5 py-1.5 border border-border/60 shadow-xs flex items-center gap-2">
+                            <span className="text-[10px] sm:text-[11px] font-semibold tracking-[0.2em] text-foreground uppercase block">
+                              {step.image.badge}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* TEXT COLUMN (Desktop: col 2 / Mobile: bottom) */}
+                    <div className="story-text-column flex flex-col justify-center w-full">
+                      <div className="w-full max-w-[580px] lg:max-w-[620px]">
+                        {/* Chapter Pill & Visual Continuity Indicator */}
+                        <div className="flex items-center justify-between gap-4 mb-4 sm:mb-6">
+                          <div className="story-pill inline-flex items-center gap-2.5 px-3.5 py-1.5 bg-surface border border-border/70 rounded-full shadow-xs">
+                            <span
+                              className="story-dot story-dot-pulse w-1.5 h-1.5 rounded-full bg-accent"
+                              aria-hidden="true"
+                            />
+                            <span className="font-mono text-xs font-bold text-accent">
+                              CHƯƠNG {step.number}
+                            </span>
+                            <span className="text-foreground-muted/40">•</span>
+                            <span className="text-[11.5px] font-bold tracking-[0.2em] uppercase text-foreground">
+                              {step.name}
+                            </span>
+                          </div>
+
+                          {/* Visual Continuity Thread & Step Counter */}
+                          <div className="flex items-center gap-2">
+                            <span
+                              className="story-line story-line-pulse hidden sm:block w-7 h-[1px] bg-border/80"
+                              aria-hidden="true"
+                            />
+                            <span className="story-indicator-shimmer font-mono text-xs sm:text-[13px] font-bold text-foreground-muted/70 tracking-widest">
+                              {step.number} / 03
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Tagline */}
+                        <p className="story-tagline text-xs sm:text-sm font-bold tracking-[0.22em] text-accent uppercase mb-3">
+                          {step.tagline}
+                        </p>
+
+                        {/* Chapter Title */}
+                        <h3 className="story-title text-2xl sm:text-3xl md:text-4xl lg:text-[40px] xl:text-[44px] 2xl:text-[48px] font-extrabold tracking-tight text-foreground uppercase leading-[1.12]">
+                          {step.title}
+                        </h3>
+
+                        {/* Narrative Description */}
+                        <p className="story-desc mt-5 sm:mt-6 text-base sm:text-[17px] lg:text-[18px] text-foreground-muted leading-[1.75] font-normal">
+                          {step.description}
+                        </p>
+
+                        {/* Closing statement on Screen 03 with subtle draw underline & coffee bean icon */}
+                        {idx === 2 && (
+                          <div className="story-closing-wrap mt-8 pt-6 border-t border-border/60 relative">
+                            <div className="flex items-center gap-3 mb-2">
+                              {/* CHAPTER 03 DECORATIVE MOTIF: MINIMALIST COFFEE BEAN LINE SILHOUETTE */}
+                              <svg
+                                className="story-bean-sway w-4 h-4 text-accent/80 shrink-0"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="1.6"
+                                aria-hidden="true"
+                              >
+                                <ellipse cx="12" cy="12" rx="9" ry="6" transform="rotate(45 12 12)" />
+                                <path d="M8 8 C10 11 14 13 16 16" strokeLinecap="round" />
+                              </svg>
+                              <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-accent">
+                                DI SẢN & SỨ MỆNH
+                              </span>
+                            </div>
+
+                            <p className="text-base sm:text-lg font-display-serif italic text-accent/95 leading-relaxed">
+                              &ldquo;{closing.headline.line1} {closing.headline.line2}&rdquo;
+                            </p>
+
+                            {/* Animated underline reveal */}
+                            <div
+                              aria-hidden="true"
+                              className="story-closing-draw h-[1.5px] w-28 bg-accent/60 mt-3 rounded-full origin-left"
+                            />
+
+                            <p className="text-xs tracking-[0.2em] uppercase text-foreground-muted/80 mt-3 font-medium">
+                              {closing.scrollCue}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
-            </div>
-          </div>
-
-          {/* RIGHT: Interactive Editorial Story Navigation & Active Content (approx 40% on desktop: 5 cols) */}
-          <div className="lg:col-span-5 flex flex-col justify-center order-2">
-            {/* Step Selector: Clean Editorial Styling (Horizontal row on mobile, vertical stack on desktop) */}
-            <div
-              role="tablist"
-              aria-label="Các chặng câu chuyện thương hiệu DELIVN"
-              className="story-step-nav flex flex-row sm:flex-col items-center sm:items-start justify-between sm:justify-start gap-2 sm:gap-6 border-b sm:border-b-0 border-border/40 pb-3 sm:pb-0"
-            >
-              {steps.map((step, idx) => {
-                const isActive = activeStepIndex === idx;
-                return (
-                  <button
-                    key={step.id}
-                    ref={(el) => {
-                      stepButtonsRef.current[idx] = el;
-                    }}
-                    type="button"
-                    role="tab"
-                    id={`story-tab-${step.id}`}
-                    aria-selected={isActive}
-                    aria-controls={`story-panel-${step.id}`}
-                    tabIndex={isActive ? 0 : -1}
-                    onClick={() => goToStep(idx)}
-                    onKeyDown={(e) => handleKeyDown(e, idx)}
-                    className="relative group text-left flex items-center gap-2 sm:gap-4 transition-all duration-300 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-xs py-1.5 px-1"
-                  >
-                    <span
-                      className={`font-mono text-xs sm:text-[13px] tracking-wider transition-colors duration-300 ${
-                        isActive
-                          ? "text-accent font-bold"
-                          : "text-foreground-muted/50 group-hover:text-foreground"
-                      }`}
-                    >
-                      {step.number}
-                    </span>
-                    <span
-                      className={`text-[11.5px] xs:text-xs sm:text-base tracking-[0.16em] sm:tracking-[0.2em] uppercase font-semibold transition-colors duration-300 whitespace-nowrap ${
-                        isActive
-                          ? "text-foreground font-bold"
-                          : "text-foreground-muted/60 group-hover:text-foreground"
-                      }`}
-                    >
-                      {step.name}
-                    </span>
-                    {/* Animated hairline indicator on desktop */}
-                    <span
-                      className={`hidden sm:inline-block h-[1.5px] transition-all duration-500 ease-out ${
-                        isActive
-                          ? "w-12 sm:w-16 lg:w-20 bg-accent opacity-100"
-                          : "w-0 bg-border opacity-0 group-hover:w-6 group-hover:opacity-40"
-                      }`}
-                      aria-hidden="true"
-                    />
-                    {/* Active underline indicator on mobile */}
-                    {isActive && (
-                      <span
-                        className="sm:hidden absolute bottom-0 left-0 right-0 h-[2px] bg-accent rounded-full"
-                        aria-hidden="true"
-                      />
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-
-
-            {/* Active Content Container */}
-            <div
-              id={`story-panel-${activeStep.id}`}
-              role="tabpanel"
-              aria-labelledby={`story-tab-${activeStep.id}`}
-              className="story-active-panel mt-6 sm:mt-8 lg:mt-10 pt-4 sm:pt-6 border-t-0 sm:border-t border-border/50"
-            >
-              {/* Active Step Title */}
-              <h3
-                ref={titleRef}
-                className="story-content-item text-xl sm:text-2xl lg:text-[30px] font-bold tracking-tight text-foreground uppercase leading-snug"
-              >
-                {activeStep.title}
-              </h3>
-
-              {/* Active Step Description */}
-              <p
-                ref={descRef}
-                className="story-content-item mt-3.5 sm:mt-5 text-sm sm:text-base lg:text-[16.5px] text-foreground-muted leading-relaxed font-normal"
-              >
-                {activeStep.description}
-              </p>
-
-              {/* Subtle Step Progress Indicator */}
-              <div className="story-content-item mt-6 sm:mt-8 pt-4 border-t border-border/40 flex items-center justify-between text-xs text-foreground-muted/60 select-none">
-                <span className="font-mono tracking-widest text-[11px]">
-                  CHẶNG {activeStep.number} / 03
-                </span>
-                <div className="flex items-center gap-1.5" aria-hidden="true">
-                  {steps.map((_, i) => (
-                    <span
-                      key={i}
-                      className={`h-1 rounded-full transition-all duration-300 ${
-                        activeStepIndex === i ? "w-6 bg-accent" : "w-1.5 bg-border/80"
-                      }`}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* CLOSING BRAND STATEMENT ANCHOR */}
-        <div className="story-closing-wrapper max-w-5xl mx-auto px-4 sm:px-8 pt-16 sm:pt-20 text-center border-t border-border/60 mt-16 sm:mt-24 w-full">
-          <h3 className="story-closing-item text-2xl sm:text-3xl md:text-[34px] font-bold tracking-tight text-foreground uppercase max-w-3xl mx-auto leading-snug">
-            <span className="block">{closing.headline.line1}</span>
-            <span className="block">{closing.headline.line2}</span>
-          </h3>
-
-          <div className="story-closing-item mt-6 flex flex-col items-center justify-center">
-            <span className="text-xs uppercase tracking-[0.2em] text-foreground-muted font-medium inline-flex items-center gap-1.5 transition-colors duration-200 hover:text-foreground select-none">
-              {closing.scrollCue}
-            </span>
-          </div>
-        </div>
+            </article>
+          );
+        })}
       </div>
     </section>
   );
