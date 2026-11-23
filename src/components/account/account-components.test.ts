@@ -3,6 +3,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
 vi.mock("@/components/auth/LogoutButton", () => ({ LogoutButton: () => createElement("button", null, "ĐĂNG XUẤT") }));
+vi.mock("@/components/account/GoogleLinkButton", () => ({ GoogleLinkButton: () => createElement("button", null, "Liên kết Google") }));
 
 import { AccountDashboard } from "./AccountDashboard";
 import { OrderList } from "./OrderList";
@@ -13,8 +14,36 @@ const summary = { orderNumber: "DLV-1", totalVnd: 100000, paymentMethod: "cod" a
 describe("account presentation", () => {
   it("shows identity and order navigation without internal ids", () => {
     const html = renderToStaticMarkup(createElement(AccountDashboard, { name: "Khach Hang", email: "customer@example.com" }));
-    expect(html).toContain("Khach Hang"); expect(html).toContain("/tai-khoan/don-hang"); expect(html).not.toContain("userId");
+    expect(html).toContain("Khach Hang");
+    expect(html).toContain("/tai-khoan/don-hang");
+    expect(html).not.toContain("userId");
+    expect(html).toContain("TÀI KHOẢN LIÊN KẾT");
+    expect(html).toContain("Google — Chưa liên kết");
+    expect(html).toContain("Liên kết Google");
   });
+
+  it("shows Google — Đã liên kết and suppresses link button when already linked", () => {
+    const html = renderToStaticMarkup(createElement(AccountDashboard, {
+      name: "Khach Hang",
+      email: "customer@example.com",
+      isGoogleLinked: true,
+    }));
+    expect(html).toContain("Google — Đã liên kết");
+    expect(html).not.toContain("Liên kết Google");
+    expect(html).not.toContain("provider_id");
+    expect(html).not.toContain("accountId");
+  });
+
+  it("renders safe link error message without technical payload", () => {
+    const html = renderToStaticMarkup(createElement(AccountDashboard, {
+      name: "Khach Hang",
+      email: "customer@example.com",
+      linkError: "Tài khoản Google phải sử dụng cùng email với tài khoản DELIVN hiện tại.",
+    }));
+    expect(html).toContain("Tài khoản Google phải sử dụng cùng email với tài khoản DELIVN hiện tại.");
+    expect(html).not.toContain("email_does_not_match");
+  });
+
   it("handles empty and populated order lists", () => {
     expect(renderToStaticMarkup(createElement(OrderList, { orders: [] }))).toContain("CHƯA CÓ ĐƠN HÀNG");
     const html = renderToStaticMarkup(createElement(OrderList, { orders: [summary] }));
@@ -23,6 +52,7 @@ describe("account presentation", () => {
     expect(html).toContain("unpaid");
     expect(html).toContain("pending");
   });
+
   it("renders authoritative detail snapshots without auth/inventory internals", () => {
     const html = renderToStaticMarkup(createElement(OrderDetail, { order: { ...summary, customer: { name: "A", phone: "0912345678", email: null, address: "Dia chi", note: "Giao buoi sang" }, subtotalVnd: 100000, shippingFeeVnd: 0, items: [{ productName: "Coffee", variantName: "250g", unitPriceVnd: 100000, quantity: 1, lineTotalVnd: 100000 }], statusHistory: [{ fromStatus: null, toStatus: "pending", note: "Order created", createdAt: "2026-11-06T00:00:00.000Z" }] } }));
     expect(html).toContain("Coffee");

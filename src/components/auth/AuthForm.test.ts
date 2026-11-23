@@ -9,6 +9,7 @@ vi.mock("next/navigation", () => ({ useRouter: () => ({ push: mocks.push, refres
 vi.mock("@/lib/auth/auth-client", () => ({ authClient: { signIn: { email: mocks.email, social: mocks.social }, signUp: { email: mocks.signup } } }));
 
 import { AuthForm } from "./AuthForm";
+import { GOOGLE_ACCOUNT_NOT_LINKED_MESSAGE } from "@/lib/auth/google-oauth";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -87,6 +88,16 @@ describe("AuthForm", () => {
     })));
     expect(container.querySelector('[role="alert"]')?.textContent).toContain("Không thể hoàn tất đăng nhập bằng Google");
     expect(container.textContent).not.toContain("access_denied");
+  });
+
+  it("displays friendly unverified account guidance when errorMessage is provided", () => {
+    act(() => root.render(createElement(AuthForm, {
+      mode: "login",
+      returnTo: "/tai-khoan",
+      googleEnabled: true,
+      errorMessage: GOOGLE_ACCOUNT_NOT_LINKED_MESSAGE,
+    })));
+    expect(container.querySelector('[role="alert"]')?.textContent).toContain("Tài khoản email này đã tồn tại");
   });
 
   it("recovers from a rejected credential request without navigating", async () => {

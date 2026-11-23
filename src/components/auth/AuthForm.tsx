@@ -10,11 +10,25 @@ import {
 } from "@/lib/auth/google-oauth";
 import { sanitizeReturnTo } from "@/lib/auth/return-to";
 
-export function AuthForm({ mode, returnTo, googleEnabled, googleOAuthError = false }: { mode: "login" | "register"; returnTo: string; googleEnabled: boolean; googleOAuthError?: boolean }) {
+export function AuthForm({
+  mode,
+  returnTo,
+  googleEnabled,
+  googleOAuthError = false,
+  errorMessage,
+}: {
+  mode: "login" | "register";
+  returnTo: string;
+  googleEnabled: boolean;
+  googleOAuthError?: boolean;
+  errorMessage?: string | null;
+}) {
   const router = useRouter();
   const pendingRef = useRef(false);
   const [pending, setPending] = useState(false);
-  const [error, setError] = useState(googleOAuthError ? GOOGLE_OAUTH_ERROR_MESSAGE : "");
+  const [error, setError] = useState(
+    errorMessage ?? (googleOAuthError ? GOOGLE_OAUTH_ERROR_MESSAGE : ""),
+  );
   const destination = sanitizeReturnTo(returnTo, "/tai-khoan");
 
   async function submit(event: FormEvent<HTMLFormElement>) {
