@@ -21,14 +21,14 @@ export function Header() {
       </div>
 
       {/* Tier 2: Main Navigation */}
-      <div className="h-[70px] md:h-[84px] lg:h-[96px] w-full bg-[#171717]">
+      <div className="h-[64px] md:h-[74px] lg:h-[82px] w-full bg-[#171717]">
         <div className="w-full max-w-[1600px] mx-auto h-full px-4 sm:px-6 lg:px-10 grid grid-cols-[1fr_auto_1fr] items-center">
           {/* Left: Menu */}
           <div className="flex items-center justify-start">
             <MobileMenuButton navigation={headerContent.navigation} />
           </div>
 
-          {/* Center: Official DELIVN Logo */}
+          {/* Center: Official DELIVN Emblem (No wordmark text below) */}
           <div className="flex items-center justify-center">
             <Link
               href="/"
@@ -36,11 +36,11 @@ export function Header() {
               className="inline-flex items-center justify-center transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent rounded-sm"
             >
               <Image
-                src="/brand/delivn-logo-white.svg"
+                src="/brand/delivn-emblem-red.png"
                 alt="DELIVN Logo"
-                width={122}
-                height={92}
-                className="w-[78px] sm:w-[88px] lg:w-[114px] xl:w-[122px] h-auto object-contain"
+                width={609}
+                height={334}
+                className="w-[68px] sm:w-[76px] lg:w-[88px] xl:w-[96px] h-auto object-contain"
                 priority
               />
             </Link>

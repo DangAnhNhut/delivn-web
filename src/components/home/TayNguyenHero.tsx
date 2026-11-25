@@ -68,14 +68,14 @@ export function TayNguyenHero() {
               </span>
             </div>
 
-            {/* Official DELIVN Red Emblem Logo */}
+            {/* Official DELIVN Black Vector Wordmark */}
             <div className="taynguyen-wordmark mb-4 sm:mb-5">
               <Image
-                src="/brand/delivn-emblem-red.png"
-                alt="Logo DELIVN"
-                width={609}
-                height={334}
-                className="w-[124px] sm:w-[144px] lg:w-[172px] xl:w-[188px] h-auto object-contain select-none"
+                src="/brand/delivn-wordmark.svg"
+                alt={tayNguyenHeroContent.brandLabel}
+                width={612}
+                height={80}
+                className="w-[168px] sm:w-[192px] lg:w-[238px] xl:w-[264px] h-auto object-contain select-none"
               />
             </div>
 
