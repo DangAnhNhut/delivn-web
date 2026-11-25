@@ -104,7 +104,7 @@ export function CoffeeLines() {
                 </div>
 
                 {/* Title */}
-                <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground uppercase tracking-tight">
+                <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-foreground tracking-tight leading-[1.3]">
                   {product.title}
                 </h3>
 

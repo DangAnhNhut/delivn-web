@@ -14,7 +14,7 @@ if (typeof window !== "undefined") {
 
 export function Footer() {
   const footerRef = useRef<HTMLElement>(null);
-  const { brandLine, summary, tag, navigation, copyright } = footerContent;
+  const { navigation, copyright } = footerContent;
   const informationLinks = [
     ...navigation,
     ...LEGAL_ROUTE_LINKS.slice(0, 2),
@@ -78,14 +78,14 @@ export function Footer() {
       className="bg-[#161616] text-[#FAF6F1]/80 relative z-20 border-t border-neutral-800"
     >
       <div className="footer-inner site-shell pt-14 sm:pt-16 lg:pt-20 pb-10 sm:pb-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
-          {/* COL 1: Brand Wordmark & Tag */}
-          <div className="footer-col lg:col-span-4 flex flex-col items-start pr-0 lg:pr-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-10 items-start">
+          {/* COL 1: Official DELIVN Logo */}
+          <div className="footer-col lg:col-span-2 flex flex-col items-start">
             {/* Official White Logo with authentic Red Seal - ZERO CSS filters */}
             <Link
               href="/"
               aria-label="DELIVN — Về trang chủ"
-              className="inline-block mb-5 transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent rounded-sm"
+              className="inline-block transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent rounded-sm"
             >
               <Image
                 src="/brand/delivn-logo-white.svg"
@@ -95,29 +95,10 @@ export function Footer() {
                 className="h-9 sm:h-10 w-auto object-contain select-none"
               />
             </Link>
-
-            {/* Brand Closing Line */}
-            <p className="text-white text-sm sm:text-base font-semibold tracking-[0.08em] uppercase mb-3">
-              {brandLine}
-            </p>
-
-            {/* Brand Narrative Summary */}
-            <p className="text-xs sm:text-[13px] text-neutral-400 leading-relaxed font-light mb-5 max-w-md">
-              {summary}
-            </p>
-
-            {/* Origin Tag */}
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xs bg-[#1F1F1F] border border-neutral-800 text-[10px] sm:text-[10.5px] uppercase font-mono tracking-widest text-neutral-400 select-none">
-              <span
-                className="w-1.5 h-1.5 rounded-full bg-accent shrink-0"
-                aria-hidden="true"
-              />
-              <span>{tag}</span>
-            </div>
           </div>
 
           {/* COL 2: Verified Company Legal Information */}
-          <div className="footer-col lg:col-span-3 flex flex-col items-start text-xs text-neutral-400 leading-relaxed space-y-2.5">
+          <div className="footer-col lg:col-span-4 flex flex-col items-start text-xs text-neutral-400 leading-relaxed space-y-2.5">
             <h3 className="text-[11px] font-bold uppercase tracking-[0.24em] text-white/90 mb-2">
               THÔNG TIN DOANH NGHIỆP
             </h3>
@@ -155,7 +136,7 @@ export function Footer() {
           </div>
 
           {/* COL 3: Information links */}
-          <div className="footer-col lg:col-span-2 flex flex-col items-start">
+          <div className="footer-col lg:col-span-3 flex flex-col items-start">
             <h3 className="text-[11px] font-bold uppercase tracking-[0.24em] text-white/90 mb-4 lg:mb-5">
               THÔNG TIN
             </h3>

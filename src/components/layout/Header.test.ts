@@ -33,46 +33,29 @@ async function renderHeader() {
 }
 
 describe("Header navigation", () => {
-  it("renders the commerce-first desktop navigation without dead links", async () => {
+  it("renders the two-tier header with brand strip, centered logo, search, and cart", async () => {
     await renderHeader();
-    const desktopNavigation = container.querySelector('nav[aria-label="Menu chính"]');
 
-    expect(desktopNavigation?.querySelector('a[href="/"]')?.textContent).toBe(
-      "TRANG CHỦ",
-    );
-    expect(
-      desktopNavigation?.querySelector('a[href="/san-pham"]')?.textContent,
-    ).toBe("SẢN PHẨM");
-    expect(desktopNavigation?.querySelector('a[href="/lien-he"]')?.textContent).toBe(
-      "LIÊN HỆ",
-    );
-    expect(desktopNavigation?.querySelector('a[href="/cau-chuyen"]')).toBeNull();
-    expect(desktopNavigation?.querySelector('a[href="/cach-pha"]')).toBeNull();
-    expect(container.querySelector('a[href="/gio-hang"]')?.textContent).toContain(
-      "GIỎ HÀNG",
-    );
+    expect(container.textContent).toContain("DELIVN");
+    expect(container.textContent).toContain("Modern delicious Vietnam coffee.");
+    expect(container.querySelector('a[aria-label="DELIVN — Trang chủ"]')).not.toBeNull();
+    expect(container.querySelector('button[aria-label="Mở menu"]')).not.toBeNull();
+    expect(container.querySelector('button[aria-label="Tìm kiếm"]')).not.toBeNull();
+    expect(container.querySelector('a[href="/gio-hang"]')).not.toBeNull();
   });
 
-  it("uses the same commerce-first links in the mobile menu", async () => {
+  it("opens the navigation drawer with commerce-first links", async () => {
     await renderHeader();
     await act(async () => {
       container.querySelector<HTMLButtonElement>('button[aria-label="Mở menu"]')?.click();
     });
-    const mobileNavigation = container.querySelector('nav[aria-label="Menu di động"]');
 
-    expect(mobileNavigation?.querySelector('a[href="/"]')?.textContent).toBe(
-      "TRANG CHỦ",
-    );
-    expect(
-      mobileNavigation?.querySelector('a[href="/san-pham"]')?.textContent,
-    ).toBe("SẢN PHẨM");
-    expect(mobileNavigation?.querySelector('a[href="/lien-he"]')?.textContent).toBe(
-      "LIÊN HỆ",
-    );
-    expect(mobileNavigation?.querySelector('a[href="/gio-hang"]')?.textContent).toContain(
-      "GIỎ HÀNG",
-    );
-    expect(mobileNavigation?.querySelector('a[href="/cau-chuyen"]')).toBeNull();
-    expect(mobileNavigation?.querySelector('a[href="/cach-pha"]')).toBeNull();
+    const drawerNav = container.querySelector('nav[aria-label="Menu điều hướng"]');
+    expect(drawerNav?.querySelector('a[href="/"]')?.textContent).toBe("TRANG CHỦ");
+    expect(drawerNav?.querySelector('a[href="/san-pham"]')?.textContent).toBe("SẢN PHẨM");
+    expect(drawerNav?.querySelector('a[href="/lien-he"]')?.textContent).toBe("LIÊN HỆ");
+    expect(drawerNav?.querySelector('a[href="/gio-hang"]')?.textContent).toContain("GIỎ HÀNG");
+    expect(drawerNav?.querySelector('a[href="/cau-chuyen"]')).toBeNull();
+    expect(drawerNav?.querySelector('a[href="/cach-pha"]')).toBeNull();
   });
 });

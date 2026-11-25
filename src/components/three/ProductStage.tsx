@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState, useRef, useCallback } from "react";
+import { Suspense, useState, useRef, useCallback, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
 import { ContactShadows } from "@react-three/drei";
 import Image from "next/image";
@@ -12,6 +12,7 @@ interface ProductStageProps {
   fallbackImage: string;
   altText: string;
   targetRotationY: number;
+  freeRotate?: boolean;
   onManualInteractionStart?: () => void;
   className?: string;
 }
@@ -21,16 +22,32 @@ export function ProductStage({
   fallbackImage,
   altText,
   targetRotationY,
+  freeRotate = false,
   onManualInteractionStart,
   className = "",
 }: ProductStageProps) {
   const [hasWebGLError, setHasWebGLError] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(() =>
+    typeof window !== "undefined"
+      ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      : false
+  );
 
   const isDraggingRef = useRef(false);
+  const hasUserInteractedRef = useRef(false);
   const manualRotationRef = useRef(targetRotationY);
   const dragStartXRef = useRef(0);
   const startRotationRef = useRef(targetRotationY);
   const releaseTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const onChange = (e: MediaQueryListEvent) =>
+      setPrefersReducedMotion(e.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
 
   // Pointer drag handling for 360-degree rotation
   const handlePointerDown = useCallback(
@@ -50,6 +67,7 @@ export function ProductStage({
       }
 
       isDraggingRef.current = true;
+      hasUserInteractedRef.current = true;
       dragStartXRef.current = e.clientX;
       startRotationRef.current = manualRotationRef.current;
 
@@ -71,16 +89,24 @@ export function ProductStage({
     manualRotationRef.current = startRotationRef.current + deltaX * sensitivity;
   }, []);
 
-  const handlePointerUp = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
-    if (!isDraggingRef.current) return;
+  const handlePointerUp = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      if (!isDraggingRef.current) return;
 
-    (e.target as HTMLElement).releasePointerCapture?.(e.pointerId);
+      (e.target as HTMLElement).releasePointerCapture?.(e.pointerId);
 
-    // Keep user's angle momentarily (1200ms grace period before scroll resumes ownership)
-    releaseTimeoutRef.current = setTimeout(() => {
-      isDraggingRef.current = false;
-    }, 1200);
-  }, []);
+      if (freeRotate) {
+        isDraggingRef.current = false;
+        return;
+      }
+
+      // Keep user's angle momentarily (1200ms grace period before scroll resumes ownership)
+      releaseTimeoutRef.current = setTimeout(() => {
+        isDraggingRef.current = false;
+      }, 1200);
+    },
+    [freeRotate]
+  );
 
   const handlePointerCancel = useCallback(() => {
     isDraggingRef.current = false;
@@ -120,7 +146,7 @@ export function ProductStage({
       />
 
       {/* 3D Canvas Stage */}
-      <div className="w-full h-full min-h-[440px] lg:min-h-[520px] relative z-10 select-none outline-hidden focus:outline-hidden [&_*::selection]:bg-transparent">
+      <div className="w-full h-full min-h-[420px] sm:min-h-[460px] lg:min-h-[520px] relative z-10 select-none outline-hidden focus:outline-hidden [&_*::selection]:bg-transparent">
         <Canvas
           dpr={[1, 1.5]}
           camera={{
@@ -174,6 +200,9 @@ export function ProductStage({
               targetRotationY={targetRotationY}
               isUserInteractingRef={isDraggingRef}
               manualRotationRef={manualRotationRef}
+              freeRotate={freeRotate}
+              hasUserInteractedRef={hasUserInteractedRef}
+              prefersReducedMotion={prefersReducedMotion}
             />
             {/* Ground contact shadow under pouch */}
             <ContactShadows

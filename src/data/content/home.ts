@@ -1,3 +1,36 @@
+export const headerContent = {
+  brandPrefix: "DELIVN",
+  brandTagline: "Modern delicious Vietnam coffee.",
+  navigation: [
+    { label: "TRANG CHỦ", href: "/" },
+    { label: "SẢN PHẨM", href: "/san-pham" },
+    { label: "LIÊN HỆ", href: "/lien-he" },
+  ],
+} as const;
+
+export const tayNguyenHeroContent = {
+  indexLabel: "01 / CÂU CHUYỆN DELIVN",
+  regionLabel: "TÂY NGUYÊN · NGUỒN CẢM HỨNG",
+  brandLabel: "DELIVN",
+  headline: {
+    lead: "VIẾT TIẾP CÂU CHUYỆN",
+    highlight: "CÀ PHÊ",
+    region: "TÂY NGUYÊN",
+  },
+  paragraphs: [
+    "Tây Nguyên là vùng đất hùng vĩ nổi tiếng là cái nôi của những hạt cà phê đậm bản sắc Việt Nam.",
+    "Tại DeliVN, hành trình ấy được viết tiếp bằng sự kết nối giữa bản sắc đại ngàn và nhịp sống hiện đại.",
+    "Thông qua những hạt cà phê được tuyển chọn tốt nhất cho đến quy trình rang xay thủ công để giữ trọn vị nguyên bản mộc mạc, dù pha phin truyền thống hay pha máy hiện đại đều đọng lại và giữ trọn độ tươi mới.",
+  ],
+  image: {
+    src: "/home/tay-nguyen/taynguyen-fullbleed.jpg",
+    alt: "Không gian văn hóa Tây Nguyên với nhà rông, cồng chiêng và núi rừng",
+    width: 1282,
+    height: 869,
+  },
+  scrollCue: "CUỘN ĐỂ KHÁM PHÁ",
+} as const;
+
 export const heroContent = {
   eyebrow: "CÀ PHÊ VIỆT NAM · TỪ TÂY NGUYÊN",
   headline: {
@@ -21,47 +54,47 @@ export const heroContent = {
 } as const;
 
 export const coffeeLinesContent = {
-  eyebrow: "HAI DÒNG CÀ PHÊ",
+  eyebrow: "CÀ PHÊ PHA MÁY | CÀ PHÊ PHA PHIN",
   headline: {
     main: "HAI TRẢI NGHIỆM,",
     italic: "MỘT TINH THẦN",
     brand: "DELIVN.",
   },
   intro:
-    "Mỗi dòng cà phê của DELIVN là một cách thưởng thức khác nhau, nhưng cùng bắt đầu từ cảm hứng Tây Nguyên. Từ sự mạnh mẽ, rõ nét của espresso đến hương vị đậm đà, gần gũi của cà phê rang xay pha phin, DELIVN mang đến hai lựa chọn phù hợp cho những nhịp thưởng thức khác nhau trong ngày.",
+    "Chọn gu pha máy đậm đà hoặc pha phin truyền thống phù hợp với nhịp thưởng thức mỗi ngày.",
   products: [
     {
-      index: "01 / DÒNG HIỆN ĐẠI",
+      index: "01 / CÀ PHÊ PHA MÁY",
       weight: "500G NGUYÊN BẢN",
-      title: "CÀ PHÊ HẠT RANG ESPRESSO",
-      descriptors: ["Mạnh mẽ", "Cân bằng", "Hiện đại"],
+      title: "Cà phê hạt rang Espresso Special Tây Nguyên VietNam",
+      descriptors: ["Pha máy", "Mạnh mẽ", "Cân bằng"],
       description:
-        "Phù hợp với người yêu espresso có hậu vị rõ, cấu trúc vị chắc và chiều sâu hương thơm ấn tượng. Đây là lựa chọn dành cho những khoảnh khắc cần sự tập trung, rõ nét và một cá tính vị mạnh mẽ hơn.",
+        "Phù hợp với người yêu espresso có hậu vị rõ, cấu trúc vị chắc và chiều sâu hương thơm ấn tượng cho những khoảnh khắc cần sự tập trung.",
       cta: {
-        label: "XEM CÀ PHÊ ESPRESSO",
+        label: "XEM CÀ PHÊ PHA MÁY",
         href: "/san-pham/ca-phe-hat-rang-espresso",
       },
       image: {
         src: "/products/home/coffee-lines/delivn-espresso-line.jpg",
-        alt: "DELIVN Cà Phê Hạt Rang Espresso 500g bao bì đen mờ minh họa Tây Nguyên",
+        alt: "DELIVN Cà phê hạt rang Espresso Special Tây Nguyên VietNam 500g bao bì đen",
         width: 512,
         height: 383,
       },
     },
     {
-      index: "02 / BẢN NỀN CÁT KRAFT",
+      index: "02 / CÀ PHÊ PHA PHIN",
       weight: "500G NGUYÊN BẢN",
-      title: "CÀ PHÊ RANG XAY",
-      descriptors: ["Gần gũi", "Đậm vị", "Chuẩn gu Việt"],
+      title: "Cà phê rang xay pha phin truyền thống Tây Nguyên VietNam",
+      descriptors: ["Pha phin", "Đậm vị", "Truyền thống"],
       description:
-        "Dành cho những ai yêu hương vị cà phê truyền thống, đậm đà, tròn vị và phù hợp với nhịp thưởng thức chậm rãi mỗi ngày. Đây là dòng cà phê gợi nhắc sự quen thuộc nhưng vẫn giữ tinh thần tinh gọn và hiện đại của DELIVN.",
+        "Dành cho những ai yêu hương vị cà phê pha phin truyền thống, đậm đà, tròn vị và gần gũi với nhịp thưởng thức chậm rãi mỗi ngày.",
       cta: {
-        label: "XEM CÀ PHÊ RANG XAY",
+        label: "XEM CÀ PHÊ PHA PHIN",
         href: "/san-pham/ca-phe-rang-xay",
       },
       image: {
         src: "/products/home/coffee-lines/delivn-rang-xay-line.jpg",
-        alt: "DELIVN Cà Phê Rang Xay 500g bao bì màu cát kraft minh họa voi Tây Nguyên",
+        alt: "DELIVN Cà phê rang xay pha phin truyền thống Tây Nguyên VietNam 500g bao bì cát",
         width: 512,
         height: 383,
       },
@@ -74,32 +107,30 @@ export const coffeeLinesContent = {
 } as const;
 
 export const packagingExperienceContent = {
-  eyebrow: "KHÔNG CHỈ LÀ BAO BÌ",
-  headline: {
-    main: "MỖI GÓC NHÌN,",
-    italic: "một phần câu chuyện.",
-  },
-  description:
-    "Bao bì DELIVN không chỉ bảo vệ cà phê bên trong. Từ mặt trước, hai cạnh bên đến mặt sau, mỗi chi tiết đều được xây dựng để kể tiếp câu chuyện về sản phẩm, vùng đất Tây Nguyên và tinh thần cà phê Việt.",
-  selectorLabel: "LỰA CHỌN DÒNG SẢN PHẨM",
+  eyebrow: "KHÁM PHÁ 3D",
+  headline: "KHÁM PHÁ SẢN PHẨM DELIVN",
+  subtitle: "Xoay để xem bao bì từ mọi góc độ.",
+  selectorLabel: "CHỌN DÒNG CÀ PHÊ",
   products: {
-    sand: {
-      id: "sand",
-      title: "CÀ PHÊ RANG XAY",
-      subtitle: "Pha phin truyền thống",
-      modelPath: "/models/delivn/delivn-sand-500.glb",
-      thumbnail: "/products/sand/front.png",
-      fallbackImage: "/products/sand/three-quarter.png",
-      alt: "DELIVN Cà Phê Rang Xay 500g bao bì màu cát kraft",
-    },
     black: {
       id: "black",
-      title: "HẠT RANG ESPRESSO",
-      subtitle: "Rang mộc chuyên biệt",
+      title: "CÀ PHÊ PHA MÁY",
+      fullName: "Cà phê hạt rang Espresso Special Tây Nguyên VietNam",
+      subtitle: "Cà phê hạt rang Espresso Special Tây Nguyên VietNam",
       modelPath: "/models/delivn/delivn-black-500.glb",
       thumbnail: "/products/black/front.png",
       fallbackImage: "/products/black/three-quarter.png",
-      alt: "DELIVN Cà Phê Hạt Rang Espresso 500g bao bì đen mờ",
+      alt: "DELIVN Cà phê hạt rang Espresso Special Tây Nguyên VietNam",
+    },
+    sand: {
+      id: "sand",
+      title: "CÀ PHÊ PHA PHIN",
+      fullName: "Cà phê rang xay pha phin truyền thống Tây Nguyên VietNam",
+      subtitle: "Cà phê rang xay pha phin truyền thống Tây Nguyên VietNam",
+      modelPath: "/models/delivn/delivn-sand-500.glb",
+      thumbnail: "/products/sand/front.png",
+      fallbackImage: "/products/sand/three-quarter.png",
+      alt: "DELIVN Cà phê rang xay pha phin truyền thống Tây Nguyên VietNam",
     },
   },
   storyStates: [
@@ -109,7 +140,7 @@ export const packagingExperienceContent = {
       label: "MẶT TRƯỚC",
       title: "DẤU ẤN ĐẦU TIÊN",
       description:
-        "Mặt trước định hình cá tính của từng dòng cà phê — từ sắc cát ấm áp của cà phê rang xay đến sắc đen mạnh mẽ của Espresso.",
+        "Mặt trước định hình cá tính của từng dòng cà phê — từ sắc đen mạnh mẽ của pha máy đến sắc cát ấm áp của pha phin.",
       targetAngle: 0,
     },
     {
@@ -131,12 +162,7 @@ export const packagingExperienceContent = {
       targetAngle: -2.5,
     },
   ],
-  interactionCaption: "XOAY ĐỂ KHÁM PHÁ BAO BÌ",
-  scrollCue: "CUỘN ĐỂ KHÁM PHÁ TOÀN DIỆN THIẾT KẾ",
-  bottomMeta: {
-    brand: "DELIVN HERITAGE ROAST — HỆ THỐNG TRẢI NGHIỆM KỸ THUẬT SỐ ĐƯƠNG ĐẠI",
-    cue: "TIẾP TỤC CUỘN ĐỂ KHÁM PHÁ CÂU CHUYỆN NGUỒN GỐC & CÁCH PHA →",
-  },
+  interactionCaption: "XOAY ĐỂ KHÁM PHÁ",
 } as const;
 
 export const brandStoryContent = {

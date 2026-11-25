@@ -10,6 +10,9 @@ interface ProductModelProps {
   targetRotationY: number;
   isUserInteractingRef: React.RefObject<boolean>;
   manualRotationRef: React.RefObject<number>;
+  freeRotate?: boolean;
+  hasUserInteractedRef?: React.RefObject<boolean>;
+  prefersReducedMotion?: boolean;
 }
 
 export function ProductModel({
@@ -17,6 +20,9 @@ export function ProductModel({
   targetRotationY,
   isUserInteractingRef,
   manualRotationRef,
+  freeRotate = false,
+  hasUserInteractedRef,
+  prefersReducedMotion = false,
 }: ProductModelProps) {
   const groupRef = useRef<THREE.Group>(null);
 
@@ -53,18 +59,36 @@ export function ProductModel({
         14,
         delta
       );
-    } else {
-      // Reconcile smoothly toward target story state angle
-      groupRef.current.rotation.y = THREE.MathUtils.damp(
-        groupRef.current.rotation.y,
-        targetRotationY,
-        4.5,
-        delta
-      );
-      // Keep manual ref in sync with current resting rotation
-      if (manualRotationRef.current !== undefined) {
-        manualRotationRef.current = groupRef.current.rotation.y;
+      return;
+    }
+
+    if (freeRotate) {
+      if (!hasUserInteractedRef?.current && !prefersReducedMotion) {
+        groupRef.current.rotation.y += delta * 0.18;
+        if (manualRotationRef.current !== undefined) {
+          manualRotationRef.current = groupRef.current.rotation.y;
+        }
+      } else {
+        groupRef.current.rotation.y = THREE.MathUtils.damp(
+          groupRef.current.rotation.y,
+          manualRotationRef.current ?? groupRef.current.rotation.y,
+          10,
+          delta
+        );
       }
+      return;
+    }
+
+    // Reconcile smoothly toward target story state angle
+    groupRef.current.rotation.y = THREE.MathUtils.damp(
+      groupRef.current.rotation.y,
+      targetRotationY,
+      4.5,
+      delta
+    );
+    // Keep manual ref in sync with current resting rotation
+    if (manualRotationRef.current !== undefined) {
+      manualRotationRef.current = groupRef.current.rotation.y;
     }
   });
 

@@ -12,7 +12,7 @@
   --border: #D9CEBD;
 
   /* Layout tokens */
-  --header-height: 80px;
+  --header-height: 106px;
   --hero-usable-height: calc(100svh - var(--header-height));
 
   /* Fluid page shell tokens */
@@ -305,7 +305,14 @@ body {
   .story-line-pulse,
   .story-indicator-shimmer,
   .story-frame-glow,
-  .story-ambient-drift {
+  .story-ambient-drift,
+  .taynguyen-bg-ambient,
+  .taynguyen-fg-breath,
+  .taynguyen-hero-zoom,
+  .taynguyen-dot-pulse,
+  .taynguyen-scroll-arrow,
+  .taynguyen-mist-1,
+  .taynguyen-mist-2 {
     animation: none !important;
     transform: none !important;
   }
@@ -313,5 +320,153 @@ body {
   .steam-wisp-2,
   .steam-wisp-3 {
     opacity: 0.5 !important;
+  }
+}
+
+/* ==========================================================================
+   Screen 01 — Tây Nguyên Hero, 3D Title & Mountain/Mist Ambient Motion
+   ========================================================================== */
+@keyframes delivn-taynguyen-bg-ambient {
+  0% {
+    transform: scale(1.08) translate3d(-4px, 0, 0);
+  }
+  100% {
+    transform: scale(1.11) translate3d(4px, -3px, 0);
+  }
+}
+
+@keyframes delivn-taynguyen-fg-breath {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.008);
+  }
+}
+
+.taynguyen-bg-ambient {
+  animation: delivn-taynguyen-bg-ambient 20s ease-in-out infinite alternate;
+}
+
+.taynguyen-fg-breath {
+  animation: delivn-taynguyen-fg-breath 16s ease-in-out infinite alternate;
+}
+
+@media (min-width: 1024px) {
+  .taynguyen-fg-feather {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      #000 4.5%,
+      #000 95.5%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      #000 4.5%,
+      #000 95.5%,
+      transparent 100%
+    );
+  }
+}
+
+@keyframes delivn-scroll-arrow-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(5px);
+  }
+}
+
+@keyframes delivn-mist-drift-1 {
+  0%,
+  100% {
+    transform: translate3d(-18px, 0, 0);
+    opacity: 0.15;
+  }
+  50% {
+    transform: translate3d(20px, -2px, 0);
+    opacity: 0.22;
+  }
+}
+
+@keyframes delivn-mist-drift-2 {
+  0%,
+  100% {
+    transform: translate3d(20px, 0, 0);
+    opacity: 0.12;
+  }
+  50% {
+    transform: translate3d(-18px, 2px, 0);
+    opacity: 0.18;
+  }
+}
+
+.taynguyen-hero-zoom {
+  animation: delivn-taynguyen-zoom 16s ease-in-out infinite alternate;
+}
+
+.taynguyen-dot-pulse {
+  animation: delivn-dot-pulse 3.6s ease-in-out infinite;
+}
+
+.taynguyen-scroll-arrow {
+  animation: delivn-scroll-arrow-bob 2.2s ease-in-out infinite;
+}
+
+.taynguyen-mist-1 {
+  animation: delivn-mist-drift-1 20s ease-in-out infinite;
+}
+
+.taynguyen-mist-2 {
+  animation: delivn-mist-drift-2 25s ease-in-out infinite;
+}
+
+@media (max-width: 1023px) {
+  .taynguyen-mist-1,
+  .taynguyen-mist-2 {
+    filter: blur(22px);
+    opacity: 0.12;
+  }
+}
+
+/* Soft feathered mask for mountain-sky landscape band */
+.taynguyen-mountain-mask {
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0%, #000 10%, #000 88%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 18%, #000 84%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right, transparent 0%, #000 10%, #000 88%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 18%, #000 84%, transparent 100%);
+  mask-composite: intersect;
+}
+
+/* Monumental Cast Earth-Gold Treatment for "TÂY NGUYÊN" (Architectural Depth, No WordArt) */
+.taynguyen-monumental-wrap {
+  transform: scaleX(0.95) scaleY(1.04);
+  transform-origin: left center;
+}
+
+.taynguyen-cast-edge {
+  color: #6b4312;
+  filter: drop-shadow(0 8px 18px rgba(36, 20, 6, 0.14));
+}
+
+.taynguyen-monumental-face {
+  color: #aa7221;
+  background-image: linear-gradient(180deg, #c99438 0%, #9b661b 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 -0.5px 0 rgba(255, 240, 205, 0.28);
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --header-height: 138px;
   }
 }
