@@ -90,9 +90,9 @@ export function Footer() {
               <Image
                 src="/brand/delivn-logo-white.svg"
                 alt="DELIVN Logo"
-                width={96}
-                height={72}
-                className="h-9 sm:h-10 w-auto object-contain select-none"
+                width={140}
+                height={105}
+                className="h-14 sm:h-16 lg:h-20 w-auto object-contain select-none"
               />
             </Link>
           </div>
