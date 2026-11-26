@@ -94,14 +94,14 @@ describe("CartPage", () => {
     );
     expect(
       container.querySelector(
-        'img[src="/products/reference/500g_black_reference.jpg"]',
+        'img[src="/products/variants/espresso-250g.png"]',
       )?.getAttribute("alt"),
-    ).toBe("Bao bì DELIVN Espresso");
+    ).toBe("Cà phê hạt rang Espresso Special Tây Nguyên VietNam — 250g");
     expect(
       container.querySelector(
-        'img[src="/products/reference/500g_sand_reference.jpg"]',
+        'img[src="/products/variants/rang-xay-500g.png"]',
       )?.getAttribute("alt"),
-    ).toBe("Bao bì DELIVN Rang Xay");
+    ).toBe("Cà phê rang xay pha phin truyền thống Tây Nguyên VietNam — 500g");
     expect(container.querySelector('img[src*="legacy-gray"]')).toBeNull();
     expect(
       container.querySelector('a[href="/san-pham/dev-local-delivn-espresso"]')

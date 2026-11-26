@@ -81,18 +81,18 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-10 items-start">
           {/* COL 1: Official DELIVN Logo */}
           <div className="footer-col lg:col-span-2 flex flex-col items-start">
-            {/* Official White Logo with authentic Red Seal - ZERO CSS filters */}
+            {/* Official Red Emblem Logo - ZERO CSS filters */}
             <Link
               href="/"
               aria-label="DELIVN — Về trang chủ"
               className="inline-block transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent rounded-sm"
             >
               <Image
-                src="/brand/delivn-logo-white.svg"
+                src="/brand/delivn-emblem-red.png"
                 alt="DELIVN Logo"
-                width={140}
-                height={105}
-                className="h-14 sm:h-16 lg:h-20 w-auto object-contain select-none"
+                width={609}
+                height={334}
+                className="w-[100px] md:w-[116px] lg:w-[136px] h-auto object-contain select-none"
               />
             </Link>
           </div>

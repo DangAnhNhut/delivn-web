@@ -105,7 +105,8 @@ describe("ProductPurchasePanel", () => {
     expect(radios[0]?.checked).toBe(false);
     expect(radios[1]?.checked).toBe(true);
     expect(container.textContent).toContain("150.000 ₫");
-    expect(container.textContent).toContain("CÒN HÀNG");
+    expect(container.textContent).toContain("Còn hàng");
+    expect(container.textContent).not.toContain("CÒN HÀNG");
     expect(container.querySelector("del")?.textContent).toContain("175.000 ₫");
     expect(purchaseButton()?.textContent).toContain("THÊM VÀO GIỎ");
     expect(purchaseButton()?.disabled).toBe(false);

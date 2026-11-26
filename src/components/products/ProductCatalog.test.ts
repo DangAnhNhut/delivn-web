@@ -164,20 +164,26 @@ describe("ProductCatalog", () => {
     expect(html).toContain('href="/"');
   });
 
-  it("renders both product cards with exactly one approved reference JPG per product", async () => {
+  it("renders both product cards with official names, buyer labels, and variant-matched 250g images", async () => {
     await renderCatalog([productFixture1, productFixture2]);
 
     const images = container.querySelectorAll("img");
     expect(images).toHaveLength(2);
     expect(decodeURIComponent(images[0]?.getAttribute("src") ?? "")).toContain(
-      "/products/reference/500g_black_reference.jpg",
+      "/products/variants/espresso-250g.png",
     );
     expect(decodeURIComponent(images[1]?.getAttribute("src") ?? "")).toContain(
-      "/products/reference/500g_sand_reference.jpg",
+      "/products/variants/rang-xay-250g.png",
     );
 
-    expect(container.textContent).toContain("CÀ PHÊ HẠT RANG ESPRESSO");
-    expect(container.textContent).toContain("CÀ PHÊ RANG XAY");
+    expect(container.textContent).toContain("CÀ PHÊ PHA MÁY");
+    expect(container.textContent).toContain("CÀ PHÊ PHA PHIN");
+    expect(container.textContent).toContain(
+      "Cà phê hạt rang Espresso Special Tây Nguyên VietNam",
+    );
+    expect(container.textContent).toContain(
+      "Cà phê rang xay pha phin truyền thống Tây Nguyên VietNam",
+    );
     expect(container.textContent).toContain("173.000 ₫");
     expect(container.textContent).toContain("168.000 ₫");
     expect(container.textContent).toContain("CÒN HÀNG");
@@ -192,47 +198,67 @@ describe("ProductCatalog", () => {
     expect(container.querySelectorAll(".gallery-dot, [data-slide-dot]")).toHaveLength(0);
   });
 
-  it("does not render PDP links or XEM CHI TIẾT on catalog cards", async () => {
+  it("links each catalog card to the matching product detail route with selected size", async () => {
     await renderCatalog([productFixture1, productFixture2]);
 
-    expect(container.textContent).not.toContain("Xem chi tiết");
-    expect(container.textContent).not.toContain("XEM CHI TIẾT");
-
-    const links = container.querySelectorAll<HTMLAnchorElement>("a");
-    for (const link of links) {
-      expect(link.getAttribute("href")).not.toContain("/san-pham/");
-    }
+    const links = [...container.querySelectorAll<HTMLAnchorElement>("a")].map(
+      (a) => a.getAttribute("href"),
+    );
+    expect(links).toContain("/san-pham/san-pham-espresso?size=250");
+    expect(links).toContain("/san-pham/san-pham-rang-xay?size=250");
   });
 
-  it("does not render development copy and displays neutral factual copy without unverified claims", async () => {
+  it("replaces development copy with official factual product summaries and hides technical SKU", async () => {
     await renderCatalog([productFixture1, productFixture2]);
 
     expect(container.textContent).not.toContain("phát triển cục bộ");
     expect(container.textContent).not.toContain("Dữ liệu sản phẩm");
-    expect(container.textContent).not.toContain("Tây Nguyên");
-    expect(container.textContent).toContain("Cà phê hạt rang — lựa chọn 250g hoặc 500g.");
-    expect(container.textContent).toContain("Cà phê rang xay — lựa chọn 250g hoặc 500g.");
+    expect(container.textContent).not.toContain("ESPRESSO-250");
+    expect(container.textContent).not.toContain("RANG-XAY-250");
+    expect(container.textContent).toContain(
+      "Cà phê hạt rang — 100% cà phê (70% Robusta - 30% Arabica) · Lựa chọn 250g hoặc 500g.",
+    );
+    expect(container.textContent).toContain(
+      "Cà phê rang xay pha phin — 100% cà phê (90% Robusta - 10% Arabica) · Lựa chọn 250g hoặc 500g.",
+    );
   });
 
-  it("updates displayed price immediately when 250g / 500g variant is selected", async () => {
+  it("updates displayed price and image immediately when 250g / 500g variant is selected", async () => {
     await renderCatalog([productFixture1]);
 
     expect(container.textContent).toContain("173.000 ₫");
+    expect(
+      decodeURIComponent(container.querySelector("img")?.getAttribute("src") ?? ""),
+    ).toContain("/products/variants/espresso-250g.png");
 
     const radios = container.querySelectorAll<HTMLButtonElement>('button[role="radio"]');
     expect(radios).toHaveLength(2);
     expect(radios[0]?.textContent).toContain("250g");
     expect(radios[1]?.textContent).toContain("500g");
 
-    // Click 500g variant
+    // Click 500g variant -> image, price, and detail link update together
     await act(async () => radios[1]?.click());
 
     expect(container.textContent).toContain("345.000 ₫");
     expect(radios[1]?.getAttribute("aria-checked")).toBe("true");
+    expect(
+      decodeURIComponent(
+        container
+          .querySelector('[data-stage-layer="active"] img')
+          ?.getAttribute("src") ?? "",
+      ),
+    ).toContain("/products/variants/espresso-500g.png");
 
-    // Click back to 250g
+    // Click back to 250g -> image and price revert cleanly
     await act(async () => radios[0]?.click());
     expect(container.textContent).toContain("173.000 ₫");
+    expect(
+      decodeURIComponent(
+        container
+          .querySelector('[data-stage-layer="active"] img')
+          ?.getAttribute("src") ?? "",
+      ),
+    ).toContain("/products/variants/espresso-250g.png");
   });
 
   it("handles MUA NGAY by adding selected variant to cart and navigating directly to /thanh-toan", async () => {
@@ -289,6 +315,92 @@ describe("ProductCatalog", () => {
     expect(outOfStockButtons.length).toBeGreaterThanOrEqual(1);
     for (const btn of outOfStockButtons) {
       expect(btn.disabled).toBe(true);
+    }
+  });
+
+  it("handles rapid switching 250g -> 500g -> 250g -> 500g cleanly and syncs add-to-cart and buy-now to 500g", async () => {
+    await renderCatalog([productFixture1, productFixture2]);
+
+    const cards = container.querySelectorAll("article");
+    const espRadios = cards[0]!.querySelectorAll<HTMLButtonElement>('button[role="radio"]');
+    const rxRadios = cards[1]!.querySelectorAll<HTMLButtonElement>('button[role="radio"]');
+
+    // Rapid switching on Espresso
+    await act(async () => {
+      espRadios[1]?.click(); // 500g
+      espRadios[0]?.click(); // 250g
+      espRadios[1]?.click(); // 500g
+    });
+
+    const espActiveImg = cards[0]!.querySelector('[data-stage-layer="active"] img');
+    expect(decodeURIComponent(espActiveImg?.getAttribute("src") ?? "")).toContain(
+      "/products/variants/espresso-500g.png",
+    );
+    expect(cards[0]!.textContent).toContain("345.000 ₫");
+    expect(cards[0]!.textContent).not.toContain("ESPRESSO-500");
+
+    // Switch Rang Xay to 500g
+    await act(async () => rxRadios[1]?.click());
+    const rxActiveImg = cards[1]!.querySelector('[data-stage-layer="active"] img');
+    expect(decodeURIComponent(rxActiveImg?.getAttribute("src") ?? "")).toContain(
+      "/products/variants/rang-xay-500g.png",
+    );
+    expect(cards[1]!.textContent).toContain("335.000 ₫");
+    expect(cards[1]!.textContent).not.toContain("RANG-XAY-500");
+
+    // Media stages preserve unified aspect-[5/4] class
+    expect(
+      cards[0]!.querySelector("[data-product-media-stage]")?.className,
+    ).toContain("aspect-[5/4]");
+    expect(
+      cards[1]!.querySelector("[data-product-media-stage]")?.className,
+    ).toContain("aspect-[5/4]");
+
+    // Add Espresso 500g to cart and verify stored cart snapshot
+    const espAddBtn = [...cards[0]!.querySelectorAll<HTMLButtonElement>("button")].find(
+      (b) => b.textContent?.trim() === "THÊM VÀO GIỎ",
+    );
+    await act(async () => espAddBtn?.click());
+    const stored = localStorage.getItem("delivn.cart.v1") ?? "";
+    expect(stored).toContain("00000000-0000-4000-8000-000000000005");
+    expect(stored).toContain("500g");
+    expect(stored).toContain("/products/variants/espresso-500g.png");
+
+    // Buy-now on Rang Xay 500g adds 500g variant and navigates to /thanh-toan
+    const rxBuyBtn = [...cards[1]!.querySelectorAll<HTMLButtonElement>("button")].find(
+      (b) => b.textContent?.trim() === "MUA NGAY",
+    );
+    await act(async () => rxBuyBtn?.click());
+    expect(assignMock).toHaveBeenCalledWith("/thanh-toan");
+    const storedAfterBuy = localStorage.getItem("delivn.cart.v1") ?? "";
+    expect(storedAfterBuy).toContain("00000000-0000-4000-8000-000000000015");
+  });
+
+  it("swaps immediately without outgoing transition layer under prefers-reduced-motion", async () => {
+    const originalMatchMedia = window.matchMedia;
+    window.matchMedia = vi.fn().mockImplementation((query: string) => ({
+      matches: query === "(prefers-reduced-motion: reduce)",
+      media: query,
+      onchange: null,
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    }));
+
+    try {
+      await renderCatalog([productFixture1]);
+      const radios = container.querySelectorAll<HTMLButtonElement>('button[role="radio"]');
+      await act(async () => radios[1]?.click());
+
+      expect(container.querySelector('[data-stage-layer="outgoing"]')).toBeNull();
+      const activeImg = container.querySelector('[data-stage-layer="active"] img');
+      expect(decodeURIComponent(activeImg?.getAttribute("src") ?? "")).toContain(
+        "/products/variants/espresso-500g.png",
+      );
+    } finally {
+      window.matchMedia = originalMatchMedia;
     }
   });
 });

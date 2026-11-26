@@ -107,31 +107,37 @@ describe("getDefaultProductVariant", () => {
 });
 
 describe("getProductDisplayDescription", () => {
-  it("replaces development copy with neutral factual copy for espresso", () => {
+  it("replaces development copy with official factual copy for espresso", () => {
     expect(
       getProductDisplayDescription({
         description: "Dữ liệu sản phẩm DELIVN dùng cho phát triển cục bộ.",
         category: "espresso",
       }),
-    ).toBe("Cà phê hạt rang — lựa chọn 250g hoặc 500g.");
+    ).toBe(
+      "Cà phê hạt rang — 100% cà phê (70% Robusta - 30% Arabica) · Lựa chọn 250g hoặc 500g.",
+    );
   });
 
-  it("replaces development copy with neutral factual copy for rang xay", () => {
+  it("replaces development copy with official factual copy for rang xay", () => {
     expect(
       getProductDisplayDescription({
         description: "Dữ liệu sản phẩm tổng hợp chỉ dùng cho phát triển và kiểm thử thương mại.",
         category: "rang_xay",
       }),
-    ).toBe("Cà phê rang xay — lựa chọn 250g hoặc 500g.");
+    ).toBe(
+      "Cà phê rang xay pha phin — 100% cà phê (90% Robusta - 10% Arabica) · Lựa chọn 250g hoặc 500g.",
+    );
   });
 
-  it("replaces unverified regional claims with neutral factual copy", () => {
+  it("replaces unverified regional claims with official factual copy", () => {
     expect(
       getProductDisplayDescription({
         description: "Cà phê hạt rang espresso đặc biệt, chế tác từ nguồn nguyên liệu Tây Nguyên.",
         category: "espresso",
       }),
-    ).toBe("Cà phê hạt rang — lựa chọn 250g hoặc 500g.");
+    ).toBe(
+      "Cà phê hạt rang — 100% cà phê (70% Robusta - 30% Arabica) · Lựa chọn 250g hoặc 500g.",
+    );
   });
 
   it("preserves verified business description when provided", () => {
@@ -146,61 +152,83 @@ describe("getProductDisplayDescription", () => {
 });
 
 describe("getProductPrincipalImage", () => {
-  it("resolves the approved reference JPG for espresso", () => {
+  it("resolves the 500g default variant JPG for espresso and 250g when selected", () => {
     expect(getProductPrincipalImage({ category: "espresso" })).toEqual({
-      url: "/products/reference/500g_black_reference.jpg",
-      altText: "Bao bì DELIVN Espresso",
+      url: "/products/variants/espresso-500g.png",
+      altText: "Cà phê hạt rang Espresso Special Tây Nguyên VietNam — 500g",
+    });
+    expect(
+      getProductPrincipalImage(
+        { category: "espresso" },
+        { sku: "DELIVN-ESPRESSO-250", weightGrams: 250, label: "250g" },
+      ),
+    ).toEqual({
+      url: "/products/variants/espresso-250g.png",
+      altText: "Cà phê hạt rang Espresso Special Tây Nguyên VietNam — 250g",
     });
   });
 
-  it("resolves the approved reference JPG for rang_xay", () => {
+  it("resolves the 500g default variant JPG for rang_xay and 250g when selected", () => {
     expect(getProductPrincipalImage({ category: "rang_xay" })).toEqual({
-      url: "/products/reference/500g_sand_reference.jpg",
-      altText: "Bao bì DELIVN Rang Xay",
+      url: "/products/variants/rang-xay-500g.png",
+      altText: "Cà phê rang xay pha phin truyền thống Tây Nguyên VietNam — 500g",
+    });
+    expect(
+      getProductPrincipalImage(
+        { category: "rang_xay" },
+        { sku: "DELIVN-RANG-XAY-250", weightGrams: 250, label: "250g" },
+      ),
+    ).toEqual({
+      url: "/products/variants/rang-xay-250g.png",
+      altText: "Cà phê rang xay pha phin truyền thống Tây Nguyên VietNam — 250g",
     });
   });
 });
 
 describe("getCartProductDisplayImage", () => {
-  it("uses approved storefront photography for known persistent product slugs", () => {
+  it("uses variant-matched photography for known persistent product slugs", () => {
     expect(
       getCartProductDisplayImage({
         productSlug: "dev-local-delivn-espresso",
+        variantLabel: "250g",
         image: { url: "/products/legacy-gray.png", alt: "Legacy Espresso" },
       }),
     ).toEqual({
-      url: "/products/reference/500g_black_reference.jpg",
-      alt: "Bao bì DELIVN Espresso",
+      url: "/products/variants/espresso-250g.png",
+      alt: "Cà phê hạt rang Espresso Special Tây Nguyên VietNam — 250g",
     });
     expect(
       getCartProductDisplayImage({
         productSlug: "dev-local-delivn-rang-xay",
+        variantLabel: "500g",
         image: { url: "/products/legacy-gray.png", alt: "Legacy Rang Xay" },
       }),
     ).toEqual({
-      url: "/products/reference/500g_sand_reference.jpg",
-      alt: "Bao bì DELIVN Rang Xay",
+      url: "/products/variants/rang-xay-500g.png",
+      alt: "Cà phê rang xay pha phin truyền thống Tây Nguyên VietNam — 500g",
     });
   });
 
-  it("uses the same approved photography for guarded E2E product slugs", () => {
+  it("uses the same variant-matched photography for guarded E2E product slugs", () => {
     expect(
       getCartProductDisplayImage({
         productSlug: "dev-demo-delivn-espresso",
+        variantLabel: "500g",
         image: { url: "/products/demo-gray.png", alt: "Demo Espresso" },
       }),
     ).toEqual({
-      url: "/products/reference/500g_black_reference.jpg",
-      alt: "Bao bì DELIVN Espresso",
+      url: "/products/variants/espresso-500g.png",
+      alt: "Cà phê hạt rang Espresso Special Tây Nguyên VietNam — 500g",
     });
     expect(
       getCartProductDisplayImage({
         productSlug: "dev-demo-delivn-rang-xay",
+        variantLabel: "250g",
         image: { url: "/products/demo-gray.png", alt: "Demo Rang Xay" },
       }),
     ).toEqual({
-      url: "/products/reference/500g_sand_reference.jpg",
-      alt: "Bao bì DELIVN Rang Xay",
+      url: "/products/variants/rang-xay-250g.png",
+      alt: "Cà phê rang xay pha phin truyền thống Tây Nguyên VietNam — 250g",
     });
   });
 

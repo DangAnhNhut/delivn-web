@@ -1,25 +1,23 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
 import { useCart } from "@/components/cart/CartProvider";
-import { MAX_QUANTITY_PER_VARIANT, type ProductCategory, type ProductDTO } from "@/contracts";
+import { MAX_QUANTITY_PER_VARIANT, type ProductDTO } from "@/contracts";
 import { createCartItemSnapshot } from "@/lib/cart/cart-snapshot";
 import {
   formatVnd,
   getDefaultProductVariant,
   getProductAvailability,
+  getProductBuyerLabel,
   getProductDisplayDescription,
-  getProductPrincipalImage,
+  getProductDisplayName,
+  getProductVariantImage,
   type ProductAvailability,
 } from "@/lib/storefront/product-presentation";
 
-const categoryLabels: Record<ProductCategory, string> = {
-  espresso: "CÀ PHÊ HẠT RANG ESPRESSO",
-  rang_xay: "CÀ PHÊ RANG XAY",
-};
+import { ProductMediaStage } from "./ProductMediaStage";
 
 const availabilityLabels: Record<ProductAvailability, string> = {
   available: "CÒN HÀNG",
@@ -58,8 +56,13 @@ export function ProductCard({ product, index }: ProductCardProps) {
       : "unavailable"
     : getProductAvailability(product.variants);
 
+  const displayName = getProductDisplayName(product);
+  const buyerLabel = getProductBuyerLabel(product.category);
   const description = getProductDisplayDescription(product);
-  const principalImage = getProductPrincipalImage(product);
+  const variantImage = getProductVariantImage(product, selectedVariant);
+  const detailHref = selectedVariant
+    ? `/san-pham/${product.slug}?size=${selectedVariant.weightGrams}`
+    : `/san-pham/${product.slug}`;
 
   const handleBuyNow = () => {
     if (!selectedVariant?.inStock || !isHydrated || isAtMaximumQuantity) return;
@@ -81,24 +84,21 @@ export function ProductCard({ product, index }: ProductCardProps) {
   };
 
   return (
-    <article className="group flex flex-col justify-between transition-all duration-300">
-      <div>
-        {/* Single Approved Principal Image - occupying full column width without artificial borders */}
-        <div className="relative aspect-[4/3] w-full overflow-hidden bg-transparent">
-          <Image
-            src={principalImage.url}
-            alt={principalImage.altText || product.name}
-            fill
-            sizes="(max-width: 768px) 100vw, 50vw"
-            priority={index === 0}
-            className="object-contain transition-transform duration-500 group-hover:scale-[1.02]"
-          />
-        </div>
+    <article className="group flex h-full flex-col justify-between transition-all duration-300">
+      <div className="flex flex-1 flex-col">
+        {/* Unified Product Media Stage with optical normalization & smooth variant swap */}
+        <ProductMediaStage
+          asset={variantImage}
+          href={detailHref}
+          ariaLabel={`Xem chi tiết ${displayName}`}
+          priority={index === 0}
+          sizeBadge={selectedVariant?.label ?? null}
+        />
 
         {/* Category descriptor & Stock status */}
         <div className="mt-4 flex flex-wrap items-center justify-between gap-2 sm:mt-5">
           <p className="text-[10px] font-semibold tracking-[0.2em] text-foreground-muted uppercase sm:text-[11px]">
-            {String(index + 1).padStart(2, "0")} / {categoryLabels[product.category]}
+            {String(index + 1).padStart(2, "0")} / {buyerLabel}
           </p>
           <p className="text-[10px] font-semibold tracking-[0.14em] text-foreground-muted uppercase sm:text-[11px]">
             <span
@@ -111,25 +111,30 @@ export function ProductCard({ product, index }: ProductCardProps) {
           </p>
         </div>
 
-        {/* Title without PDP link */}
-        <h3 className="mt-2 text-xl font-bold leading-tight tracking-tight text-foreground uppercase sm:text-2xl">
-          {product.name}
+        {/* Official Product Title linking to PDP */}
+        <h3 className="mt-2 text-xl font-bold leading-snug tracking-tight text-foreground sm:text-2xl">
+          <Link
+            href={detailHref}
+            className="transition-colors hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          >
+            {displayName}
+          </Link>
         </h3>
 
         {/* Neutral factual description */}
-        <p className="mt-1.5 text-xs leading-relaxed text-foreground-muted sm:text-sm">
+        <p className="mt-1.5 flex-1 text-xs leading-relaxed text-foreground-muted sm:text-sm">
           {description}
         </p>
 
-        {/* Variant selection without inner red dots */}
+        {/* Variant selection */}
         {product.variants.length > 0 && (
-          <div className="mt-3.5 sm:mt-4">
+          <div className="mt-4">
             <p className="text-[10px] font-bold tracking-[0.2em] text-foreground-muted uppercase">
               Quy cách
             </p>
             <div
               role="radiogroup"
-              aria-label={`Chọn quy cách cho ${product.name}`}
+              aria-label={`Chọn quy cách cho ${displayName}`}
               className="mt-2 flex flex-wrap gap-2 sm:gap-2.5"
             >
               {product.variants.map((variant) => {
@@ -144,10 +149,10 @@ export function ProductCard({ product, index }: ProductCardProps) {
                       setSelectedVariantId(variant.id);
                       setFeedback("");
                     }}
-                    className={`border px-5 py-2 text-xs font-bold tracking-[0.14em] uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-accent ${
+                    className={`border px-5 py-2 text-xs font-bold tracking-[0.14em] uppercase transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent motion-reduce:transition-none ${
                       isSelected
                         ? "border-foreground bg-foreground text-background"
-                        : "border-border/80 bg-background text-foreground hover:border-foreground/60"
+                        : "border-border/80 bg-background text-foreground hover:border-foreground/60 hover:bg-surface/60"
                     }`}
                   >
                     <span>{variant.label}</span>
@@ -158,9 +163,12 @@ export function ProductCard({ product, index }: ProductCardProps) {
           </div>
         )}
 
-        {/* Price Display */}
-        <div className="mt-3.5 sm:mt-4">
-          <div className="flex items-baseline gap-2.5">
+        {/* Price & Detail Link */}
+        <div className="mt-4 flex flex-wrap items-baseline justify-between gap-2 border-t border-border/50 pt-3.5">
+          <div
+            aria-live="polite"
+            className="flex items-baseline gap-2.5 transition-opacity duration-200 motion-reduce:transition-none"
+          >
             {selectedVariant ? (
               <>
                 <p className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
@@ -176,6 +184,12 @@ export function ProductCard({ product, index }: ProductCardProps) {
               <p className="text-sm text-foreground-muted">Đang cập nhật</p>
             )}
           </div>
+          <Link
+            href={detailHref}
+            className="text-[11px] font-bold tracking-[0.16em] text-foreground-muted uppercase underline-offset-4 transition-colors hover:text-accent hover:underline"
+          >
+            Chi tiết sản phẩm →
+          </Link>
         </div>
       </div>
 
@@ -254,7 +268,7 @@ export function ProductCatalog({ products }: ProductCatalogProps) {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-x-10 lg:gap-x-14 xl:gap-x-16">
+          <div className="grid grid-cols-1 items-stretch gap-12 md:grid-cols-2 md:gap-x-10 lg:gap-x-14 xl:gap-x-16">
             {products.map((product, index) => (
               <ProductCard key={product.id} product={product} index={index} />
             ))}

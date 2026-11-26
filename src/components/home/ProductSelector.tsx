@@ -30,8 +30,8 @@ export function ProductSelector({
           onClick={() => onSelectProduct("black")}
           className={`h-full flex items-center gap-3.5 p-3.5 sm:p-4 rounded-xl border text-left transition-all duration-300 group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent cursor-pointer ${
             selectedProduct === "black"
-              ? "border-[#1A1A1A] bg-[#FAF6F1] shadow-[0_12px_28px_rgba(18,14,10,0.22)] ring-1 ring-[#1A1A1A]/15"
-              : "border-white/45 bg-[#FAF6F1]/88 backdrop-blur-md hover:bg-[#FAF6F1] hover:border-[#1A1A1A]/45 shadow-[0_6px_18px_rgba(18,14,10,0.14)]"
+              ? "border-foreground bg-[#F5EFE6]/90 shadow-sm"
+              : "border-border/60 bg-transparent hover:bg-[#F7F2E9]/60 hover:border-foreground/40"
           }`}
         >
           <div className="w-16 h-12 sm:w-20 sm:h-[60px] rounded-lg bg-[#222120] overflow-hidden flex-shrink-0 border border-foreground/10">
@@ -60,8 +60,8 @@ export function ProductSelector({
           onClick={() => onSelectProduct("sand")}
           className={`h-full flex items-center gap-3.5 p-3.5 sm:p-4 rounded-xl border text-left transition-all duration-300 group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent cursor-pointer ${
             selectedProduct === "sand"
-              ? "border-[#1A1A1A] bg-[#FAF6F1] shadow-[0_12px_28px_rgba(18,14,10,0.22)] ring-1 ring-[#1A1A1A]/15"
-              : "border-white/45 bg-[#FAF6F1]/88 backdrop-blur-md hover:bg-[#FAF6F1] hover:border-[#1A1A1A]/45 shadow-[0_6px_18px_rgba(18,14,10,0.14)]"
+              ? "border-foreground bg-[#F5EFE6]/90 shadow-sm"
+              : "border-border/60 bg-transparent hover:bg-[#F7F2E9]/60 hover:border-foreground/40"
           }`}
         >
           <div className="w-16 h-12 sm:w-20 sm:h-[60px] rounded-lg bg-[#EFE7DA] overflow-hidden flex-shrink-0 border border-foreground/10">
