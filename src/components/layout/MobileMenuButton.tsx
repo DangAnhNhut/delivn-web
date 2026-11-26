@@ -95,7 +95,7 @@ export function MobileMenuButton({
           />
 
           {/* Drawer panel */}
-          <div className="relative z-10 w-[min(86vw,360px)] h-full bg-[#171717] text-[#EEEAE2] border-r border-white/10 flex flex-col justify-between p-6 sm:p-8 shadow-2xl">
+          <div className="relative z-10 w-[min(86vw,360px)] h-full overflow-y-auto bg-[#171717] text-[#EEEAE2] border-r border-white/10 flex flex-col justify-between p-6 sm:p-8 shadow-2xl">
             <div>
               <div className="flex items-center justify-between pb-6 border-b border-white/10">
                 <Link
@@ -105,11 +105,11 @@ export function MobileMenuButton({
                   className="inline-block focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent rounded-sm"
                 >
                   <Image
-                    src="/brand/delivn-logo-white.svg"
+                    src="/brand/delivn-emblem-red.png"
                     alt="DELIVN Logo"
-                    width={84}
-                    height={63}
-                    className="w-[74px] h-auto object-contain"
+                    width={609}
+                    height={334}
+                    className="w-[92px] sm:w-[96px] h-auto object-contain select-none"
                   />
                 </Link>
                 <button
@@ -162,8 +162,8 @@ export function MobileMenuButton({
               </nav>
             </div>
 
-            <p className="text-[11px] font-mono tracking-[0.18em] uppercase text-[#EEEAE2]/45">
-              TÂY NGUYÊN · VIỆT NAM
+            <p className="font-sans text-[13px] font-normal tracking-normal text-[#EEEAE2]/65 pt-6 pb-[env(safe-area-inset-bottom)]">
+              Modern delicious Vietnam coffee
             </p>
           </div>
         </div>

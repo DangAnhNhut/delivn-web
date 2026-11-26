@@ -125,7 +125,7 @@ export function PackagingExperience() {
             className="pointer-events-none absolute -inset-x-4 sm:-inset-x-10 lg:-inset-x-16 -inset-y-2 overflow-hidden taynguyen-mountain-mask"
           >
             <div
-              className="absolute inset-0 bg-no-repeat bg-[length:195%_auto] bg-[82%_19%] sm:bg-[length:190%_auto] sm:bg-[82%_19%] opacity-[0.32] blur-[2.5px] saturate-[0.92] contrast-[1.04]"
+              className="absolute inset-0 bg-no-repeat bg-[length:145%_auto] bg-[38%_19%] sm:bg-[length:130%_auto] sm:bg-[44%_19%] opacity-[0.32] blur-[2.5px] saturate-[0.92] contrast-[1.04]"
               style={{
                 backgroundImage: `url("${tayNguyenHeroContent.image.src}")`,
               }}
