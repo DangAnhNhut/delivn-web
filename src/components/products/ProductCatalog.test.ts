@@ -173,7 +173,7 @@ describe("ProductCatalog", () => {
       "/products/variants/espresso-250g.png",
     );
     expect(decodeURIComponent(images[1]?.getAttribute("src") ?? "")).toContain(
-      "/products/variants/rang-xay-250g.png",
+      "/products/variants/rang-xay-250g-v2.png",
     );
 
     expect(container.textContent).toContain("CÀ PHÊ PHA MÁY");
@@ -208,19 +208,21 @@ describe("ProductCatalog", () => {
     expect(links).toContain("/san-pham/san-pham-rang-xay?size=250");
   });
 
-  it("replaces development copy with official factual product summaries and hides technical SKU", async () => {
+  it("replaces development copy with official factual product summaries, shows green stock dot, and hides technical SKU", async () => {
     await renderCatalog([productFixture1, productFixture2]);
 
     expect(container.textContent).not.toContain("phát triển cục bộ");
     expect(container.textContent).not.toContain("Dữ liệu sản phẩm");
+    expect(container.textContent).not.toContain("Lựa chọn 250g hoặc 500g");
     expect(container.textContent).not.toContain("ESPRESSO-250");
     expect(container.textContent).not.toContain("RANG-XAY-250");
     expect(container.textContent).toContain(
-      "Cà phê hạt rang — 100% cà phê (70% Robusta - 30% Arabica) · Lựa chọn 250g hoặc 500g.",
+      "Cà phê hạt rang — 100% cà phê (70% Robusta - 30% Arabica).",
     );
     expect(container.textContent).toContain(
-      "Cà phê rang xay pha phin — 100% cà phê (90% Robusta - 10% Arabica) · Lựa chọn 250g hoặc 500g.",
+      "Cà phê rang xay pha phin — 100% cà phê (90% Robusta - 10% Arabica).",
     );
+    expect(container.querySelectorAll(".bg-\\[\\#16A34A\\]").length).toBe(2);
   });
 
   it("updates displayed price and image immediately when 250g / 500g variant is selected", async () => {
@@ -316,6 +318,7 @@ describe("ProductCatalog", () => {
     for (const btn of outOfStockButtons) {
       expect(btn.disabled).toBe(true);
     }
+    expect(container.querySelector(".bg-\\[\\#16A34A\\]")).toBeNull();
   });
 
   it("handles rapid switching 250g -> 500g -> 250g -> 500g cleanly and syncs add-to-cart and buy-now to 500g", async () => {

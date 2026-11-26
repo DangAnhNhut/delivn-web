@@ -125,13 +125,13 @@ export function PackagingExperience() {
             className="pointer-events-none absolute -inset-x-4 sm:-inset-x-10 lg:-inset-x-16 -inset-y-2 overflow-hidden taynguyen-mountain-mask"
           >
             <div
-              className="absolute inset-0 bg-cover bg-[center_40%] opacity-[0.46] blur-[0.5px] saturate-[0.94] contrast-[1.06]"
+              className="absolute inset-0 bg-no-repeat bg-[length:195%_auto] bg-[82%_19%] sm:bg-[length:190%_auto] sm:bg-[82%_19%] opacity-[0.32] blur-[2.5px] saturate-[0.92] contrast-[1.04]"
               style={{
                 backgroundImage: `url("${tayNguyenHeroContent.image.src}")`,
               }}
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-[#FAF6F1]/50 via-transparent to-[#FAF6F1]/65" />
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(250,246,241,0.42)_0%,rgba(250,246,241,0.12)_52%,transparent_80%)]" />
+            <div className="absolute inset-0 bg-gradient-to-b from-[#FAF6F1]/35 via-transparent to-[#FAF6F1]/68" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(250,246,241,0.40)_0%,rgba(250,246,241,0.10)_54%,transparent_82%)]" />
           </div>
 
           <div className="packaging-eyebrow relative z-10 inline-flex items-center gap-2.5 mb-3.5 sm:mb-4">

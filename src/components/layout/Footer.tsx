@@ -179,10 +179,10 @@ export function Footer() {
         </div>
 
         {/* BOTTOM: Minimal Hairline Divider & Copyright */}
-        <div className="mt-12 sm:mt-16 pt-6 sm:pt-8 border-t border-neutral-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-neutral-500 font-light">
+        <div className="mt-12 sm:mt-16 pt-6 sm:pt-8 border-t border-neutral-800 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 text-xs text-neutral-500 font-light">
           <p>{copyright}</p>
-          <p className="text-[11px] font-mono tracking-wider text-neutral-500/80 uppercase">
-            BẢN SẮC TÂY NGUYÊN · THIẾT KẾ ĐƯƠNG ĐẠI
+          <p className="font-sans text-xs sm:text-[13px] font-normal tracking-normal text-neutral-400 text-center sm:text-right">
+            Modern delicious Vietnam coffee
           </p>
         </div>
       </div>

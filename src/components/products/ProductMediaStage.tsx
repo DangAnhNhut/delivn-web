@@ -15,30 +15,8 @@ interface ProductMediaStageProps {
 }
 
 const TRANSITION_MS = 320;
-const decodedUrlCache = new Set<string>();
-
-function preloadAndDecode(url: string): Promise<void> {
-  if (typeof window === "undefined" || decodedUrlCache.has(url)) {
-    return Promise.resolve();
-  }
-
-  const img = new window.Image();
-  if (typeof img.decode !== "function") {
-    decodedUrlCache.add(url);
-    return Promise.resolve();
-  }
-
-  return new Promise((resolve) => {
-    img.src = url;
-    img
-      .decode()
-      .then(() => {
-        decodedUrlCache.add(url);
-        resolve();
-      })
-      .catch(() => resolve());
-  });
-}
+const RESPONSIVE_SIZES = "(min-width: 1280px) 640px, (min-width: 768px) 46vw, 94vw";
+const loadedUrlCache = new Set<string>();
 
 export function ProductMediaStage({
   asset,
@@ -48,6 +26,9 @@ export function ProductMediaStage({
   sizeBadge,
 }: ProductMediaStageProps) {
   const [currentAsset, setCurrentAsset] = useState<VariantImageAsset>(asset);
+  const [pendingAsset, setPendingAsset] = useState<VariantImageAsset | null>(
+    null,
+  );
   const [outgoingAsset, setOutgoingAsset] = useState<VariantImageAsset | null>(
     null,
   );
@@ -56,66 +37,65 @@ export function ProductMediaStage({
   const requestIdRef = useRef(0);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const rafRef = useRef<number | null>(null);
-  const currentUrlRef = useRef(asset.url);
+  const currentAssetRef = useRef<VariantImageAsset>(asset);
 
-  useEffect(() => {
-    if (asset.url === currentUrlRef.current) {
-      return;
-    }
+  const commitSwap = (nextAsset: VariantImageAsset, reqId: number) => {
+    if (reqId !== requestIdRef.current) return;
 
-    const reqId = ++requestIdRef.current;
     const prefersReducedMotion =
       typeof window !== "undefined" &&
       typeof window.matchMedia === "function" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    const commitSwap = () => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+
+    const previous = currentAssetRef.current;
+    currentAssetRef.current = nextAsset;
+    setPendingAsset(null);
+
+    if (prefersReducedMotion) {
+      setOutgoingAsset(null);
+      setCurrentAsset(nextAsset);
+      setIsEntered(true);
+      return;
+    }
+
+    setOutgoingAsset(previous);
+    setCurrentAsset(nextAsset);
+    setIsEntered(false);
+
+    rafRef.current = requestAnimationFrame(() => {
       if (reqId !== requestIdRef.current) return;
+      setIsEntered(true);
+    });
 
-      if (timerRef.current) clearTimeout(timerRef.current);
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    timerRef.current = setTimeout(() => {
+      if (reqId !== requestIdRef.current) return;
+      setOutgoingAsset(null);
+    }, TRANSITION_MS + 40);
+  };
 
-      const previous: VariantImageAsset = {
-        url: currentUrlRef.current,
-        alt: currentAsset.alt,
-        objectPosition: currentAsset.objectPosition,
-        presentationScale: currentAsset.presentationScale,
-        fitMode: currentAsset.fitMode,
-      };
-      currentUrlRef.current = asset.url;
+  useEffect(() => {
+    if (asset.url === currentAssetRef.current.url) {
+      setPendingAsset(null);
+      return;
+    }
 
-      if (prefersReducedMotion) {
-        setOutgoingAsset(null);
-        setCurrentAsset(asset);
-        setIsEntered(true);
-        return;
-      }
+    const reqId = ++requestIdRef.current;
+    const isJsdom =
+      typeof navigator !== "undefined" && /jsdom/i.test(navigator.userAgent);
 
-      setOutgoingAsset(previous);
-      setCurrentAsset(asset);
-      setIsEntered(false);
-
-      rafRef.current = requestAnimationFrame(() => {
-        if (reqId !== requestIdRef.current) return;
-        setIsEntered(true);
-      });
-
-      timerRef.current = setTimeout(() => {
-        if (reqId !== requestIdRef.current) return;
-        setOutgoingAsset(null);
-      }, TRANSITION_MS + 40);
-    };
-
-    if (decodedUrlCache.has(asset.url) || prefersReducedMotion) {
-      commitSwap();
+    if (loadedUrlCache.has(asset.url) || isJsdom) {
+      commitSwap(asset, reqId);
     } else {
-      void preloadAndDecode(asset.url).then(commitSwap);
+      // Load optimized Next.js Image in hidden layer; keep current image visible with zero raw PNG download
+      setPendingAsset(asset);
     }
 
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- currentAsset is read synchronously on swap
   }, [asset]);
 
   useEffect(() => {
@@ -128,6 +108,7 @@ export function ProductMediaStage({
   const renderLayerImage = (
     layerAsset: VariantImageAsset,
     isPriority: boolean,
+    onLoadHandler?: () => void,
   ) => {
     const scale = layerAsset.presentationScale ?? 1;
     const fitClass =
@@ -138,8 +119,12 @@ export function ProductMediaStage({
         src={layerAsset.url}
         alt={layerAsset.alt}
         fill
-        sizes="(max-width: 768px) 100vw, 50vw"
+        sizes={RESPONSIVE_SIZES}
         priority={isPriority}
+        onLoad={() => {
+          loadedUrlCache.add(layerAsset.url);
+          onLoadHandler?.();
+        }}
         className={`${fitClass} transition-transform duration-500 group-hover:scale-[1.02] motion-reduce:transition-none`}
         style={{
           objectPosition: layerAsset.objectPosition ?? "center center",
@@ -175,7 +160,7 @@ export function ProductMediaStage({
         </div>
       )}
 
-      {/* Incoming / Active layer: enters with subtle depth and opacity */}
+      {/* Incoming / Active layer */}
       <div
         data-stage-layer="active"
         className="absolute inset-0 will-change-[transform,opacity] motion-reduce:!transform-none motion-reduce:!transition-none"
@@ -190,6 +175,30 @@ export function ProductMediaStage({
       >
         {renderLayerImage(currentAsset, priority)}
       </div>
+
+      {/* Hidden Next.js Image pre-decoder for pending variant switch (uses optimized AVIF/WebP, never raw 2.66MB PNG) */}
+      {pendingAsset && (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 opacity-0"
+        >
+          <Image
+            src={pendingAsset.url}
+            alt=""
+            fill
+            sizes={RESPONSIVE_SIZES}
+            onLoad={() => {
+              loadedUrlCache.add(pendingAsset.url);
+              commitSwap(pendingAsset, requestIdRef.current);
+            }}
+            className={
+              pendingAsset.fitMode === "cover"
+                ? "object-cover"
+                : "object-contain"
+            }
+          />
+        </div>
+      )}
 
       {sizeBadge && (
         <span className="pointer-events-none absolute top-3 left-3 z-10 border border-border/60 bg-background/90 px-2.5 py-0.5 text-[10px] font-bold tracking-[0.16em] text-foreground uppercase backdrop-blur-sm">

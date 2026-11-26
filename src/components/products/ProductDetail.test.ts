@@ -164,7 +164,7 @@ describe("ProductDetail official DELIVN variants & specifications", () => {
     expect(html250).toContain(
       "Cà phê hạt rang Espresso Special Tây Nguyên VietNam",
     );
-    expect(html250).toContain('src="/products/detail/espresso-250g-detail.webp"');
+    expect(html250).toContain('src="/products/variants/espresso-250g.png"');
     expect(html250).toContain("100% cà phê (70% Robusta - 30% Arabica)");
     expect(html250).toContain("bg-emerald-500");
     expect(html250).not.toContain("DEV-LOCAL");

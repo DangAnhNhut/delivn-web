@@ -100,14 +100,16 @@ export function ProductCard({ product, index }: ProductCardProps) {
           <p className="text-[10px] font-semibold tracking-[0.2em] text-foreground-muted uppercase sm:text-[11px]">
             {String(index + 1).padStart(2, "0")} / {buyerLabel}
           </p>
-          <p className="text-[10px] font-semibold tracking-[0.14em] text-foreground-muted uppercase sm:text-[11px]">
+          <p className="inline-flex items-center gap-1.5 text-[10px] font-semibold tracking-[0.14em] text-foreground-muted uppercase sm:text-[11px]">
             <span
               aria-hidden="true"
-              className={`mr-1.5 inline-block size-1.5 rounded-full align-middle ${
-                availability === "available" ? "bg-accent" : "bg-foreground-muted/50"
+              className={`inline-block size-[7px] shrink-0 rounded-full ${
+                availability === "available"
+                  ? "bg-[#16A34A]"
+                  : "bg-foreground-muted/50"
               }`}
             />
-            {availabilityLabels[availability]}
+            <span>{availabilityLabels[availability]}</span>
           </p>
         </div>
 

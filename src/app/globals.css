@@ -79,9 +79,11 @@ body {
   0% {
     transform: rotate(-4deg);
   }
+
   50% {
     transform: rotate(4deg);
   }
+
   100% {
     transform: rotate(-4deg);
   }
@@ -92,10 +94,12 @@ body {
     transform: rotate(0deg) scale(1);
     opacity: 0.10;
   }
+
   50% {
     transform: rotate(6deg) scale(1.02);
     opacity: 0.16;
   }
+
   100% {
     transform: rotate(0deg) scale(1);
     opacity: 0.10;
@@ -108,12 +112,15 @@ body {
     transform: translateY(0) scaleY(0.9) scaleX(1);
     opacity: 0;
   }
+
   30% {
     opacity: 0.55;
   }
+
   70% {
     opacity: 0.45;
   }
+
   100% {
     transform: translateY(-10px) scaleY(1.08) scaleX(0.95);
     opacity: 0;
@@ -125,12 +132,15 @@ body {
     transform: translateY(0) scaleY(0.92) scaleX(1);
     opacity: 0;
   }
+
   35% {
     opacity: 0.65;
   }
+
   75% {
     opacity: 0.4;
   }
+
   100% {
     transform: translateY(-12px) scaleY(1.1) scaleX(0.92);
     opacity: 0;
@@ -142,12 +152,15 @@ body {
     transform: translateY(0) scaleY(0.9) scaleX(1);
     opacity: 0;
   }
+
   40% {
     opacity: 0.5;
   }
+
   80% {
     opacity: 0.35;
   }
+
   100% {
     transform: translateY(-9px) scaleY(1.06) scaleX(0.96);
     opacity: 0;
@@ -159,9 +172,11 @@ body {
   0% {
     transform: rotate(-5deg) translateY(0);
   }
+
   50% {
     transform: rotate(5deg) translateY(-3px);
   }
+
   100% {
     transform: rotate(-5deg) translateY(0);
   }
@@ -172,10 +187,12 @@ body {
     transform: rotate(0deg);
     opacity: 0.08;
   }
+
   50% {
     transform: rotate(8deg);
     opacity: 0.16;
   }
+
   100% {
     transform: rotate(0deg);
     opacity: 0.08;
@@ -188,10 +205,12 @@ body {
     transform: scale(1);
     opacity: 0.8;
   }
+
   50% {
     transform: scale(1.22);
     opacity: 1;
   }
+
   100% {
     transform: scale(1);
     opacity: 0.8;
@@ -203,10 +222,12 @@ body {
     transform: scaleX(0.9);
     opacity: 0.5;
   }
+
   50% {
     transform: scaleX(1.15);
     opacity: 0.85;
   }
+
   100% {
     transform: scaleX(0.9);
     opacity: 0.5;
@@ -217,9 +238,11 @@ body {
   0% {
     opacity: 0.6;
   }
+
   50% {
     opacity: 0.95;
   }
+
   100% {
     opacity: 0.6;
   }
@@ -231,10 +254,12 @@ body {
     border-color: rgba(217, 206, 189, 0.6);
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.02);
   }
+
   50% {
     border-color: rgba(239, 78, 62, 0.22);
     box-shadow: 0 4px 14px -2px rgba(239, 78, 62, 0.05);
   }
+
   100% {
     border-color: rgba(217, 206, 189, 0.6);
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.02);
@@ -246,9 +271,11 @@ body {
   0% {
     transform: translateY(0) rotate(0deg);
   }
+
   50% {
     transform: translateY(-8px) rotate(-6deg);
   }
+
   100% {
     transform: translateY(0) rotate(0deg);
   }
@@ -258,42 +285,54 @@ body {
 .story-motion-in-view .story-sunburst-rotate {
   animation: delivn-sunburst-sway 14s ease-in-out infinite;
 }
+
 .story-motion-in-view .story-orbit-c1 {
   animation: delivn-orbit-pulse 11s ease-in-out infinite;
 }
+
 .story-motion-in-view .steam-wisp-1 {
   animation: delivn-steam-rise-1 5.2s ease-in-out infinite;
 }
+
 .story-motion-in-view .steam-wisp-2 {
   animation: delivn-steam-rise-2 5.8s ease-in-out 1.2s infinite;
 }
+
 .story-motion-in-view .steam-wisp-3 {
   animation: delivn-steam-rise-3 6.4s ease-in-out 2.4s infinite;
 }
+
 .story-motion-in-view .story-bean-sway {
   animation: delivn-bean-sway 5.5s ease-in-out infinite;
 }
+
 .story-motion-in-view .story-roast-arc {
   animation: delivn-arc-drift 12s ease-in-out infinite;
 }
+
 .story-motion-in-view .story-dot-pulse {
   animation: delivn-dot-pulse 3.6s ease-in-out infinite;
 }
+
 .story-motion-in-view .story-line-pulse {
   animation: delivn-line-expand 4.2s ease-in-out infinite;
 }
+
 .story-motion-in-view .story-indicator-shimmer {
   animation: delivn-indicator-breath 4.8s ease-in-out infinite;
 }
+
 .story-motion-in-view .story-frame-glow {
   animation: delivn-frame-glow 7s ease-in-out infinite;
 }
+
 .story-motion-in-view .story-ambient-drift {
   animation: delivn-ambient-drift 18s ease-in-out infinite;
 }
 
 /* Accessibility: Complete override for reduced-motion */
 @media (prefers-reduced-motion: reduce) {
+
   .story-sunburst-rotate,
   .story-orbit-c1,
   .steam-wisp-1,
@@ -306,8 +345,6 @@ body {
   .story-indicator-shimmer,
   .story-frame-glow,
   .story-ambient-drift,
-  .taynguyen-bg-ambient,
-  .taynguyen-fg-breath,
   .taynguyen-hero-zoom,
   .taynguyen-dot-pulse,
   .taynguyen-scroll-arrow,
@@ -316,6 +353,7 @@ body {
     animation: none !important;
     transform: none !important;
   }
+
   .steam-wisp-1,
   .steam-wisp-2,
   .steam-wisp-3 {
@@ -326,67 +364,26 @@ body {
 /* ==========================================================================
    Screen 01 — Tây Nguyên Hero, 3D Title & Mountain/Mist Ambient Motion
    ========================================================================== */
-@keyframes delivn-taynguyen-bg-ambient {
-  0% {
-    transform: scale(1.08) translate3d(-4px, 0, 0);
-  }
-  100% {
-    transform: scale(1.11) translate3d(4px, -3px, 0);
-  }
-}
-
-@keyframes delivn-taynguyen-fg-breath {
-  0% {
-    transform: scale(1);
-  }
-  100% {
-    transform: scale(1.008);
-  }
-}
-
-.taynguyen-bg-ambient {
-  animation: delivn-taynguyen-bg-ambient 20s ease-in-out infinite alternate;
-}
-
-.taynguyen-fg-breath {
-  animation: delivn-taynguyen-fg-breath 16s ease-in-out infinite alternate;
-}
-
-@media (min-width: 1024px) {
-  .taynguyen-fg-feather {
-    -webkit-mask-image: linear-gradient(
-      to right,
-      transparent 0%,
-      #000 4.5%,
-      #000 95.5%,
-      transparent 100%
-    );
-    mask-image: linear-gradient(
-      to right,
-      transparent 0%,
-      #000 4.5%,
-      #000 95.5%,
-      transparent 100%
-    );
-  }
-}
-
 @keyframes delivn-scroll-arrow-bob {
+
   0%,
   100% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(5px);
   }
 }
 
 @keyframes delivn-mist-drift-1 {
+
   0%,
   100% {
     transform: translate3d(-18px, 0, 0);
     opacity: 0.15;
   }
+
   50% {
     transform: translate3d(20px, -2px, 0);
     opacity: 0.22;
@@ -394,11 +391,13 @@ body {
 }
 
 @keyframes delivn-mist-drift-2 {
+
   0%,
   100% {
     transform: translate3d(20px, 0, 0);
     opacity: 0.12;
   }
+
   50% {
     transform: translate3d(-18px, 2px, 0);
     opacity: 0.18;
@@ -426,6 +425,7 @@ body {
 }
 
 @media (max-width: 1023px) {
+
   .taynguyen-mist-1,
   .taynguyen-mist-2 {
     filter: blur(22px);

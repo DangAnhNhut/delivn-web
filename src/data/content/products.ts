@@ -24,7 +24,7 @@ export const COFFEE_LINE_DETAILS: Record<
     officialName: "Cà phê hạt rang Espresso Special Tây Nguyên VietNam",
     productType: "Cà phê hạt rang",
     catalogDescription:
-      "Cà phê hạt rang — 100% cà phê (70% Robusta - 30% Arabica) · Lựa chọn 250g hoặc 500g.",
+      "Cà phê hạt rang — 100% cà phê (70% Robusta - 30% Arabica).",
     detailShortDescription:
       "Cà phê hạt rang – 100% cà phê (70% Robusta - 30% Arabica).",
     ingredients: "100% cà phê (70% Robusta - 30% Arabica).",
@@ -46,7 +46,7 @@ export const COFFEE_LINE_DETAILS: Record<
     officialName: "Cà phê rang xay pha phin truyền thống Tây Nguyên VietNam",
     productType: "Cà phê rang xay",
     catalogDescription:
-      "Cà phê rang xay pha phin — 100% cà phê (90% Robusta - 10% Arabica) · Lựa chọn 250g hoặc 500g.",
+      "Cà phê rang xay pha phin — 100% cà phê (90% Robusta - 10% Arabica).",
     detailShortDescription:
       "Cà phê rang xay pha phin – 100% cà phê (90% Robusta - 10% Arabica).",
     ingredients: "100% cà phê (90% Robusta - 10% Arabica).",

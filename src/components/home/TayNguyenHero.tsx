@@ -1,12 +1,34 @@
 "use client";
 
 import { useRef } from "react";
-import Image from "next/image";
+import Image, { getImageProps } from "next/image";
 import { tayNguyenHeroContent } from "@/data/content/home";
 import { TayNguyenHeroMotion } from "./TayNguyenHeroMotion";
 
 export function TayNguyenHero() {
   const sectionRef = useRef<HTMLElement>(null);
+
+  const {
+    props: { srcSet: desktopSrcSet },
+  } = getImageProps({
+    src: tayNguyenHeroContent.panoramaImage.src,
+    alt: tayNguyenHeroContent.panoramaImage.alt,
+    width: tayNguyenHeroContent.panoramaImage.width,
+    height: tayNguyenHeroContent.panoramaImage.height,
+    priority: true,
+    sizes: "100vw",
+  });
+
+  const {
+    props: { srcSet: mobileSrcSet, ...mobileImgProps },
+  } = getImageProps({
+    src: tayNguyenHeroContent.image.src,
+    alt: tayNguyenHeroContent.image.alt,
+    width: tayNguyenHeroContent.image.width,
+    height: tayNguyenHeroContent.image.height,
+    priority: true,
+    sizes: "100vw",
+  });
 
   return (
     <section
@@ -16,41 +38,21 @@ export function TayNguyenHero() {
     >
       <TayNguyenHeroMotion sectionRef={sectionRef} />
 
-      {/* Zone A: Cinematic Artwork Stage (Full-bleed blurred landscape + crisp uncropped foreground) */}
-      <div className="relative w-full overflow-hidden bg-[#171717]">
-        {/* Background layer (desktop): blurred, subdued full-bleed landscape extending colors edge-to-edge */}
-        <div
-          aria-hidden="true"
-          className="taynguyen-bg-ambient pointer-events-none absolute inset-0 hidden lg:block bg-cover bg-center blur-[28px] saturate-[0.84] brightness-[0.72] will-change-transform"
-          style={{
-            backgroundImage: `url("${tayNguyenHeroContent.image.src}")`,
-          }}
-        />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 hidden lg:block bg-[#140F0A]/20"
-        />
-
-        {/* Foreground layer: 100% uncropped artwork, large and sharp */}
-        <div className="taynguyen-fg-feather relative mx-auto w-full lg:w-auto lg:h-[clamp(480px,62svh,600px)] xl:h-[clamp(540px,62svh,660px)] min-[1920px]:h-[clamp(600px,61svh,680px)] aspect-[1282/869] max-w-full overflow-hidden">
-          <Image
-            src={tayNguyenHeroContent.image.src}
+      {/* Zone A: Art-directed Hero (original 1282x869 on mobile/tablet, 2:1 panorama on desktop) */}
+      <div className="relative w-full overflow-hidden bg-[#F4EFE6] aspect-[1282/869] lg:aspect-[2/1]">
+        <picture className="block w-full h-full">
+          <source
+            media="(min-width: 1024px)"
+            srcSet={desktopSrcSet}
+            sizes="100vw"
+          />
+          <img
+            {...mobileImgProps}
+            srcSet={mobileSrcSet}
             alt={tayNguyenHeroContent.image.alt}
-            fill
-            priority
-            sizes="(min-width: 1920px) 1005px, (min-width: 1280px) 975px, (min-width: 1024px) 885px, 100vw"
-            className="taynguyen-fg-breath object-contain will-change-transform"
+            className="block w-full h-full object-cover"
           />
-        </div>
-
-        {/* Subtle desktop editorial region chip */}
-        <div className="hidden lg:inline-flex items-center gap-2 absolute bottom-4 left-8 xl:left-12 z-10 px-3 py-1.5 bg-[#171717]/75 backdrop-blur-sm border border-white/15 text-[#FAF6F1]/90 text-[10.5px] font-sans font-medium tracking-[0.2em] uppercase select-none">
-          <span
-            className="w-1.5 h-1.5 rounded-full bg-[#EF4E3E] shrink-0"
-            aria-hidden="true"
-          />
-          <span>{tayNguyenHeroContent.regionLabel}</span>
-        </div>
+        </picture>
       </div>
 
       {/* Zone B: Brand Statement & Story Intro */}

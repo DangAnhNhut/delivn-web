@@ -28,6 +28,12 @@ export const tayNguyenHeroContent = {
     width: 1282,
     height: 869,
   },
+  panoramaImage: {
+    src: "/home/tay-nguyen/taynguyen-panorama.png",
+    alt: "Bức tranh panorama Tây Nguyên với nhà rông, người đánh cồng chiêng, nhóm múa quanh lửa trại, voi, dãy núi và hoàng hôn",
+    width: 1774,
+    height: 887,
+  },
   scrollCue: "CUỘN ĐỂ KHÁM PHÁ",
 } as const;
 

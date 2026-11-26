@@ -44,7 +44,7 @@ export const PRODUCT_VARIANT_IMAGES: Record<
   },
   rang_xay: {
     250: {
-      url: "/products/variants/rang-xay-250g.png",
+      url: "/products/variants/rang-xay-250g-v2.png",
       alt: "Cà phê rang xay pha phin truyền thống Tây Nguyên VietNam — 250g",
       objectPosition: "center center",
       presentationScale: 1,
@@ -65,10 +65,7 @@ export const PRODUCT_DETAIL_IMAGES: Record<
   Record<250 | 500, VariantImageAsset>
 > = {
   espresso: {
-    250: {
-      url: "/products/detail/espresso-250g-detail.webp",
-      alt: "Cà phê hạt rang Espresso Special Tây Nguyên VietNam — 250g",
-    },
+    250: PRODUCT_VARIANT_IMAGES.espresso[250],
     500: {
       url: "/products/detail/espresso-500g-detail.webp",
       alt: "Cà phê hạt rang Espresso Special Tây Nguyên VietNam — 500g",

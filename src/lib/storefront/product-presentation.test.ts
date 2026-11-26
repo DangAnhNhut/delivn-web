@@ -113,9 +113,7 @@ describe("getProductDisplayDescription", () => {
         description: "Dữ liệu sản phẩm DELIVN dùng cho phát triển cục bộ.",
         category: "espresso",
       }),
-    ).toBe(
-      "Cà phê hạt rang — 100% cà phê (70% Robusta - 30% Arabica) · Lựa chọn 250g hoặc 500g.",
-    );
+    ).toBe("Cà phê hạt rang — 100% cà phê (70% Robusta - 30% Arabica).");
   });
 
   it("replaces development copy with official factual copy for rang xay", () => {
@@ -124,9 +122,7 @@ describe("getProductDisplayDescription", () => {
         description: "Dữ liệu sản phẩm tổng hợp chỉ dùng cho phát triển và kiểm thử thương mại.",
         category: "rang_xay",
       }),
-    ).toBe(
-      "Cà phê rang xay pha phin — 100% cà phê (90% Robusta - 10% Arabica) · Lựa chọn 250g hoặc 500g.",
-    );
+    ).toBe("Cà phê rang xay pha phin — 100% cà phê (90% Robusta - 10% Arabica).");
   });
 
   it("replaces unverified regional claims with official factual copy", () => {
@@ -135,9 +131,7 @@ describe("getProductDisplayDescription", () => {
         description: "Cà phê hạt rang espresso đặc biệt, chế tác từ nguồn nguyên liệu Tây Nguyên.",
         category: "espresso",
       }),
-    ).toBe(
-      "Cà phê hạt rang — 100% cà phê (70% Robusta - 30% Arabica) · Lựa chọn 250g hoặc 500g.",
-    );
+    ).toBe("Cà phê hạt rang — 100% cà phê (70% Robusta - 30% Arabica).");
   });
 
   it("preserves verified business description when provided", () => {
@@ -179,7 +173,7 @@ describe("getProductPrincipalImage", () => {
         { sku: "DELIVN-RANG-XAY-250", weightGrams: 250, label: "250g" },
       ),
     ).toEqual({
-      url: "/products/variants/rang-xay-250g.png",
+      url: "/products/variants/rang-xay-250g-v2.png",
       altText: "Cà phê rang xay pha phin truyền thống Tây Nguyên VietNam — 250g",
     });
   });
@@ -227,7 +221,7 @@ describe("getCartProductDisplayImage", () => {
         image: { url: "/products/demo-gray.png", alt: "Demo Rang Xay" },
       }),
     ).toEqual({
-      url: "/products/variants/rang-xay-250g.png",
+      url: "/products/variants/rang-xay-250g-v2.png",
       alt: "Cà phê rang xay pha phin truyền thống Tây Nguyên VietNam — 250g",
     });
   });

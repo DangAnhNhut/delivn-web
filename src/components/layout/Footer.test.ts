@@ -42,5 +42,7 @@ describe("Footer compliance navigation", () => {
     }
     expect(html).not.toContain('href="/cau-chuyen"');
     expect(html).not.toContain('href="/cach-pha"');
+    expect(html).toContain("Modern delicious Vietnam coffee");
+    expect(html).not.toContain("BẢN SẮC TÂY NGUYÊN · THIẾT KẾ ĐƯƠNG ĐẠI");
   });
 });
