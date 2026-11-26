@@ -21,7 +21,8 @@ export function createCartItemSnapshot(
 
   let image: { url: string; alt: string } | null = null;
   if (isMappedVariant) {
-    image = getProductVariantImage(product, variant);
+    const { url, alt } = getProductVariantImage(product, variant);
+    image = { url, alt };
   } else if (primaryMedia && primaryUrl) {
     image = {
       url: primaryUrl,

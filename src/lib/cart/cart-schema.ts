@@ -13,8 +13,13 @@ const cartImageSnapshotSchema = z
   .object({
     url: nonEmptyText,
     alt: nonEmptyText,
+    // Older catalog snapshots included these rendering fields.
+    objectPosition: nonEmptyText.optional(),
+    presentationScale: z.number().optional(),
+    fitMode: z.enum(["contain", "cover"]).optional(),
   })
-  .strict();
+  .strict()
+  .transform(({ url, alt }) => ({ url, alt }));
 
 export const cartItemSchema = z
   .object({

@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import type { ProductDTO } from "@/contracts";
 
 import { createCartItemSnapshot } from "./cart-snapshot";
+import { parseCartStorage, serializeCart } from "./cart-storage";
 
 const product: ProductDTO = {
   id: "00000000-0000-4000-8000-000000000001",
@@ -35,6 +36,38 @@ const product: ProductDTO = {
 };
 
 describe("createCartItemSnapshot", () => {
+  it.each(["DELIVN-ESPRESSO-500", "DEV-LOCAL-ESPRESSO-500"])(
+    "persists the mapped cart image for %s across hydration",
+    (sku) => {
+      const variant = { ...product.variants[0]!, sku, weightGrams: 500 };
+      const item = { ...createCartItemSnapshot(product, variant), quantity: 1 };
+      expect(item.image).toEqual({
+        url: "/products/variants/espresso-500g.png",
+        alt: expect.any(String),
+      });
+      expect(parseCartStorage(serializeCart([item]))).toMatchObject({
+        ok: true,
+        payload: { items: [item] },
+      });
+    },
+  );
+
+  it("restores legacy carts that contain known image presentation fields", () => {
+    const item = { ...createCartItemSnapshot(product, product.variants[0]!), quantity: 2 };
+    const legacyImage = {
+      ...item.image,
+      objectPosition: "center center",
+      presentationScale: 1,
+      fitMode: "contain",
+    };
+    const serialized = JSON.stringify({ version: 1, items: [{ ...item, image: legacyImage }] });
+    expect(parseCartStorage(serialized)).toEqual({
+      ok: true,
+      payload: { version: 1, items: [item] },
+      serialized: serializeCart([item]),
+    });
+  });
+
   it("copies only ProductDTO presentation fields needed by the cart", () => {
     expect(createCartItemSnapshot(product, product.variants[0]!)).toEqual({
       productId: product.id,
