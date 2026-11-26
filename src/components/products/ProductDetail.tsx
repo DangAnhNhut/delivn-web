@@ -193,12 +193,13 @@ export function ProductDetail({
 
               {/* 3. Concise 1–2 line blending description */}
               <p className="mt-3 text-sm leading-relaxed text-foreground-muted sm:text-base">
-                {product.description &&
-                !/dữ liệu sản phẩm|phát triển cục bộ|kiểm thử thương mại/i.test(
+                {hasMappedVariant ||
+                !product.description ||
+                /dữ liệu sản phẩm|phát triển cục bộ|kiểm thử thương mại|tây nguyên/i.test(
                   product.description,
                 )
-                  ? product.description
-                  : lineDetail.detailShortDescription}
+                  ? lineDetail.detailShortDescription
+                  : product.description}
               </p>
 
               {/* 4–7. Weight Selector, Price, Quantity, CTAs */}
