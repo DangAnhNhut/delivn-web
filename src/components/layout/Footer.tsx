@@ -18,6 +18,7 @@ export function Footer() {
   const informationLinks = [
     ...navigation,
     ...LEGAL_ROUTE_LINKS.slice(0, 2),
+    { label: "BẢN TỰ CÔNG BỐ SẢN PHẨM", href: "/ban-tu-cong-bo-san-pham" },
   ];
   const policyLinks = LEGAL_ROUTE_LINKS.slice(2);
 

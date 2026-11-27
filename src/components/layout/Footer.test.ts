@@ -37,9 +37,10 @@ describe("Footer compliance navigation", () => {
   it("keeps useful and legal navigation without dead story or brewing links", () => {
     const html = renderToStaticMarkup(createElement(Footer));
 
-    for (const href of ["/", "/san-pham", "/lien-he", "/thong-tin-doanh-nghiep"]) {
+    for (const href of ["/", "/san-pham", "/lien-he", "/thong-tin-doanh-nghiep", "/ban-tu-cong-bo-san-pham"]) {
       expect(html).toContain(`href="${href}"`);
     }
+    expect(html).toContain("BẢN TỰ CÔNG BỐ SẢN PHẨM");
     expect(html).not.toContain('href="/cau-chuyen"');
     expect(html).not.toContain('href="/cach-pha"');
     expect(html).toContain("Modern delicious Vietnam coffee");

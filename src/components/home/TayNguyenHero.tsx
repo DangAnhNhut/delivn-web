@@ -38,8 +38,8 @@ export function TayNguyenHero() {
     >
       <TayNguyenHeroMotion sectionRef={sectionRef} />
 
-      {/* Zone A: Art-directed Hero (original 1282x869 on mobile/tablet, compact panorama crop on desktop) */}
-      <div className="relative w-full overflow-hidden bg-[#F4EFE6] aspect-[1282/869] lg:aspect-auto lg:h-[clamp(400px,32vw,550px)]">
+      {/* Zone A: Art-directed Hero (original 1282x869 on mobile/tablet, balanced roof-to-xà-rông panorama on desktop) */}
+      <div className="relative w-full overflow-hidden bg-[#F4EFE6] aspect-[1282/869] lg:aspect-[1774/650]">
         <picture className="block w-full h-full">
           <source
             media="(min-width: 1024px)"
@@ -50,7 +50,7 @@ export function TayNguyenHero() {
             {...mobileImgProps}
             srcSet={mobileSrcSet}
             alt={tayNguyenHeroContent.image.alt}
-            className="block w-full h-full object-cover object-center lg:object-[center_26%]"
+            className="block w-full h-full object-cover object-center lg:object-[center_36%]"
           />
         </picture>
       </div>

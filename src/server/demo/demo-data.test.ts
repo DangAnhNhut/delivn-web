@@ -28,10 +28,10 @@ describe("development demo fixtures", () => {
       priceVnd,
       active,
     }))).toEqual([
-      { sku: "DEV-DEMO-ESPRESSO-250", label: "250g", priceVnd: 173_000, active: true },
-      { sku: "DEV-DEMO-ESPRESSO-500", label: "500g", priceVnd: 345_000, active: true },
-      { sku: "DEV-DEMO-RANG-XAY-250", label: "250g", priceVnd: 168_000, active: true },
-      { sku: "DEV-DEMO-RANG-XAY-500", label: "500g", priceVnd: 335_000, active: true },
+      { sku: "DEV-DEMO-ESPRESSO-250", label: "250g", priceVnd: 162_000, active: true },
+      { sku: "DEV-DEMO-ESPRESSO-500", label: "500g", priceVnd: 297_000, active: true },
+      { sku: "DEV-DEMO-RANG-XAY-250", label: "250g", priceVnd: 135_000, active: true },
+      { sku: "DEV-DEMO-RANG-XAY-500", label: "500g", priceVnd: 270_000, active: true },
     ]);
     expect(DEMO_VARIANTS.every((variant) => variant.compareAtPriceVnd === null)).toBe(true);
     expect(DEMO_STOCK.every((entry) => entry.quantity === 100 && entry.reservedQuantity === 0)).toBe(true);
