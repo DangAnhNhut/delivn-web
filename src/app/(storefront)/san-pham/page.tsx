@@ -8,6 +8,9 @@ export const metadata: Metadata = {
   title: "Sản phẩm | Cà phê DELIVN",
   description:
     "Khám phá các dòng cà phê DELIVN và lựa chọn quy cách phù hợp với bạn.",
+  alternates: {
+    canonical: "/san-pham",
+  },
 };
 
 export default async function ProductsPage() {

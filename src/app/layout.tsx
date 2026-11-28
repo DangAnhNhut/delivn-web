@@ -18,12 +18,18 @@ const playfairDisplay = Playfair_Display({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://delivn.com.vn"),
   title: {
     default: "DELIVN — Cà Phê Việt Nam Từ Tây Nguyên",
     template: "%s | DELIVN",
   },
   description:
     "DELIVN mang đến hai dòng cà phê với tinh thần hiện đại, được khơi nguồn từ bản sắc Tây Nguyên và hoàn thiện cho trải nghiệm thưởng thức mỗi ngày.",
+  openGraph: {
+    type: "website",
+    locale: "vi_VN",
+    siteName: "DELIVN",
+  },
 };
 
 export default function RootLayout({

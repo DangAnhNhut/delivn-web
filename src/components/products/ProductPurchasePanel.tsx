@@ -223,6 +223,10 @@ export function ProductPurchasePanel({
         </div>
       )}
 
+      <p className="mt-2 text-xs text-foreground-muted">
+        Mỗi quy cách sản phẩm được đặt tối đa {MAX_QUANTITY_PER_VARIANT} đơn vị trong một đơn hàng.
+      </p>
+
       {/* 7. Dual Purchase CTAs: MUA NGAY + THÊM VÀO GIỎ */}
       <div className="mt-5 flex flex-col gap-2.5 sm:flex-row">
         <button

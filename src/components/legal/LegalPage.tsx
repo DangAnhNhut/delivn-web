@@ -59,6 +59,24 @@ export function LegalPage({ page }: { page: LegalPageDefinition }) {
                 ) : null}
               </section>
             ))}
+            {page.crossLinks && page.crossLinks.length > 0 ? (
+              <section className="border-t border-border pt-6">
+                <h2 className="text-xs font-bold tracking-[0.2em] text-foreground uppercase">
+                  CHÍNH SÁCH ÁP DỤNG LIÊN QUAN
+                </h2>
+                <div className="mt-4 flex flex-wrap gap-3">
+                  {page.crossLinks.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className="inline-flex min-h-10 items-center border border-border px-4 py-2 text-xs font-bold tracking-[0.12em] text-foreground uppercase transition-colors hover:border-foreground hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                    >
+                      {link.label} →
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            ) : null}
           </div>
 
           <nav aria-label="Thông tin pháp lý và chính sách" className="lg:sticky lg:top-[calc(var(--header-height)+2.5rem)] lg:self-start">

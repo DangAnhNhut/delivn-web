@@ -4,7 +4,7 @@ import { LEGAL_ROUTE_LINKS } from "@/data/legal";
 const BASE_URL = "https://delivn.com.vn";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const staticRoutes = [
+  const publicRoutes = [
     "/",
     "/san-pham",
     "/san-pham/ca-phe-hat-rang-espresso",
@@ -13,9 +13,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...LEGAL_ROUTE_LINKS.map((item) => item.href),
   ];
 
-  return staticRoutes.map((route) => ({
+  return publicRoutes.map((route) => ({
     url: `${BASE_URL}${route}`,
-    lastModified: new Date(),
   }));
 }
-

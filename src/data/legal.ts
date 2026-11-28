@@ -42,6 +42,7 @@ export type LegalPageDefinition = {
   description: string;
   updated: string;
   pendingNotice?: string;
+  crossLinks?: readonly { label: string; href: string }[];
   sections: readonly LegalSection[];
 };
 
@@ -110,12 +111,19 @@ export const LEGAL_PAGES: Record<LegalRoute, LegalPageDefinition> = {
     title: "GIAO DỊCH MINH BẠCH.",
     description:
       "Quy chế và điều khoản giao dịch thương mại điện tử áp dụng cho khách hàng mua sắm tại DELIVN.",
-    updated: "13/11/2026",
+    updated: "28/11/2026",
+    crossLinks: [
+      { label: "Chính sách thanh toán", href: "/chinh-sach-thanh-toan" },
+      { label: "Chính sách vận chuyển", href: "/chinh-sach-van-chuyen" },
+      { label: "Đổi trả & hoàn tiền", href: "/chinh-sach-doi-tra-hoan-tien" },
+      { label: "Chính sách bảo mật", href: "/chinh-sach-bao-mat" },
+    ],
     sections: [
       {
         title: "QUY TRÌNH ĐẶT HÀNG",
         items: [
-          "Khách hàng lựa chọn sản phẩm, quy cách đóng gói và số lượng phù hợp vào giỏ hàng.",
+          "Khách hàng lựa chọn sản phẩm, quy cách đóng gói và số lượng phù hợp vào giỏ hàng (mỗi quy cách sản phẩm được đặt tối đa 20 đơn vị trong một đơn hàng).",
+          "Khách hàng cần đăng nhập tài khoản DELIVN trước khi truy cập trang thanh toán để bảo vệ thông tin đơn hàng và lịch sử giao dịch.",
           "Tại trang thanh toán, khách hàng cung cấp chính xác thông tin người nhận (họ tên, số điện thoại, địa chỉ nhận hàng) và lựa chọn phương thức thanh toán được hỗ trợ.",
           "Máy chủ kiểm tra tính hợp lệ của sản phẩm, tồn kho khả dụng và tính toán đơn hàng trước khi tạo mã đơn.",
           "Đơn hàng được ghi nhận và hiển thị thông tin xác nhận sau khi quá trình gửi thông tin thành công.",
@@ -213,6 +221,10 @@ export const LEGAL_PAGES: Record<LegalRoute, LegalPageDefinition> = {
     description:
       "Thông tin chi tiết về các phương thức thanh toán được hỗ trợ khi mua hàng tại DELIVN.",
     updated: "13/11/2026",
+    crossLinks: [
+      { label: "Đổi trả & hoàn tiền", href: "/chinh-sach-doi-tra-hoan-tien" },
+      { label: "Điều khoản giao dịch", href: "/dieu-khoan-giao-dich" },
+    ],
     sections: [
       {
         title: "PHƯƠNG THỨC ĐANG HOẠT ĐỘNG",

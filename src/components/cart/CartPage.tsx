@@ -231,7 +231,7 @@ export function CartPage() {
                 </p>
               </div>
               <p className="mt-5 text-sm leading-relaxed text-foreground-muted">
-                Giá và tình trạng sản phẩm sẽ được xác nhận lại khi thanh toán.
+                Giá và tình trạng sản phẩm sẽ được xác nhận lại khi thanh toán. Yêu cầu đăng nhập tài khoản DELIVN trước khi thanh toán; mỗi quy cách tối đa {MAX_QUANTITY_PER_VARIANT} đơn vị/đơn.
               </p>
               <Link
                 href="/thanh-toan"

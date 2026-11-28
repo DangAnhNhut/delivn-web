@@ -4,6 +4,11 @@ import { connection } from "next/server";
 
 import { ProductDetail } from "@/components/products/ProductDetail";
 import {
+  buildBreadcrumbJsonLd,
+  buildProductGroupJsonLd,
+  serializeJsonLd,
+} from "@/lib/seo/structured-data";
+import {
   getProductDisplayDescription,
   getProductDisplayName,
 } from "@/lib/storefront/product-presentation";
@@ -22,9 +27,21 @@ export async function generateMetadata({
     return { title: "Không tìm thấy sản phẩm | DELIVN" };
   }
 
+  const displayName = getProductDisplayName(product);
+  const description = getProductDisplayDescription(product);
+  const canonicalPath = `/san-pham/${product.slug}`;
+
   return {
-    title: `${getProductDisplayName(product)} | DELIVN`,
-    description: getProductDisplayDescription(product),
+    title: `${displayName} | DELIVN`,
+    description,
+    alternates: {
+      canonical: canonicalPath,
+    },
+    openGraph: {
+      title: `${displayName} | DELIVN`,
+      description,
+      url: canonicalPath,
+    },
   };
 }
 
@@ -52,10 +69,29 @@ export default async function ProductDetailPage({
       (query.size && String(v.weightGrams) === query.size),
   );
 
+  const productJsonLd = serializeJsonLd(buildProductGroupJsonLd(product));
+  const breadcrumbJsonLd = serializeJsonLd(
+    buildBreadcrumbJsonLd([
+      { name: "Trang chủ", path: "/" },
+      { name: "Sản phẩm", path: "/san-pham" },
+      { name: getProductDisplayName(product), path: `/san-pham/${product.slug}` },
+    ]),
+  );
+
   return (
-    <ProductDetail
-      product={product}
-      initialVariantId={matchedVariant?.id ?? null}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: productJsonLd }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: breadcrumbJsonLd }}
+      />
+      <ProductDetail
+        product={product}
+        initialVariantId={matchedVariant?.id ?? null}
+      />
+    </>
   );
 }

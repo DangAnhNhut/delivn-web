@@ -419,6 +419,15 @@ export function ProductDetail({
                       Xem chính sách đổi trả &amp; hoàn tiền →
                     </Link>
                   </p>
+                  <p className="mt-3 border-t border-border/50 pt-3">
+                    Hồ sơ công bố chất lượng ({product.category === "espresso" ? "Số 01/CÔNG TY TNHH CÀ PHÊ DELIVN/2026" : "Số 02/CÔNG TY TNHH CÀ PHÊ DELIVN/2026"}):{" "}
+                    <Link
+                      href="/ban-tu-cong-bo-san-pham"
+                      className="font-semibold text-foreground underline underline-offset-4 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                    >
+                      Bản tự công bố sản phẩm →
+                    </Link>
+                  </p>
                 </div>
               </div>
             </div>
