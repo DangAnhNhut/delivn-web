@@ -281,7 +281,14 @@ export function CheckoutForm({
           </span>
         </label>
         <p id="checkout-terms-help" className="mt-3 pl-8 text-xs leading-relaxed text-foreground-muted">
-          Việc đồng ý là điều kiện gửi yêu cầu đặt hàng trên website.
+          Việc đồng ý là điều kiện gửi yêu cầu đặt hàng trên website. Thông tin người nhận (họ tên, số điện thoại, địa chỉ và email/ghi chú nếu cung cấp) được xử lý để xác nhận, thực hiện đơn hàng và xuất hóa đơn điện tử khi có yêu cầu theo{" "}
+          <a
+            href="/chinh-sach-bao-mat"
+            className="font-semibold underline decoration-border underline-offset-4 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          >
+            Chính sách bảo mật
+          </a>
+          .
         </p>
         {termsError ? (
           <p id="checkout-terms-error" className="mt-3 pl-8 text-sm font-medium text-accent">

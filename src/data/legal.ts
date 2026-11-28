@@ -149,35 +149,60 @@ export const LEGAL_PAGES: Record<LegalRoute, LegalPageDefinition> = {
     title: "BẢO VỆ DỮ LIỆU CÁ NHÂN.",
     description:
       "Chính sách bảo vệ dữ liệu cá nhân theo Luật Bảo vệ dữ liệu cá nhân số 91/2025/QH15 và Nghị định số 356/2025/NĐ-CP.",
-    updated: "13/11/2026",
+    updated: "28/11/2026",
     sections: [
       {
         title: "DỮ LIỆU THU THẬP KHI ĐẶT HÀNG",
         items: [
-          "Họ và tên, số điện thoại liên lạc và địa chỉ nhận hàng.",
-          "Địa chỉ email và ghi chú đơn hàng khi khách hàng tự nguyện cung cấp.",
+          "Họ và tên, số điện thoại liên lạc và địa chỉ nhận hàng (bắt buộc để thực hiện giao nhận đơn hàng).",
+          "Địa chỉ email và ghi chú đơn hàng khi khách hàng tự nguyện cung cấp (tùy chọn).",
           "Chi tiết đơn hàng gồm sản phẩm, quy cách, số lượng và phương thức thanh toán lựa chọn.",
         ],
       },
       {
         title: "TÀI KHOẢN VÀ BIỆN PHÁP AN TOÀN KỸ THUẬT",
         items: [
-          "Tài khoản sử dụng họ tên, email và mật khẩu xác thực để quản lý và theo dõi lịch sử đơn hàng.",
-          "Phiên đăng nhập được quản lý an toàn trong cơ sở dữ liệu.",
+          "Tài khoản sử dụng họ tên, email và mật khẩu xác thực để quản lý và theo dõi lịch sử đơn hàng; nếu chọn đăng nhập qua Google, hệ thống tiếp nhận tên, email đã xác minh và ảnh đại diện từ Google OAuth.",
+          "Phiên đăng nhập được quản lý trong cơ sở dữ liệu với cookie xác thực HttpOnly.",
           "Hệ thống ghi nhận và lưu trữ có thời hạn địa chỉ IP cùng định danh kỹ thuật trong cơ sở dữ liệu nhằm kiểm soát tần suất truy cập (rate limiting), bảo vệ an toàn tài khoản và phòng ngừa các hành vi truy cập trái phép hoặc tấn công dịch vụ.",
         ],
       },
       {
-        title: "MỤC ĐÍCH XỬ LÝ DỮ LIỆU",
-        paragraphs: [
-          "Dữ liệu được xử lý nhằm mục đích xác nhận và xử lý đơn hàng, điều phối giao nhận qua đối tác chuyển phát, hỗ trợ khách hàng, xuất hóa đơn điện tử khi có yêu cầu và bảo đảm an toàn hệ thống thông tin.",
+        title: "COOKIE VÀ LƯU TRỮ TRÌNH DUYỆT (LOCALSTORAGE)",
+        items: [
+          "Cookie phiên đăng nhập (chỉ phục vụ xác thực, HttpOnly): duy trì trạng thái đăng nhập an toàn và tự hủy khi khách hàng đăng xuất hoặc hết thời hạn phiên.",
+          "Bộ nhớ trình duyệt localStorage (khóa delivn.cart.v1): chỉ lưu danh sách sản phẩm trong giỏ hàng trên thiết bị của khách hàng (mã sản phẩm, quy cách, số lượng, ảnh hiển thị); không lưu mật khẩu hay thông tin thanh toán.",
+          "Website hiện không sử dụng cookie quảng cáo hoặc công cụ theo dõi hành vi tiếp thị của bên thứ ba.",
         ],
       },
       {
-        title: "THỜI HẠN LƯU TRỮ VÀ QUYỀN CỦA CHỦ THỂ DỮ LIỆU",
+        title: "MỤC ĐÍCH VÀ CƠ SỞ XỬ LÝ DỮ LIỆU",
         paragraphs: [
-          "Dữ liệu đơn hàng được lưu trữ theo thời hạn quy định của pháp luật về kế toán và thương mại điện tử. Dữ liệu kỹ thuật phục vụ kiểm soát tần suất truy cập được thu dọn định kỳ.",
-          `Khách hàng có quyền yêu cầu tra cứu, điều chỉnh hoặc rút lại sự đồng ý đối với dữ liệu cá nhân của mình bằng cách liên hệ email ${COMPANY_INFORMATION.email} hoặc hotline ${COMPANY_INFORMATION.phone}.`,
+          "Dữ liệu cá nhân được xử lý để thực hiện nghĩa vụ hợp đồng và giao dịch với khách hàng (tạo/quản lý tài khoản, xác nhận và xử lý đơn hàng, hỗ trợ khách hàng, xuất hóa đơn điện tử khi có yêu cầu) và bảo đảm an toàn hệ thống thông tin theo quy định pháp luật hiện hành.",
+        ],
+      },
+      {
+        title: "CHIA SẺ DỮ LIỆU VỚI BÊN THỨ BA VÀ HẠ TẦNG",
+        items: [
+          "Hạ tầng vận hành ứng dụng và cơ sở dữ liệu: dịch vụ lưu trữ ứng dụng web (Vercel) và cơ sở dữ liệu (Neon PostgreSQL). Dữ liệu trên hạ tầng đám mây có thể được xử lý tại máy chủ đặt ngoài lãnh thổ Việt Nam; doanh nghiệp thực hiện rà soát và hoàn thiện hồ sơ theo quy định về chuyển dữ liệu xuyên biên giới tại Điều 20 Luật 91/2025/QH15 và Nghị định 356/2025/NĐ-CP.",
+          "Nhà cung cấp xác thực Google OAuth: chỉ phát sinh khi khách hàng chủ động chọn tiếp tục bằng tài khoản Google.",
+          "Đơn vị vận chuyển đối tác: khi tính năng vận chuyển trực tuyến được kích hoạt chính thức, thông tin người nhận cần thiết (họ tên, số điện thoại, địa chỉ giao hàng) mới được chuyển cho đơn vị giao nhận tương ứng để thực hiện giao hàng.",
+        ],
+      },
+      {
+        title: "THỜI HẠN LƯU TRỮ DỮ LIỆU",
+        items: [
+          "Phiên đăng nhập: tối đa 07 ngày kể từ lần cấp hoặc làm mới gần nhất (cập nhật mỗi 24 giờ khi hoạt động), hoặc chấm dứt ngay khi khách hàng đăng xuất.",
+          "Dữ liệu kiểm soát tần suất truy cập (IP và định danh kỹ thuật trong bảng rate_limit): lưu tạm thời theo cửa sổ kiểm soát an toàn và thu dọn định kỳ.",
+          "Dữ liệu tài khoản và lịch sử đơn hàng: lưu trữ phục vụ quản lý tài khoản, bảo hành/đổi trả và đáp ứng nghĩa vụ lưu giữ chứng từ kế toán, thương mại điện tử theo quy định pháp luật.",
+        ],
+      },
+      {
+        title: "QUYỀN VÀ QUY TRÌNH TIẾP NHẬN YÊU CẦU CỦA CHỦ THỂ DỮ LIỆU",
+        items: [
+          "Khách hàng có các quyền theo Điều 4 Luật 91/2025/QH15: được biết về hoạt động xử lý dữ liệu; đồng ý, không đồng ý hoặc rút lại sự đồng ý; xem, chỉnh sửa hoặc yêu cầu chỉnh sửa; yêu cầu cung cấp, xóa, hạn chế xử lý, phản đối xử lý dữ liệu và khiếu nại theo quy định pháp luật.",
+          `Kênh tiếp nhận yêu cầu: gửi email tới ${COMPANY_INFORMATION.email} hoặc liên hệ hotline ${COMPANY_INFORMATION.phone}, nêu rõ nội dung yêu cầu và thông tin đơn hàng/email tài khoản để đối chiếu xác minh danh tính. Quý khách không gửi mật khẩu, mã OTP hoặc ảnh CCCD qua email thông thường.`,
+          "Thời hạn giải quyết theo Điều 5 Nghị định 356/2025/NĐ-CP: đối với yêu cầu rút lại sự đồng ý, hạn chế hoặc phản đối xử lý, DELIVN phản hồi trong 02 ngày làm việc và thực hiện trong 15 ngày (20 ngày nếu liên quan bên thứ ba), trừ trường hợp pháp luật quy định xử lý không cần sự đồng ý; đối với yêu cầu xem, chỉnh sửa hoặc cung cấp dữ liệu, thực hiện trong 10 ngày (15 ngày nếu cần phối hợp bên thứ ba); đối với yêu cầu xóa dữ liệu, thực hiện trong 20 ngày (30 ngày nếu cần phối hợp bên thứ ba), ngoại trừ dữ liệu bắt buộc lưu giữ theo pháp luật kế toán và thương mại điện tử.",
         ],
       },
     ],

@@ -139,4 +139,13 @@ describe("AuthForm", () => {
     expect((container.querySelector('button[type="submit"]') as HTMLButtonElement).disabled).toBe(false);
     expect(mocks.push).not.toHaveBeenCalled();
   });
+
+  it("displays a privacy processing notice linking to /chinh-sach-bao-mat on register and login", () => {
+    for (const mode of ["register", "login"] as const) {
+      act(() => root.render(createElement(AuthForm, { mode, returnTo: "/tai-khoan", googleEnabled: true })));
+      const privacyLink = container.querySelector('a[href="/chinh-sach-bao-mat"]');
+      expect(privacyLink).toBeTruthy();
+      expect(privacyLink?.textContent).toContain("Chính sách bảo mật");
+    }
+  });
 });

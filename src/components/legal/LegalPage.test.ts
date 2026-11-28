@@ -93,4 +93,18 @@ describe("DELIVN legal content", () => {
       expect(html).not.toContain("support@delivn.com.vn");
     }
   });
+
+  it("publishes complete personal data protection disclosures under Law 91/2025/QH15 and Decree 356/2025/ND-CP", () => {
+    const privacyHtml = renderToStaticMarkup(
+      createElement(LegalPage, { page: LEGAL_PAGES["/chinh-sach-bao-mat"] }),
+    );
+    expect(privacyHtml).toContain("91/2025/QH15");
+    expect(privacyHtml).toContain("356/2025/NĐ-CP");
+    expect(privacyHtml).toContain("delivn.cart.v1");
+    expect(privacyHtml).toContain("Vercel");
+    expect(privacyHtml).toContain("Neon PostgreSQL");
+    expect(privacyHtml).toContain("02 ngày làm việc");
+    expect(privacyHtml).toContain("10 ngày");
+    expect(privacyHtml).toContain("20 ngày");
+  });
 });

@@ -125,6 +125,16 @@ export function AuthForm({
           {error}
         </p>
       ) : null}
+      <p className="text-xs leading-relaxed text-foreground-muted">
+        Thông tin tài khoản của bạn được xử lý để xác thực đăng nhập, quản lý đơn hàng và bảo đảm an toàn hệ thống. Xem{" "}
+        <Link
+          href="/chinh-sach-bao-mat"
+          className="font-semibold text-foreground underline underline-offset-4 hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        >
+          Chính sách bảo mật
+        </Link>
+        .
+      </p>
       <button
         type="submit"
         disabled={pending}
