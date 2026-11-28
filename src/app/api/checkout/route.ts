@@ -46,7 +46,10 @@ export async function POST(request: Request): Promise<Response> {
     const order = await checkoutService.createOrder(normalized, {
       userId: session.user.id,
     });
-    return Response.json(order, { status: 201 });
+    return Response.json(order, {
+      status: 201,
+      headers: { "Cache-Control": "no-store" },
+    });
   } catch (error) {
     return unexpectedErrorResponse(error);
   }

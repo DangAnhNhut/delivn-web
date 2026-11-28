@@ -7,6 +7,8 @@ import {
 
 export const runtime = "nodejs";
 
+const NO_STORE_HEADERS = { "Cache-Control": "no-store" } as const;
+
 export async function POST(request: Request): Promise<Response> {
   try {
     const body = (await request.json()) as Partial<ShippingQuoteRequest>;
@@ -23,14 +25,14 @@ export async function POST(request: Request): Promise<Response> {
       addressDetail: typeof body.addressDetail === "string" ? body.addressDetail : undefined,
       weightGrams: Number(body.weightGrams) || 500,
     });
-    return NextResponse.json(result);
-  } catch (error) {
+    return NextResponse.json(result, { headers: NO_STORE_HEADERS });
+  } catch {
     return NextResponse.json(
       {
         status: "ERROR",
-        message: error instanceof Error ? error.message : "Không thể tính phí vận chuyển.",
+        message: "Không thể tính phí vận chuyển.",
       },
-      { status: 500 },
+      { status: 500, headers: NO_STORE_HEADERS },
     );
   }
 }
