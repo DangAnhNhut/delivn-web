@@ -10,8 +10,33 @@ export const runtime = "nodejs";
 const NO_STORE_HEADERS = { "Cache-Control": "no-store" } as const;
 
 export async function POST(request: Request): Promise<Response> {
+  let rawBody: unknown;
   try {
-    const body = (await request.json()) as Partial<ShippingQuoteRequest>;
+    rawBody = await request.json();
+  } catch {
+    return NextResponse.json(
+      {
+        status: "ERROR",
+        code: "INVALID_JSON",
+        message: "Dữ liệu JSON không hợp lệ.",
+      },
+      { status: 400, headers: NO_STORE_HEADERS },
+    );
+  }
+
+  if (typeof rawBody !== "object" || rawBody === null || Array.isArray(rawBody)) {
+    return NextResponse.json(
+      {
+        status: "ERROR",
+        code: "VALIDATION_ERROR",
+        message: "Dữ liệu yêu cầu tính phí vận chuyển không hợp lệ.",
+      },
+      { status: 400, headers: NO_STORE_HEADERS },
+    );
+  }
+
+  try {
+    const body = rawBody as Partial<ShippingQuoteRequest>;
     const forceNull =
       process.env.NODE_ENV !== "production" &&
       process.env.DELIVN_ENABLE_DEMO_SEED === "true" &&

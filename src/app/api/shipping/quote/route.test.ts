@@ -21,7 +21,7 @@ describe("POST /api/shipping/quote", () => {
     expect(data.reason).toContain("Phí vận chuyển cần được xác định");
   });
 
-  it("handles malformed JSON payload cleanly", async () => {
+  it("returns 400 INVALID_JSON with no-store when payload is malformed JSON", async () => {
     const request = new Request("http://localhost/api/shipping/quote", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -29,8 +29,10 @@ describe("POST /api/shipping/quote", () => {
     });
 
     const response = await POST(request);
-    expect(response.status).toBe(500);
+    expect(response.status).toBe(400);
+    expect(response.headers.get("Cache-Control")).toBe("no-store");
     const data = await response.json();
     expect(data.status).toBe("ERROR");
+    expect(data.code).toBe("INVALID_JSON");
   });
 });
